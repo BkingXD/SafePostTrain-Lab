@@ -65,6 +65,8 @@ node --check web/dist/app.mjs
 - 部署：`appgdep_6aedade21bbc8191bf80443b46afd5cb`
 - 原生部署查询结果：`succeeded`，已返回上述 URL。
 
+发布后在浏览器打开了实际 URL，确认显示完整首页、17 章入口与 0/17 的新站点初始进度。[已发布页面截图](learning-published.jpg) 保留该观察证据。
+
 站点部署源码仓库与用户 GitHub 仓库不是同一仓库。第一阶段学习内容与前端可交付，但整个 GitHub 项目要求仍有待完成，尚不将总体目标标记为完成。
 
 ## 实际限制

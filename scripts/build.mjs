@@ -1,6 +1,7 @@
 import {mkdir,writeFile,copyFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
+import {execFileSync} from 'node:child_process';
 import {course,glossary,sources,stages} from '../web/course.mjs';
 const root=path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const output=path.join(root,'web/dist/content');
@@ -17,3 +18,4 @@ const downloads=path.join(root,'web/dist/downloads');
 await mkdir(downloads,{recursive:true});
 for(const file of ['core_math.py','toy_training.py','reward_model.py','data_audit.py','README.md'])await copyFile(path.join(root,'labs',file),path.join(downloads,file));
 await copyFile(path.join(root,'docs/LEARNING_CHECKLIST.md'),path.join(downloads,'LEARNING_CHECKLIST.md'));
+execFileSync('python3',[path.join(root,'scripts/package_labs.py')],{stdio:'inherit'});

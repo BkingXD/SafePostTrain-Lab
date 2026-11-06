@@ -45,3 +45,26 @@ export function memoryEstimate(billions,workers,activationGB) {
   [billions,workers,activationGB].forEach(finite);if(billions<=0||!Number.isInteger(workers)||workers<1||activationGB<0)throw new Error('参数量需正数，卡数需正整数，激活估计需非负');
   return{weights:billions*2,gradients:billions*2,master:billions*4,optimizer:billions*8,perWorker:billions*16/workers+activationGB};
 }
+
+export function sftStep(theta, target, learningRate) {
+  [theta,target,learningRate].forEach(finite);
+  if(![0,1].includes(target)||learningRate<0)throw new Error('目标需为 0 或 1，学习率需非负');
+  const probability=sigmoid(theta),gradient=probability-target,nextTheta=theta-learningRate*gradient;
+  finite(nextTheta);
+  const loss=target?softplus(-theta):softplus(theta);
+  const nextLoss=target?softplus(-nextTheta):softplus(nextTheta);
+  return {theta,probability,loss,gradient,nextTheta,nextProbability:sigmoid(nextTheta),nextLoss};
+}
+
+// One continuous rollout segment; no internal episode boundaries or padding.
+export function gaeTrace(rewards, values, gamma, lambda, terminal=true) {
+  if(!Array.isArray(rewards)||!Array.isArray(values)||!rewards.length||values.length!==rewards.length+1)throw new Error('n 个奖励需要 n+1 个价值估计');
+  [...rewards,...values,gamma,lambda].forEach(finite);
+  if(gamma<0||gamma>1||lambda<0||lambda>1||typeof terminal!=='boolean')throw new Error('gamma、lambda 需在 [0,1]，结束标志需为布尔值');
+  const deltas=[],advantages=Array(rewards.length).fill(0),returns=[];
+  for(let t=0;t<rewards.length;t++)deltas[t]=rewards[t]+gamma*(t===rewards.length-1&&terminal?0:values[t+1])-values[t];
+  let tail=0;
+  for(let t=rewards.length-1;t>=0;t--){advantages[t]=deltas[t]+gamma*lambda*tail;returns[t]=advantages[t]+values[t];tail=advantages[t];}
+  [...deltas,...advantages,...returns].forEach(finite);
+  return {deltas,advantages,returns};
+}

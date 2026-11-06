@@ -13,6 +13,7 @@ export const sources = {
   dpo: ['Direct Preference Optimization', 'https://arxiv.org/abs/2305.18290'],
   dpotrl: ['TRL · DPO Trainer', 'https://huggingface.co/docs/trl/dpo_trainer'],
   ppo: ['Proximal Policy Optimization', 'https://arxiv.org/abs/1707.06347'],
+  gae: ['Generalized Advantage Estimation', 'https://arxiv.org/abs/1506.02438'],
   grpo: ['DeepSeekMath · GRPO', 'https://arxiv.org/abs/2402.03300'],
   grpotrl: ['TRL · GRPO Trainer', 'https://huggingface.co/docs/trl/grpo_trainer'],
   cai: ['Constitutional AI', 'https://arxiv.org/abs/2212.08073'],
@@ -33,7 +34,7 @@ export const sources = {
 };
 export const course = [
 {
- id:'01', title:'从下一个词，到一个好助手', subtitle:'先把模型、概率和后训练放在同一张地图上。', stage:0, minutes:25, level:'基础', prerequisites:[], lab:'temperature',
+ id:'01', title:'从下一个词，到一个好助手', subtitle:'先把模型、概率和后训练放在同一张地图上。', stage:0, minutes:30, level:'基础', prerequisites:[], lab:'temperature', extraLabs:['gradient'],
  objectives:['解释 token、logit、softmax 和序列概率', '区分预训练、持续预训练与后训练', '说清楚训练和生成时分别发生了什么'],
  sections:[
  section('模型究竟在预测什么？', '想象一个反复练习补全句子的学生。语言模型看到前面的文字，为“接下来出现什么”分配概率。它处理的单位是 token：可能是一个词、一段汉字、标点或词的一部分。token 的边界由 tokenizer 决定，不能把一个 token 永远理解成一个字。', '每一步模型输出一组未归一化分数，叫 logits。softmax 把它们变成总和为 1 的概率。选出一个 token 后把它接回上下文，再预测下一个。这样的自回归生成不会一次写完整个答案。Transformer 用注意力汇总上下文；因果掩码保证预测当前位置时看不到未来答案。'),
@@ -120,16 +121,17 @@ export const course = [
  quizzes:[quiz('当策略模型与参考模型完全相同时，标准 DPO 单样本 loss 为？',['0','约 0.693','取决于回答长度，无法确定'],1,'两个模型的偏好差距相减为零，−log σ(0)=ln 2。'),quiz('chosen 与 rejected 的策略 log-prob 同时加 1，参考不变，DPO margin 会？',['增加 2','不变','减少 1'],1,'两个策略 log-prob 做差，共同偏移抵消。')],references:['dpo','dpotrl','ipo','kto','orpo','simpo']
 },
 {
- id:'08',title:'PPO：让模型从反馈中改进',subtitle:'策略梯度、优势、裁剪与四个模型角色。',stage:2,minutes:45,level:'核心',prerequisites:['01','06'],lab:'ppo',
+ id:'08',title:'PPO：让模型从反馈中改进',subtitle:'策略梯度、优势、裁剪与四个模型角色。',stage:2,minutes:50,level:'核心',prerequisites:['01','06'],lab:'ppo',extraLabs:['gae'],
  objectives:['把文本生成映射到强化学习','区分旧策略、参考策略与价值模型','理解 PPO 裁剪的符号与作用范围'],
  sections:[
  section('把回答看作一段轨迹','状态 sₜ 是问题与已生成的前缀，动作 aₜ 是下一个 token，策略 πθ(aₜ|sₜ) 是分布。回答结束时可获得一个结果奖励，也可在多个步骤得到反馈。回报 Gₜ 是未来折扣奖励之和，价值 V(sₜ) 估计当前状态预期能拿到多少回报。','策略梯度提高高优势动作的概率、降低低优势动作的概率。优势 Aₜ 表示某个动作比当前基线好多少，不等于奖励本身。一个奖励为正的回答，如果比同类选择还差，也可能具有负优势。'),
  section('为什么需要优势和 GAE？','简单估计可以用 Aₜ=Gₜ−V(sₜ)。GAE 先计算 TD 残差 δₜ=rₜ+γV(sₜ₊₁)−V(sₜ)，再把未来残差按 (γλ) 的幂累加。γ 控制远期奖励权重，λ 调节偏差与方差的取舍。终止状态的 bootstrap 要按环境语义处理，不能把正常终止和人为截断混为一谈。','举例：一步任务奖励 1，价值预测 0.4，优势为 0.6。若价值过高估计成 1.3，优势变成 −0.3，训练信号就可能错误。价值模型需要拟合回报，因此 PPO 不只是一个 policy loss。'),
+ section('算一条三步轨迹：奖励怎样传向前面？','令三个步骤的奖励为 [0,0,1]，价值预测为 [0.2,0.3,0.4]，最后环境真正终止，γ=0.9、λ=0.95。先从各步算 TD 残差：[0+0.9×0.3−0.2, 0+0.9×0.4−0.3, 1−0.4]=[0.07,0.06,0.6]。然后倒序计算 A₂=0.6，A₁=0.06+0.855×0.6=0.573，A₀=0.07+0.855×0.573=0.559915。','第一步即时奖励虽然为零，仍能收到后续成功带来的正优势。若 λ=0，优势就等于各步 TD 残差；若 λ=1，返回的 A+V 为 [0.81,0.9,1]，对应折扣回报。若第三步只是因为采样长度限制而截断、环境并未终止，并且下个状态的价值是 0.5，则最后残差应为 1+0.9×0.5−0.4=1.05。这个差别会一路影响前面的优势。','下方 GAE 实验把每一步的奖励、价值、残差、优势和价值训练目标列在一起。它只处理一段连续轨迹；实际 batch 含多个 episode 或 padding 时，还需要明确边界 mask，不让另一个 episode 的优势传过来。'),
  section('裁剪目标到底裁掉什么？','记 ratio=πθ(a|s)/πold(a|s)=exp(logπθ−logπold)。PPO 的 clipped surrogate 为 min(ratio×A, clip(ratio,1−ε,1+ε)×A)，通常对它取负号作为需要最小化的 policy loss。这个 min 的符号很关键，A 为负时不能直接说“超范围都没有梯度”。','例子：A=1，ratio=1.5，ε=0.2，目标被限制为 1.2；A=−1、ratio=0.5 时，目标为 min(−0.5,−0.8)=−0.8。它限制沿有利方向过度改变概率的激励，而不是强制所有概率比永远在区间内。'),
  section('旧策略、参考策略、奖励与价值','旧策略是生成本轮 rollout 的快照，用来计算 importance ratio；参考策略常是固定 SFT 模型，用于约束长期漂移。奖励模型负责打分，价值模型预测回报。这四种角色要区分，工程上有时可以共享部分参数，但目标和使用时机不同。','一次循环是：采样问题 → 用旧策略生成回答 → 打分并计算 KL 等反馈 → 估计优势 → 对这批轨迹做有限次更新 → 刷新采样策略。重复更新同一批数据太久，会使策略与采样分布相差过大。'),
  section('看哪些曲线才能判断训练健康？','至少看独立任务表现、reward、KL、熵、回答长度、clip fraction、价值误差和吞吐。熵快速下降可能意味着探索减少，奖励突增伴随重复文本可能是投机。不同实现的 KL 估计、奖励归一化和 token 聚合方式都可能影响数值。','先在可检查的小任务上验证优势、mask 和结束处理，再扩展到语言模型。下面的实验只计算单动作 surrogate，不包含 critic 训练或真实文本 rollout；不要把曲线当成大模型训练成绩。')],
  pitfall:'PPO clipping 不是硬性的 KL 上限，也不等于把模型参数裁剪到一个区间。',
- quizzes:[quiz('A=1，ratio=1.5，ε=0.2，clipped surrogate 是？',['1.5','1.2','0.2'],1,'min(1.5×1,1.2×1)=1.2。注意优化 loss 通常是它的负号。'),quiz('旧策略和参考策略有什么区别？',['永远是同一个模型','旧策略对应本批采样；参考策略通常用于长期漂移约束','参考策略负责预测价值'],1,'二者在起始时可以相同，后续更新频率和用途通常不同。')],references:['ppo','reward']
+ quizzes:[quiz('A=1，ratio=1.5，ε=0.2，clipped surrogate 是？',['1.5','1.2','0.2'],1,'min(1.5×1,1.2×1)=1.2。注意优化 loss 通常是它的负号。'),quiz('旧策略和参考策略有什么区别？',['永远是同一个模型','旧策略对应本批采样；参考策略通常用于长期漂移约束','参考策略负责预测价值'],1,'二者在起始时可以相同，后续更新频率和用途通常不同。')],references:['ppo','gae','reward']
 },
 {
  id:'09',title:'GRPO：在一组回答中寻找改进方向',subtitle:'组相对优势、可验证奖励与在线采样。',stage:2,minutes:40,level:'核心',prerequisites:['08'],lab:'grpo',

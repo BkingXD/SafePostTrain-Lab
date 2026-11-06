@@ -52,3 +52,20 @@ test('sampling edge probabilities and memory assumptions',()=>{
  close(m.samplingProbability(.5,2),.75);assert.equal(m.samplingProbability(0,3),0);assert.equal(m.samplingProbability(1,3),1);
  close(m.memoryEstimate(7,4,4).perWorker,32);assert.throws(()=>m.memoryEstimate(7,0,4));
 });
+test('a binary SFT gradient agrees with a finite difference and the worked update',()=>{
+ const r=m.sftStep(0,1,.2);close(r.gradient,-.5);close(r.nextTheta,.1);close(r.nextProbability,.52497918747894);
+ const h=1e-5,numeric=(m.softplus(-(.8+h))-m.softplus(-(.8-h)))/(2*h);
+ close(m.sftStep(.8,1,.2).gradient,numeric,1e-8);
+ assert.ok(r.nextLoss<r.loss);assert.ok(m.sftStep(0,0,.2).nextProbability<.5);
+ close(m.sftStep(2,1,0).nextTheta,2);assert.throws(()=>m.sftStep(0,.5,1));
+});
+test('GAE three-step trace, lambda limits and terminal bootstrap handling',()=>{
+ const rewards=[0,0,1],values=[.2,.3,.4,.5];
+ const r=m.gaeTrace(rewards,values,.9,.95,true);
+ [.559915,.573,.6].forEach((x,i)=>close(r.advantages[i],x));
+ const zero=m.gaeTrace(rewards,values,.9,0);zero.advantages.forEach((x,i)=>close(x,zero.deltas[i]));
+ const mc=m.gaeTrace(rewards,values,.9,1);[.81,.9,1].forEach((x,i)=>close(mc.returns[i],x));
+ const different=m.gaeTrace(rewards,[.2,.3,.4,99],.9,.95,true);assert.deepEqual(r,different);
+ close(m.gaeTrace(rewards,values,.9,.95,false).returns[2],1.45);
+ assert.throws(()=>m.gaeTrace(rewards,[1,2],.9,.95));assert.throws(()=>m.gaeTrace(rewards,values,2,.5));
+});

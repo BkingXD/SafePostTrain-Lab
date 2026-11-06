@@ -4,7 +4,7 @@ import sys
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "labs"))
-from core_math import dpo_loss, group_advantages, ppo_surrogate, sft_loss
+from core_math import dpo_loss, group_advantages, ppo_surrogate, sft_loss, gae_trace, sft_step
 from toy_training import train
 from data_audit import SAMPLES, audit_and_split
 from reward_model import fit
@@ -40,6 +40,14 @@ class TeachingMathTests(unittest.TestCase):
         result = fit()
         self.assertGreater(result["short_correct_vs_long_incorrect_probability"], .9)
         self.assertEqual(result, fit())
+
+    def test_step_and_gae_worked_examples(self):
+        self.assertAlmostEqual(sft_step(0, 1, .2)["next_probability"], .52497918747894)
+        result = gae_trace([0, 0, 1], [.2, .3, .4, .5])
+        for actual, expected in zip(result["advantages"], [.559915, .573, .6]):
+            self.assertAlmostEqual(actual, expected)
+        self.assertEqual(result, gae_trace([0, 0, 1], [.2, .3, .4, 100]))
+        self.assertAlmostEqual(gae_trace([0, 0, 1], [.2, .3, .4, .5], terminal=False)["returns"][-1], 1.45)
 
 
 if __name__ == "__main__":

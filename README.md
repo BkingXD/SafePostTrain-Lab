@@ -2,7 +2,7 @@
 
 系统学习大模型后训练，并逐步构建可复现的安全对齐项目。
 
-第一阶段提供中文课程和交互学习前端：**17 章、34 道理解检查、10 个交互实验、56 个术语**。课程覆盖基础、数据、SFT、LoRA/QLoRA、奖励建模、DPO、PPO、GRPO、反馈设计、蒸馏、安全、工程、评测与专项任务。每章都有学习目标、白话解释、数值或场景示例、误区、练习和一手资料。
+第一阶段提供中文课程和交互学习前端：**17 章、34 道理解检查、12 个交互实验、56 个术语**。课程覆盖基础、数据、SFT、LoRA/QLoRA、奖励建模、DPO、PPO、GAE、GRPO、反馈设计、蒸馏、安全、工程、评测与专项任务。每章都有学习目标、白话解释、数值或场景示例、误区、练习和一手资料。
 
 [打开私人学习站](https://safeposttrain-learning-lab.cappedcone1.chatgpt.site) · [第一阶段验收记录](reports/STAGE1_AUDIT.md)
 
@@ -72,7 +72,7 @@ python3 labs/toy_training.py --method all --steps 80 --seed 7
 
 ## 修改内容与验证
 
-需要 Node.js 20+，无需 `npm install`。`web/course.mjs` 是课程内容的唯一维护入口；生成的 JSON 与 Markdown 不手工修改。
+构建需要 Node.js 20+ 与 Python 3.10+，无需 `npm install`。`web/course.mjs` 是课程内容的唯一维护入口；生成的 JSON 与 Markdown 不手工修改。构建同时生成可下载、保留目录结构的 Python 教学实验 ZIP。
 
 ```bash
 node scripts/build.mjs

@@ -15,10 +15,10 @@ def build():
             info.external_attr = 0o100644 << 16
             archive.writestr(info, (ROOT / name).read_bytes())
     print(f"Teaching bundle: {OUT.name} ({len(FILES)} files)")
-    tiny_files = ["labs/__init__.py", "labs/evaluate_measured.py", "tests/test_tiny_lm.py", "tests/test_tiny_lm_device.py", "reports/tiny_lm/verified_seed7.json", "reports/tiny_lm/gpu_seed7.json"]
+    tiny_files = ["labs/__init__.py", "labs/evaluate_measured.py", "tests/test_tiny_lm.py", "tests/test_tiny_lm_device.py", "tests/test_measured_report.py", "reports/tiny_lm/gpu_seed7.json"]
     tiny_files += ["reports/tiny_lm/gpu_replay_seed7.json", "reports/tiny_lm/gpu_reproducibility.json"]
-    tiny_files += [str(p.relative_to(ROOT)) for p in sorted((ROOT/'reports/tiny_lm/cpu_reference_source').iterdir()) if p.suffix in {'.py', '.md'}]
-    tiny_files += [str(p.relative_to(ROOT)) for p in sorted((ROOT/'labs/tiny_lm').iterdir()) if p.suffix in {'.py','.txt','.md'}]
+    tiny_files += [str(p.relative_to(ROOT)) for p in sorted((ROOT/'labs/tiny_lm').iterdir())
+                   if p.suffix == '.py' or p.name in {'README.md', 'requirements-gpu.txt', 'requirements-gpu-lock.txt'}]
     with ZipFile(OUT.parent/'safeposttrain-tiny-lm.zip', 'w', compression=ZIP_STORED) as archive:
         for name in tiny_files:
             info=ZipInfo(name,date_time=(2026,1,1,0,0,0));info.external_attr=0o100644<<16

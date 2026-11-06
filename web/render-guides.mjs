@@ -9,8 +9,9 @@ function destination(href){
  if(href.includes('LEARNING_CHECKLIST.md'))return '#/guide/checklist';
  if(href.includes('PROJECT_OUTLINE.md'))return '#/guide/outline';
  if(href.includes('tiny_lm/README.md')||href.endsWith('tiny_lm/'))return '#/practice';
- if(href.includes('verified_seed7.json'))return './content/tiny-lm-report.json';
- if(href.includes('pilot_seed7.json'))return './content/tiny-lm-pilot.json';
+ if(href.includes('gpu_seed7.json'))return './content/tiny-lm-report.json';
+ if(href.includes('gpu_replay_seed7.json'))return './content/tiny-lm-replay.json';
+ if(href.includes('gpu_reproducibility.json'))return './content/tiny-lm-reproducibility.json';
  if(href.match(/tiny_lm\/[a-z_-]+\.(py|txt)$/))return './downloads/tiny-lm/'+href.split('/').at(-1);
  if(href.match(/labs\/[a-z_]+\.py$/))return './downloads/'+href.split('/').at(-1);
  if(href.endsWith('labs/README.md'))return './downloads/README.md';

@@ -1,4 +1,4 @@
-"""Standard-library, CPU-only numerical examples. Not an LLM trainer."""
+"""Standard-library numerical examples. Not an LLM trainer."""
 import math
 
 

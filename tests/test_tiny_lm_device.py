@@ -1,6 +1,6 @@
-"""GPU-first preflight tests and conditional, real-CUDA teaching-path tests.
+"""CUDA-only preflight contracts and real-CUDA teaching-path tests.
 
-CPU/mocked preflight checks are not CUDA execution evidence. The CUDA class
+Mocked preflight checks are not CUDA execution evidence. The CUDA class
 actually runs the algorithms and explicitly skips if its interpreter has no
 usable CUDA device. No test runs the full training recipe or judges accuracy.
 """
@@ -25,7 +25,7 @@ except ModuleNotFoundError as error:
 
 CUDA_AVAILABLE = torch is not None and torch.version.cuda is not None and torch.cuda.is_available()
 CUDA_SKIP = ("real CUDA execution requires a CUDA-enabled PyTorch build and an accessible NVIDIA GPU; "
-             "CPU/mocked checks do not validate GPU execution")
+             "mocked checks do not validate GPU execution")
 
 if torch is not None:
     sys.path.insert(0, str(ROOT / "labs"))
@@ -41,23 +41,29 @@ if torch is not None:
     )
 
 
-@unittest.skipIf(torch is None, "optional PyTorch lab: use a teaching environment with PyTorch")
+@unittest.skipIf(torch is None, "requires PyTorch to inspect the CUDA runtime contract")
 class DevicePreflightTests(unittest.TestCase):
-    def test_gpu_is_default_and_cpu_requires_explicit_selection(self):
+    def test_cuda_is_default_and_cpu_requests_are_rejected(self):
         parameters = inspect.signature(runtime.resolve_device).parameters
         self.assertEqual(next(iter(parameters.values())).default, "cuda")
         self.assertEqual(inspect.signature(runner.run).parameters["device"].default, "cuda")
         with mock.patch.object(torch.version, "cuda", None), mock.patch.object(torch.cuda, "is_available", return_value=False):
-            self.assertEqual(runtime.resolve_device("cpu"), torch.device("cpu"))
+            with self.assertRaisesRegex(ValueError, "CUDA|cuda"):
+                runtime.resolve_device("cpu")
             with self.assertRaisesRegex(RuntimeError, "CUDA|cuda"):
                 runtime.resolve_device()
+
+    def test_cpu_request_is_rejected_even_when_cuda_is_available(self):
+        with mock.patch.object(torch.version, "cuda", "12.8"), mock.patch.object(torch.cuda, "is_available", return_value=True):
+            with self.assertRaisesRegex(ValueError, "CUDA|cuda"):
+                runtime.resolve_device("cpu")
 
     def test_cuda_build_without_accessible_gpu_fails_without_cpu_fallback(self):
         with mock.patch.object(torch.version, "cuda", "12.8"), mock.patch.object(torch.cuda, "is_available", return_value=False):
             with self.assertRaisesRegex(RuntimeError, "CUDA|cuda"):
                 runtime.resolve_device("cuda")
 
-    def test_cpu_only_build_cannot_claim_cuda_even_if_availability_is_mocked(self):
+    def test_non_cuda_build_cannot_claim_cuda_even_if_availability_is_mocked(self):
         # An availability flag alone must not overrule the installed build.
         with mock.patch.object(torch.version, "cuda", None), mock.patch.object(torch.cuda, "is_available", return_value=True):
             with self.assertRaisesRegex(RuntimeError, "CUDA|cuda"):
@@ -74,25 +80,16 @@ class DevicePreflightTests(unittest.TestCase):
                 constructor.assert_not_called()
                 self.assertFalse(output.exists())
 
-    def test_cli_cpu_device_check_does_not_start_training_or_create_output(self):
+    def test_cli_cpu_request_fails_without_training_or_output(self):
         with tempfile.TemporaryDirectory() as temporary:
             output = Path(temporary) / "preflight-only"
             result = subprocess.run(
                 [sys.executable, "-m", "labs.tiny_lm.run", "--device", "cpu", "--check-device", "--output", str(output)],
                 cwd=ROOT, capture_output=True, text=True, timeout=30,
             )
-            self.assertEqual(result.returncode, 0, result.stderr)
-            self.assertIn("cpu", result.stdout.lower())
+            self.assertNotEqual(result.returncode, 0)
+            self.assertRegex(result.stderr, "CUDA|cuda")
             self.assertFalse(output.exists())
-
-    def test_explicit_cpu_training_does_not_report_gpu_measurements(self):
-        # One update tests the CPU metadata contract, not the CUDA backend.
-        model = TinyLM(ModelConfig(width=8, heads=2, layers=1, max_length=16))
-        stats, _ = train_sft(model, [record(["copy"], "A")], steps=1)
-        self.assertEqual(stats["device"], "cpu")
-        self.assertIsNone(stats["gpu_peak_allocated_bytes"])
-        self.assertIsNone(stats["gpu_peak_reserved_bytes"])
-        self.assertGreater(stats["elapsed_seconds"], 0)
 
 
 @unittest.skipUnless(CUDA_AVAILABLE, CUDA_SKIP)
@@ -104,8 +101,7 @@ class RealCUDATeachingPaths(unittest.TestCase):
         cls.device = runtime.resolve_device("cuda")
 
     def setUp(self):
-        torch.manual_seed(73)
-        torch.cuda.manual_seed_all(73)
+        runtime.configure_runtime(self.device, 73)
         self.model = TinyLM(ModelConfig(width=16, heads=4, layers=1, max_length=24)).to(self.device)
         self.rows = [record(["copy"], "A"), record(["please", "repeat"], "B")]
 

@@ -11,7 +11,7 @@ await mkdir(path.join(root,'docs/curriculum'),{recursive:true});
 await writeFile(path.join(output,'course.json'),JSON.stringify({version:1,course,glossary,sources,stages}));
 for(const chapter of course){
  const refs=chapter.references.map(key=>`- [${sources[key][0]}](${sources[key][1]})`).join('\n');
- const practice=chapter.practice?'\n\n## GPU 微型模型实战\n\n在 [实战指南](../../labs/tiny_lm/README.md) 中把本章公式连接到 CUDA 上的真实 token 训练、日志与生成。CPU 仅用于显式兼容验证；微型合成任务不代表大模型安全 benchmark。':'';
+ const practice=chapter.practice?'\n\n## GPU 微型模型实战\n\n在 [实战指南](../../labs/tiny_lm/README.md) 中把本章公式连接到 CUDA 上的真实 token 训练、日志与生成。微型合成任务不代表大模型安全 benchmark。':'';
  const text=`# ${chapter.id} · ${chapter.title}\n\n${chapter.subtitle}\n\n建议学习时间：${chapter.minutes} 分钟（含阅读与练习，按个人基础调整）。\n\n前置章节：${chapter.prerequisites.join('、')||'无'}。\n\n## 学习目标\n\n${chapter.objectives.map(x=>'- '+x).join('\n')}\n\n${chapter.sections.map(s=>'## '+s.title+'\n\n'+s.paragraphs.join('\n\n')).join('\n\n')}\n\n## 常见误区\n\n${chapter.pitfall}${practice}\n\n## 检查理解\n\n${chapter.quizzes.map((q,i)=>`${i+1}. ${q.question}\n\n${q.options.map((x,j)=>`   - ${String.fromCharCode(65+j)}. ${x}`).join('\n')}\n\n   答案：${String.fromCharCode(65+q.correct)}。${q.explanation}`).join('\n\n')}\n\n## 一手资料\n\n${refs}\n\n本章正文的数值例子用于教学；真实微型模型的实测结果另见实战报告。\n`;
  await writeFile(path.join(root,'docs/curriculum',chapter.id+'.md'),text);
 }
@@ -30,8 +30,8 @@ for(const [key,file] of Object.entries(guideFiles)){
 }
 await writeFile(path.join(output,'guides.json'),JSON.stringify(guides));
 await copyFile(path.join(root,'reports/tiny_lm/gpu_seed7.json'),path.join(output,'tiny-lm-report.json'));
-await copyFile(path.join(root,'reports/tiny_lm/verified_seed7.json'),path.join(output,'tiny-lm-cpu-reference.json'));
-await copyFile(path.join(root,'reports/tiny_lm/pilot_seed7.json'),path.join(output,'tiny-lm-pilot.json'));
+await copyFile(path.join(root,'reports/tiny_lm/gpu_replay_seed7.json'),path.join(output,'tiny-lm-replay.json'));
+await copyFile(path.join(root,'reports/tiny_lm/gpu_reproducibility.json'),path.join(output,'tiny-lm-reproducibility.json'));
 await copyFile(path.join(root,'labs/evaluate_measured.py'),path.join(downloads,'evaluate_measured.py'));
 await mkdir(path.join(downloads,'tiny-lm'),{recursive:true});
-for(const file of await readdir(path.join(root,'labs/tiny_lm')))if(/\.(py|txt|md)$/.test(file))await copyFile(path.join(root,'labs/tiny_lm',file),path.join(downloads,'tiny-lm',file));
+for(const file of await readdir(path.join(root,'labs/tiny_lm')))if(file.endsWith('.py')||['README.md','requirements-gpu.txt','requirements-gpu-lock.txt'].includes(file))await copyFile(path.join(root,'labs/tiny_lm',file),path.join(downloads,'tiny-lm',file));

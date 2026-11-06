@@ -1,1 +1,1 @@
-"""A CPU-sized causal language model for inspecting post-training mechanics."""
+"""A compact CUDA causal language model for inspecting post-training mechanics."""

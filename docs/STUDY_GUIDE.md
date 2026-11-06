@@ -104,7 +104,7 @@ python3 labs/toy_training.py --method all --steps 80 --seed 7
 
 ## 第三组作业：在 GPU 上完成 TinyLM 训练链（04～11、14、15、17）
 
-这部分实际训练使用 GPU。先阅读 [TinyLM GPU 实战说明](../labs/tiny_lm/README.md)，在可访问设备的环境中检查驱动，再使用 [PyTorch 官方选择器](https://pytorch.org/get-started/locally/)安装与设备兼容的 CUDA 构建。本项目原有 `.venv-teaching` 和 CPU 锁文件仅保留历史 CPU 环境；GPU 主流程使用已准备的 `.venv-gpu`，本机可直接激活复用；其他机器参考 [GPU 基础依赖](../labs/tiny_lm/requirements-gpu.txt)与 [GPU 依赖锁](../labs/tiny_lm/requirements-gpu-lock.txt)。
+这部分实际训练使用 GPU。先阅读 [TinyLM GPU 实战说明](../labs/tiny_lm/README.md)，在可访问设备的环境中检查驱动，再使用 [PyTorch 官方选择器](https://pytorch.org/get-started/locally/)安装与设备兼容的 CUDA 构建。GPU 主流程使用已准备的 `.venv-gpu`，本机可直接激活复用；其他机器参考 [GPU 基础依赖](../labs/tiny_lm/requirements-gpu.txt)与 [GPU 依赖锁](../labs/tiny_lm/requirements-gpu-lock.txt)。
 
 本机已在沙箱外识别 RTX 5070 12GB。沙箱内无法访问设备不等于驱动损坏；实际训练需要在能够访问 GPU 的环境执行。安装、预检和完整运行是三个不同步骤，完成前一步不自动代表后一步成功。
 
@@ -117,9 +117,9 @@ python -m labs.tiny_lm.run --check-device
 python -m labs.tiny_lm.run --device cuda --final-eval --output artifacts/tiny-lm-cuda-seed7 --seed 7
 ```
 
-入口默认 CUDA，CUDA 不可用会失败，不自动回退 CPU。当前使用 FP32；BF16、QLoRA 与多卡是原理和后续扩展，尚未宣称实现。每次使用新的输出目录；同一目录已有报告时不能覆盖。教师未达到质量门槛就保留失败，不用标准答案替代生成。
+入口仅接受 `cuda` 或 `cuda:N`，默认 CUDA；不可用时直接失败。当前使用 FP32；BF16、QLoRA 与多卡是原理和后续扩展，尚未宣称实现。每次使用新的输出目录；同一目录已有报告时不能覆盖。教师未达到质量门槛就保留失败，不用标准答案替代生成。
 
-**GPU 结果状态：已完成全量运行。** 已在 cuda:0 / NVIDIA GeForce RTX 5070 上完成全量训练，环境为 Python 3.12.14、PyTorch 2.9.1+cu128、CUDA 12.8、FP32。[gpu_seed7.json](../reports/tiny_lm/gpu_seed7.json)保存 11 阶段的开发/最终探针，22 组原始指标和源码摘要已复核，重载 logits 差值为 0。[同环境复跑记录](../reports/tiny_lm/gpu_reproducibility.json)确认排除资源测量字段后全部训练/开发/最终记录一致；21 项 TinyLM 与设备测试通过，其中 4 项真实 CUDA 测试未跳过。实战页读取实际设备；历史 [CPU 报告](../reports/tiny_lm/verified_seed7.json)单列保留。个人复跑用于理解与复现，课程交付不要求你已完成这些练习。
+**GPU 结果状态：已完成全量运行。** 已在 cuda:0 / NVIDIA GeForce RTX 5070 上完成全量训练，环境为 Python 3.12.14、PyTorch 2.9.1+cu128、CUDA 12.8、FP32。[gpu_seed7.json](../reports/tiny_lm/gpu_seed7.json)保存 11 阶段的开发/最终探针，22 组原始指标和源码摘要已复核，重载 logits 差值为 0。[同环境复跑记录](../reports/tiny_lm/gpu_reproducibility.json)确认排除资源测量字段后全部训练/开发/最终记录一致；TinyLM 核心逻辑与真实 CUDA 路径均提供测试，运行结果以当前验收记录为准。实战页只展示通过设备校验的 GPU 报告。个人复跑用于理解与复现，课程交付不要求你已完成这些练习。
 
 训练链的阅读顺序：
 
@@ -128,11 +128,11 @@ python -m labs.tiny_lm.run --device cuda --final-eval --output artifacts/tiny-lm
 3. [training.py](../labs/tiny_lm/training.py)：走读 SFT、LoRA、评分模型、DPO/SimPO、PPO/GRPO 与筛选；检查策略、参考、critic 和随机采样的设备。
 4. [run.py](../labs/tiny_lm/run.py)：确认每条分支的起始 checkpoint、冻结对象、设备预检、计时与显存记录。
 
-拿到自己的 GPU 报告后，完成以下分析；没有对应字段或日志时写“未测”，不从 CPU 数据补数：
+拿到自己的 GPU 报告后，完成以下分析；没有对应字段或日志时写“未测”：
 
 | 要看什么 | 在报告或代码中查什么 | 应写出的解释 |
 |---|---|---|
-| 设备与精度 | `environment.device`、GPU 名称、CUDA/PyTorch 版本、precision | 确认是实际 CUDA 运行，而不是导入 PyTorch 成功或 CPU 兼容运行 |
+| 设备与精度 | `environment.device`、GPU 名称、CUDA/PyTorch 版本、precision | 确认是实际 CUDA 运行，不能只凭成功导入 PyTorch 判断 |
 | 实际更新 | random、warmup、sft 的 loss 和逐条输出 | loss 下降与生成答对为何可能不同时发生 |
 | LoRA 与全参数 | 起点、参数量、有效 token、学习率、同步耗时和显存 | 对比口径有哪些相同/不同；微型模型的启动开销不代表大模型加速比 |
 | 奖励模型 | pair accuracy、Brier 和逐对概率 | 与 oracle 特征示例的差别；小样本不足以证明校准 |
@@ -141,13 +141,13 @@ python -m labs.tiny_lm.run --device cuda --final-eval --output artifacts/tiny-lm
 | 蒸馏 | 教师质量门槛、候选、接受率、选中数与学生生成 | 数据覆盖不足怎样影响学习；生成数据不等于训练收益 |
 | 保存与恢复 | 重载 logits、设备映射、优化器和随机状态 | 已提供真实 CUDA 上全参数/LoRA 的模型、优化器、双 RNG 与下一步一致测试；仍不等于完整在线 PPO 恢复 |
 
-GPU 计时需要在测量边界同步设备；否则异步执行可能只量到 CPU 提交工作耗时。阶段显存峰值仅统计所选设备的 PyTorch 分配器，包含阶段开始已驻留模型和缓存，不含 CUDA 上下文及非 PyTorch 外部库显存；它不是全进程总显存，也不等于算法独占占用。分别记录已分配和保留显存，并说明范围。
+GPU 计时需要在测量边界同步设备；否则异步执行可能只量到主机提交工作耗时。阶段显存峰值仅统计所选设备的 PyTorch 分配器，包含阶段开始已驻留模型和缓存，不含 CUDA 上下文及非 PyTorch 外部库显存；它不是全进程总显存，也不等于算法独占占用。分别记录已分配和保留显存，并说明范围。
 
-从原始回答重新计算 `correct_count / sample_count` 和简短正确率。保留错误、空答案和控制 token。历史 [pilot](../reports/tiny_lm/pilot_seed7.json)与 CPU verified 可以提供失败分析思路，但不能代替 GPU 新结果；旧 CPU 报告通过 `--source-dir reports/tiny_lm/cpu_reference_source` 对照冻结源码，不能强行匹配当前代码。当前 GPU 报告可运行 `python labs/evaluate_measured.py` 复算；该命令不启动训练。
+从原始回答重新计算 `correct_count / sample_count` 和简短正确率。保留错误、空答案和控制 token。当前 GPU 报告可运行 `python labs/evaluate_measured.py` 复算；该命令不启动训练。
 
-个人扩展练习可增加一个 seed，条件允许时做三个 seed。不要要求 CPU 与 GPU 逐位相同；先在相同 GPU/依赖环境复跑，记录数值差异和允许误差。已有探针结果已公开，若据此修改配方，这些探针就参与了开发；需要另留集合才能支持新的独立测试结论。
+个人扩展练习可增加一个 seed，条件允许时做三个 seed。先在相同 GPU/依赖环境复跑，记录数值差异和允许误差。已有探针结果已公开，若据此修改配方，这些探针就参与了开发；需要另留集合才能支持新的独立测试结论。
 
-**个人验收**：提交 GPU 设备预检、当前运行报告、环境/源码版本、结果复算、失败分析和至少三条不能推出的结论。当前阶段不以 CPU 兼容训练替代 GPU 验收，也不要求所有算法都改善分数。
+**个人验收**：提交 GPU 设备预检、当前运行报告、环境/源码版本、结果复算、失败分析和至少三条不能推出的结论。验收以 GPU 原始运行记录为证据，不要求所有算法都改善分数。
 
 ## 第四组作业：用具体案例学安全与评测（02、10、12、13、15）
 
@@ -237,7 +237,7 @@ GPU 计时需要在测量边界同步设备；否则异步执行可能只量到 
 | 组内奖励都相同，GRPO 是否完全没有更新？ | 偏好区分优势为零；若有 KL 等其他项，仍可能更新。不能把零优势说成所有梯度必为零 |
 | 模型全部拒绝，是不是安全训练成功？ | 有害完成可能低，但误拒绝和正常任务质量会失败；必须联合评价 |
 | 8 个开发样例全部答对能证明什么？ | 仅证明在指定设置下这 8 条通过；不能证明新意图、长文本、其他语言或内容安全 |
-| 保存并重载权重一致，能否证明可恢复训练？ | 仅重载不够；本项目真实 CUDA 测试另验证模型/AdamW/CPU 与 CUDA RNG 和下一步一致；完整在线 PPO 还需 critic、其优化器与 rollout 等状态 |
+| 保存并重载权重一致，能否证明可恢复训练？ | 仅重载不够；本项目真实 CUDA 测试另验证模型/AdamW/主机与 GPU 随机状态和下一步一致；完整在线 PPO 还需 critic、其优化器与 rollout 等状态 |
 | 网站显示 17/17 完成，能否写“完成大模型安全后训练”？ | 只能说明完成课程自检；实际训练和 benchmark 需模型、配置、原始结果与独立评测证据 |
 
 ## 第一阶段毕业包与通过标准
@@ -253,4 +253,4 @@ GPU 计时需要在测量边界同步设备；否则异步执行可能只量到 
 
 通过的标准是：能从原始样例解释到损失，再从损失解释到更新和真实输出；能发现评价口径、数据泄漏或代理奖励的问题；能诚实说明实验边界。无需先获得漂亮的提升数字，也不把上传 GitHub 作为学习通过条件。
 
-GPU 训练、同步耗时与显存记录是当前实战主线。BF16、QLoRA、多卡及部署量化回归仍按资源扩展；课程讲解不等于这些能力已经实现。没有可用 GPU 时可以继续阅读和数学练习，但 GPU 实战应保留为未完成，不能改用 CPU 结果充数。
+GPU 训练、同步耗时与显存记录是当前实战主线。BF16、QLoRA、多卡及部署量化回归仍按资源扩展；课程讲解不等于这些能力已经实现。没有可用 GPU 时可以继续阅读和数学练习，但 GPU 实战应保留为未完成。

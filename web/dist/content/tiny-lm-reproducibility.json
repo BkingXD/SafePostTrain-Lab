@@ -1,0 +1,39 @@
+{
+  "same_seed": 7,
+  "same_environment": {
+    "python": "3.12.14",
+    "torch": "2.9.1+cu128",
+    "platform": "Linux",
+    "device": "cuda:0",
+    "torch_threads": 1,
+    "precision": "float32",
+    "deterministic_algorithms": true,
+    "cuda_runtime": "12.8",
+    "tf32": false,
+    "timing": "CUDA synchronized wall clock",
+    "gpu_name": "NVIDIA GeForce RTX 5070",
+    "gpu_total_memory_bytes": 12322603008,
+    "compute_capability": "12.0",
+    "cublas_workspace_config": ":4096:8"
+  },
+  "excluded_fields": [
+    "elapsed_seconds",
+    "gpu_peak_allocated_bytes",
+    "gpu_peak_reserved_bytes",
+    "process_peak_rss_mb",
+    "tokens_per_second"
+  ],
+  "training_and_all_evaluation_records_equal": true,
+  "source_sha256": {
+    "__init__.py": "903126ce86aa5bb799620812f399ea6b4e5bf4563565023b5cbeaf2f759118da",
+    "data.py": "496e81e972d7f795fa3675561ad1c0d812b366cf38f7cd1283e1235c206b7f11",
+    "model.py": "a454f4028cc2723779c58dd9422b61c45d3bcd8c465e3d2ad3e17582e0e42d52",
+    "run.py": "4a89d440f4c9faca52e8e0a485951f642933dc05e19c89d58aa2529b8de20cdb",
+    "runtime.py": "39e412b25ac312d4e6e4c928c58f913f100033470ee8ca8835b6b0abbb92495f",
+    "training.py": "cb91cc354d37796dc5158c25e09384d28a5c622a7727489fe3fc1672791f4d41"
+  },
+  "first_report": "gpu_seed7.json",
+  "second_report": "gpu_replay_seed7.json",
+  "first_report_sha256": "041ade1152a4c69b74ab89abc020927be4e7500008db5a151db8d78ba5ffe15b",
+  "second_report_sha256": "16fd900304a536e227cbfb58f1e4dcb0e9bb3b0a133ceac07f3063d6a7552005"
+}

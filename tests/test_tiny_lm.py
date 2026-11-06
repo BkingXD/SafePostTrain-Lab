@@ -1,8 +1,8 @@
-"""Small CPU invariants for the optional, real-Transformer teaching lab.
+"""Real-CUDA invariants for the Transformer teaching lab.
 
-Run with ``.venv-teaching/bin/python -m unittest discover -s tests -p
-test_tiny_lm.py -v``. The standard-library-only test environment deliberately
-skips this module's tests when the optional torch dependency is absent.
+Run with ``.venv-gpu/bin/python -m unittest discover -s tests -p
+test_tiny_lm.py -v``. These tests explicitly skip without CUDA-enabled
+PyTorch and an accessible NVIDIA GPU; a skip is not execution evidence.
 """
 import copy
 from pathlib import Path
@@ -18,6 +18,8 @@ except ModuleNotFoundError as error:
         raise
     torch = None
 
+CUDA_AVAILABLE = torch is not None and torch.version.cuda is not None and torch.cuda.is_available()
+
 if torch is not None:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "labs"))
     from tiny_lm.data import assess, brief, datasets, final_probe, record, verbose
@@ -25,23 +27,24 @@ if torch is not None:
         ModelConfig, PAD, TinyLM, apply_lora, checkpoint, collate, encode,
         load_checkpoint, parameter_counts, sft_loss, token_statistics,
     )
+    from tiny_lm.runtime import configure_runtime, resolve_device
     from tiny_lm.training import frozen, gae_tensor, preference_loss, train_preference
 
 
-@unittest.skipIf(torch is None, "optional PyTorch lab: use .venv-teaching/bin/python")
+@unittest.skipUnless(CUDA_AVAILABLE, "requires CUDA-enabled PyTorch and an accessible NVIDIA GPU")
 class TinyLMInvariants(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.previous_threads = torch.get_num_threads()
-        torch.set_num_threads(1)
+        cls.device = resolve_device("cuda")
 
     @classmethod
     def tearDownClass(cls):
         torch.set_num_threads(cls.previous_threads)
 
     def setUp(self):
-        torch.manual_seed(47)
-        self.model = TinyLM(ModelConfig(width=16, heads=4, layers=1, max_length=24))
+        configure_runtime(self.device, 47)
+        self.model = TinyLM(ModelConfig(width=16, heads=4, layers=1, max_length=24)).to(self.device)
         self.rows = [record(["copy"], "A"), record(["please", "repeat"], "B", "verbose")]
 
     def assert_tensors_equal(self, actual, expected):
@@ -63,8 +66,8 @@ class TinyLMInvariants(unittest.TestCase):
 
     def test_attention_cannot_read_future_tokens_or_their_embeddings(self):
         prefix = self.rows[0]["prompt"]
-        original = torch.tensor([encode(prefix + ["B", "<eos>"])])
-        changed = torch.tensor([encode(prefix + ["H", "G"])])
+        original = torch.tensor([encode(prefix + ["B", "<eos>"])], device=self.device)
+        changed = torch.tensor([encode(prefix + ["H", "G"])], device=self.device)
         original_logits = self.model(original)
         changed_logits = self.model(changed)
         self.assert_tensors_equal(original_logits[:, :len(prefix)], changed_logits[:, :len(prefix)])
@@ -76,7 +79,7 @@ class TinyLMInvariants(unittest.TestCase):
         self.assertGreater(self.model.embedding.weight.grad.abs().sum().item(), 0)
 
     def test_sft_shifts_once_and_supervises_only_answer_and_eos(self):
-        ids, labels = collate(self.rows)
+        ids, labels = collate(self.rows, device=self.device)
         stats = token_statistics(self.model, ids, labels)
         logits = self.model(ids[:, :-1])
         expected_logps = []
@@ -101,7 +104,7 @@ class TinyLMInvariants(unittest.TestCase):
         self.assert_tensors_equal(stats["logps"][~stats["mask"]], torch.zeros_like(stats["logps"][~stats["mask"]]))
 
     def test_right_padding_leaves_valid_loss_and_gradients_unchanged(self):
-        ids, labels = collate(self.rows)
+        ids, labels = collate(self.rows, device=self.device)
         longer_ids = torch.nn.functional.pad(ids, (0, 4), value=PAD)
         longer_labels = torch.nn.functional.pad(labels, (0, 4), value=-100)
         padded_model = copy.deepcopy(self.model)
@@ -116,15 +119,15 @@ class TinyLMInvariants(unittest.TestCase):
 
     def test_empty_batches_and_empty_supervision_are_rejected(self):
         with self.assertRaisesRegex(ValueError, "empty batch"):
-            collate([])
+            collate([], device=self.device)
         with self.assertRaisesRegex(ValueError, "supervised token"):
-            collate(self.rows[:1], [[]])
-        ids, labels = collate(self.rows)
+            collate(self.rows[:1], [[]], device=self.device)
+        ids, labels = collate(self.rows, device=self.device)
         with self.assertRaisesRegex(ValueError, "empty assistant supervision"):
             sft_loss(self.model, ids, torch.full_like(labels, -100))
 
     def test_lora_zero_initialization_and_adapter_only_update(self):
-        ids, labels = collate(self.rows)
+        ids, labels = collate(self.rows, device=self.device)
         baseline = self.model(ids).detach()
         apply_lora(self.model, rank=2)
         self.assert_tensors_equal(self.model(ids), baseline)
@@ -153,10 +156,10 @@ class TinyLMInvariants(unittest.TestCase):
         self.assertTrue(all(name.endswith(".b") for name in changed))
 
     def test_dpo_gradient_increases_relative_chosen_log_probability(self):
-        chosen = torch.tensor([-2., -3.], dtype=torch.float64, requires_grad=True)
-        rejected = torch.tensor([-4., -2.], dtype=torch.float64, requires_grad=True)
-        ref_chosen = torch.tensor([-3., -3.], dtype=torch.float64)
-        ref_rejected = torch.tensor([-4., -2.], dtype=torch.float64)
+        chosen = torch.tensor([-2., -3.], dtype=torch.float64, device=self.device, requires_grad=True)
+        rejected = torch.tensor([-4., -2.], dtype=torch.float64, device=self.device, requires_grad=True)
+        ref_chosen = torch.tensor([-3., -3.], dtype=torch.float64, device=self.device)
+        ref_rejected = torch.tensor([-4., -2.], dtype=torch.float64, device=self.device)
         loss = preference_loss({"sums": chosen}, {"sums": rejected},
                                {"sums": ref_chosen}, {"sums": ref_rejected})
         loss.backward()
@@ -185,14 +188,14 @@ class TinyLMInvariants(unittest.TestCase):
         # The recipe defines EOS and maximum output horizon as terminal. This
         # API does not claim to bootstrap a nonterminal sampling truncation.
         mask = torch.tensor([[False, True, True, True, False],
-                             [False, False, True, False, False]])
+                             [False, False, True, False, False]], device=self.device)
         values = torch.tensor([[100., .2, .3, .4, -100.],
-                               [100., -100., .25, 99., 100.]], dtype=torch.float64)
+                               [100., -100., .25, 99., 100.]], dtype=torch.float64, device=self.device)
         rewards = torch.tensor([[50., 0., 0., 1., -50.],
-                                [50., -50., .75, 50., -50.]], dtype=torch.float64)
+                                [50., -50., .75, 50., -50.]], dtype=torch.float64, device=self.device)
         advantages, returns = gae_tensor(rewards, values, mask, gamma=.9, lam=.95)
         expected = torch.tensor([[0., .559915, .573, .6, 0.],
-                                 [0., 0., .5, 0., 0.]], dtype=torch.float64)
+                                 [0., 0., .5, 0., 0.]], dtype=torch.float64, device=self.device)
         torch.testing.assert_close(advantages, expected, atol=1e-12, rtol=0)
         torch.testing.assert_close(returns[mask], (expected + values)[mask], atol=1e-12, rtol=0)
         # Arbitrary critic estimates/rewards in prompt and PAD positions must
@@ -205,11 +208,11 @@ class TinyLMInvariants(unittest.TestCase):
         self.assert_tensors_equal(other_returns[mask], returns[mask])
 
     def test_gae_lambda_zero_is_one_step_td_and_gamma_zero_is_immediate(self):
-        mask = torch.tensor([[False, True, True, True, False]])
-        values = torch.tensor([[99., .2, .3, .4, 99.]], dtype=torch.float64)
-        rewards = torch.tensor([[99., 0., 0., 1., 99.]], dtype=torch.float64)
+        mask = torch.tensor([[False, True, True, True, False]], device=self.device)
+        values = torch.tensor([[99., .2, .3, .4, 99.]], dtype=torch.float64, device=self.device)
+        rewards = torch.tensor([[99., 0., 0., 1., 99.]], dtype=torch.float64, device=self.device)
         advantages, _ = gae_tensor(rewards, values, mask, gamma=.9, lam=0.)
-        torch.testing.assert_close(advantages[mask], torch.tensor([.07, .06, .6], dtype=torch.float64))
+        torch.testing.assert_close(advantages[mask], torch.tensor([.07, .06, .6], dtype=torch.float64, device=self.device))
         advantages, returns = gae_tensor(rewards, values, mask, gamma=0., lam=.95)
         torch.testing.assert_close(advantages[mask], (rewards - values)[mask])
         torch.testing.assert_close(returns[mask], rewards[mask])
@@ -223,7 +226,7 @@ class TinyLMInvariants(unittest.TestCase):
                 optimizer = torch.optim.AdamW([p for p in model.parameters() if p.requires_grad], lr=.003)
 
                 def update(target_model, target_optimizer, row):
-                    ids, labels = collate([row])
+                    ids, labels = collate([row], device=self.device)
                     target_optimizer.zero_grad(set_to_none=True)
                     loss = sft_loss(target_model, ids, labels)
                     loss.backward()
@@ -235,22 +238,24 @@ class TinyLMInvariants(unittest.TestCase):
                 optimizer_before = copy.deepcopy(optimizer.state_dict())
                 path = Path(temporary) / "resume.pt"
                 checkpoint(path, model, optimizer, step=1, extra={"lora_rank": lora_rank})
-                expected_random = torch.rand(4)
-                expected_row = torch.randint(len(self.rows), (1,)).item()
+                expected_host_random = torch.rand(4)
+                expected_random = torch.rand(4, device=self.device)
+                expected_row = torch.randint(len(self.rows), (1,), device=self.device).item()
                 expected_loss = update(model, optimizer, self.rows[expected_row])
 
-                restored, state = load_checkpoint(path)
+                restored, state = load_checkpoint(path, device=self.device, restore_rng=True)
                 self.assertEqual(state["step"], 1)
                 self.assertEqual(restored.config, model.config)
                 self.assert_nested_equal(restored.state_dict(), before)
                 restored_optimizer = torch.optim.AdamW([p for p in restored.parameters() if p.requires_grad], lr=.5)
                 restored_optimizer.load_state_dict(state["optimizer"])
                 self.assert_nested_equal(restored_optimizer.state_dict(), optimizer_before)
-                # load_checkpoint returns state; callers explicitly restore
-                # optimizer/RNG after model construction consumes random draws.
-                torch.set_rng_state(state["torch_rng"])
-                self.assert_tensors_equal(torch.rand(4), expected_random)
-                resumed_row = torch.randint(len(self.rows), (1,)).item()
+                # RNG restoration follows model construction; both the host
+                # stream and CUDA sampling stream must resume exactly.
+                self.assertEqual(state["torch_cuda_rng"]["device"], str(self.device))
+                self.assert_tensors_equal(torch.rand(4), expected_host_random)
+                self.assert_tensors_equal(torch.rand(4, device=self.device), expected_random)
+                resumed_row = torch.randint(len(self.rows), (1,), device=self.device).item()
                 self.assertEqual(resumed_row, expected_row)
                 actual_loss = update(restored, restored_optimizer, self.rows[resumed_row])
                 self.assert_tensors_equal(actual_loss, expected_loss)

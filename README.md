@@ -4,17 +4,17 @@
 
 第一阶段提供中文课程和交互学习前端：**17 章、34 道理解检查、12 个交互实验、56 个术语**。课程覆盖基础、数据、SFT、LoRA/QLoRA、奖励建模、DPO、PPO、GAE、GRPO、反馈设计、蒸馏、安全、工程、评测与专项任务。每章都有学习目标、白话解释、数值或场景示例、误区、练习和一手资料。
 
-[打开私人学习站](https://safeposttrain-learning-lab.cappedcone1.chatgpt.site) · [GPU 实测验收](reports/GPU_MIGRATION_AUDIT.md)
+[打开私人学习站](https://safeposttrain-learning-lab.cappedcone1.chatgpt.site) · [GPU 实测报告](reports/tiny_lm/gpu_seed7.json)
 
-新增 [完整学习指南](docs/STUDY_GUIDE.md)、[17 模块覆盖表](docs/STAGE1_COVERAGE.md)及 [GPU 训练实战](labs/tiny_lm/README.md)。训练主流程使用 CUDA GPU、FP32；本地前端提供设备预检、训练命令和 GPU 实测，历史 CPU 报告独立保留。
+新增 [完整学习指南](docs/STUDY_GUIDE.md)、[17 模块覆盖表](docs/STAGE1_COVERAGE.md)及 [GPU 训练实战](labs/tiny_lm/README.md)。训练主流程使用 CUDA GPU、FP32；本地前端提供设备预检、训练命令和 GPU 实测。
 
 私人学习站已更新为 GPU 训练版，包含 RTX 5070 实测报告、训练源码与下载包。访问需要使用拥有该站点的 ChatGPT 账号登录。
 
 在线站点采用创建者私有访问。按 2026-11-07 的要求，本阶段交付本地项目与学习前端，暂不上传 GitHub；GitHub 同步不作为本阶段完成条件。
 
-当前范围：知识学习与教学实验。参数计算器使用教学输入；TinyLM 是 19,281 参数因果 Transformer，已完成 RTX 5070 上的 FP32 GPU 训练。[GPU 报告](reports/tiny_lm/gpu_seed7.json)包含 11 阶段的开发/最终探针及资源记录，22 组原始指标已复算；历史 `verified_seed7.json` 保留原 CPU 设备标签；这些教学数据均**不是大模型安全训练或 benchmark 成绩**。后续安全主项目的研究设计见 [项目大纲](docs/PROJECT_OUTLINE.md)。
+当前范围：知识学习与教学实验。参数计算器使用教学输入；TinyLM 是 19,281 参数因果 Transformer，已完成 RTX 5070 上的 FP32 GPU 训练。[GPU 报告](reports/tiny_lm/gpu_seed7.json)包含 11 阶段的开发/最终探针及资源记录，22 组原始指标已复算；这些教学数据均**不是大模型安全训练或 benchmark 成绩**。后续安全主项目的研究设计见 [项目大纲](docs/PROJECT_OUTLINE.md)。
 
-本机已在沙箱外识别 RTX 5070 12GB；最初沙箱内访问失败不能当作驱动损坏。原 `.venv-teaching` 安装的是 `torch+cpu`，GPU 训练使用独立 `.venv-gpu` 环境。GPU 全量训练、报告源码摘要和原始指标复算已通过；入口默认 CUDA，不可用时会报错，不自动回退 CPU。
+本机使用 RTX 5070 12GB 与 `.venv-gpu` 环境，已完成 GPU 全量训练、报告源码摘要校验和原始指标复算。训练入口只接受 `cuda` 或 `cuda:N`，不可用时直接报错。
 
 ## 直接打开本地学习站
 
@@ -88,9 +88,7 @@ python -m labs.tiny_lm.run --check-device
 python -m labs.tiny_lm.run --device cuda --final-eval --output artifacts/tiny-lm-cuda-seed7 --seed 7
 ```
 
-设备预检通过后再启动正式训练，使用新的输出目录。首版采用 FP32；BF16、QLoRA 与多卡仍是课程原理和后续扩展，未宣称实现或实测。安装、设备验收、历史数据与恢复边界见 [实战 README](labs/tiny_lm/README.md)。本例只有符号复制任务；真实安全策略训练属于下一阶段。
-
-`--device cpu` 只用于显式兼容性验证。现有 CPU 依赖锁文件只描述历史 CPU 环境，不能用于安装 GPU 主流程。
+设备预检通过后再启动正式训练，使用新的输出目录。首版采用 FP32；BF16、QLoRA 与多卡仍是课程原理和后续扩展，未宣称实现或实测。安装、设备验收、结果复算与恢复边界见 [实战 README](labs/tiny_lm/README.md)。本例只有符号复制任务；真实安全策略训练属于下一阶段。
 
 ## 修改内容与验证
 
@@ -105,7 +103,7 @@ node --check web/dist/app.mjs
 
 构建同步生成浏览器数据与 GitHub 可读课程。数值测试验证手算例子、不变性与边界；课程检查验证章节、引用、前置关系和生成一致性。这些自动检查不等于教学质量的全部证明，还需人工审阅与浏览器交互验证。
 
-未安装 PyTorch 时，TinyLM 相关测试会明确跳过。应在目标训练环境运行对应测试，并另外完成 CUDA 设备预检与真实 GPU 运行；CPU 测试通过不能代替 GPU 验证。网页主报告来自 `reports/tiny_lm/gpu_seed7.json`；CPU `verified_seed7.json` 与 pilot 独立保留。每次新运行另存，并标明设备和精度。
+未安装 PyTorch 时，TinyLM 相关测试会明确跳过。应在目标训练环境运行对应测试，并另外完成 CUDA 设备预检与真实 GPU 运行。网页主报告来自 `reports/tiny_lm/gpu_seed7.json`。每次新运行另存，并标明设备和精度。
 
 ## 文件结构
 

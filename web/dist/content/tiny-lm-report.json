@@ -51,12 +51,12 @@
     "personal_data": false
   },
   "source_sha256": {
-    "__init__.py": "847cc51e96e5c9f9bd929a910481d2a1cd6eace34a9603cd73bdd8dc3ed2ce28",
+    "__init__.py": "903126ce86aa5bb799620812f399ea6b4e5bf4563565023b5cbeaf2f759118da",
     "data.py": "496e81e972d7f795fa3675561ad1c0d812b366cf38f7cd1283e1235c206b7f11",
-    "model.py": "ba610be4c6a17ef63458ec6879f5bc1471772f303f3d1d63d814e180c8ec973a",
-    "run.py": "2704816dbed8d029f8c0686d10ec867bdf47121a29b21524a3f530a2c0527c11",
-    "runtime.py": "598da8e5979d0943a845789bfa351c1be0f93a0c7e8fa80b09c40a749737b542",
-    "training.py": "ff0e469fcc68cc8a78b2e32e9437d8176b6c5adcf9f8e176a2056e5d4e138195"
+    "model.py": "a454f4028cc2723779c58dd9422b61c45d3bcd8c465e3d2ad3e17582e0e42d52",
+    "run.py": "4a89d440f4c9faca52e8e0a485951f642933dc05e19c89d58aa2529b8de20cdb",
+    "runtime.py": "39e412b25ac312d4e6e4c928c58f913f100033470ee8ca8835b6b0abbb92495f",
+    "training.py": "cb91cc354d37796dc5158c25e09384d28a5c622a7727489fe3fc1672791f4d41"
   },
   "stages": [
     {
@@ -478,8 +478,8 @@
         },
         "steps": 30,
         "effective_training_tokens": 3600,
-        "elapsed_seconds": 0.2026354330000686,
-        "tokens_per_second": 17765.895858888518,
+        "elapsed_seconds": 0.20117521099928126,
+        "tokens_per_second": 17894.848883806375,
         "optimizer_tensor_bytes": 154368,
         "history": [
           {
@@ -882,8 +882,8 @@
         },
         "steps": 120,
         "effective_training_tokens": 14400,
-        "elapsed_seconds": 0.4398410070002683,
-        "tokens_per_second": 32739.102927688633,
+        "elapsed_seconds": 0.43474871199941845,
+        "tokens_per_second": 33122.58231605586,
         "optimizer_tensor_bytes": 154368,
         "history": [
           {
@@ -1344,8 +1344,8 @@
         },
         "steps": 120,
         "effective_training_tokens": 14400,
-        "elapsed_seconds": 0.6187699570000404,
-        "tokens_per_second": 23271.976664502246,
+        "elapsed_seconds": 0.6108936660002655,
+        "tokens_per_second": 23572.02374397141,
         "optimizer_tensor_bytes": 26216,
         "history": [
           {
@@ -1802,8 +1802,8 @@
         },
         "steps": 150,
         "effective_training_tokens": 7200,
-        "elapsed_seconds": 0.5502537470001698,
-        "tokens_per_second": 13084.87227802154,
+        "elapsed_seconds": 0.5517580619998625,
+        "tokens_per_second": 13049.197639094567,
         "optimizer_tensor_bytes": 154368,
         "history": [
           {
@@ -2262,8 +2262,8 @@
         },
         "steps": 60,
         "effective_training_tokens": 7200,
-        "elapsed_seconds": 0.38757682799996473,
-        "tokens_per_second": 18576.96198494265,
+        "elapsed_seconds": 0.38835464299972955,
+        "tokens_per_second": 18539.75516910458,
         "optimizer_tensor_bytes": 154368,
         "history": [
           {
@@ -2685,8 +2685,8 @@
         },
         "steps": 60,
         "effective_training_tokens": 7200,
-        "elapsed_seconds": 0.39167760800000906,
-        "tokens_per_second": 18382.46520337163,
+        "elapsed_seconds": 0.3826389840005504,
+        "tokens_per_second": 18816.69223747898,
         "optimizer_tensor_bytes": 154368,
         "history": [
           {
@@ -2733,7 +2733,7 @@
           }
         ],
         "device": "cuda:0",
-        "gpu_peak_allocated_bytes": 72065024,
+        "gpu_peak_allocated_bytes": 71896064,
         "gpu_peak_reserved_bytes": 73400320,
         "gpu_memory_scope": "PyTorch allocator peaks on the model's CUDA device during the timed loop; include allocations already live at stage start and reserved cache, but exclude CUDA context and non-PyTorch allocations."
       },
@@ -3123,8 +3123,8 @@
         },
         "steps": 60,
         "effective_training_tokens": 7200,
-        "elapsed_seconds": 0.39016456300032587,
-        "tokens_per_second": 18453.751782665066,
+        "elapsed_seconds": 0.38621400200008793,
+        "tokens_per_second": 18642.51415721163,
         "optimizer_tensor_bytes": 154368,
         "history": [
           {
@@ -3171,7 +3171,7 @@
           }
         ],
         "device": "cuda:0",
-        "gpu_peak_allocated_bytes": 72402944,
+        "gpu_peak_allocated_bytes": 72233984,
         "gpu_peak_reserved_bytes": 73400320,
         "gpu_memory_scope": "PyTorch allocator peaks on the model's CUDA device during the timed loop; include allocations already live at stage start and reserved cache, but exclude CUDA context and non-PyTorch allocations."
       },
@@ -3560,8 +3560,8 @@
         },
         "steps": 25,
         "effective_training_tokens": 1756,
-        "elapsed_seconds": 1.4641745869998886,
-        "tokens_per_second": 1199.3105300359468,
+        "elapsed_seconds": 1.4263696849993721,
+        "tokens_per_second": 1231.0973925394194,
         "optimizer_tensor_bytes": 154368,
         "history": [
           {
@@ -3626,7 +3626,7 @@
           }
         ],
         "device": "cuda:0",
-        "gpu_peak_allocated_bytes": 72168960,
+        "gpu_peak_allocated_bytes": 72000000,
         "gpu_peak_reserved_bytes": 73400320,
         "gpu_memory_scope": "PyTorch allocator peaks on the model's CUDA device during the timed loop; include allocations already live at stage start and reserved cache, but exclude CUDA context and non-PyTorch allocations.",
         "generated_tokens": 878,
@@ -4028,8 +4028,8 @@
         },
         "steps": 25,
         "effective_training_tokens": 1664,
-        "elapsed_seconds": 1.120550916999946,
-        "tokens_per_second": 1484.983836749723,
+        "elapsed_seconds": 1.1078853540002456,
+        "tokens_per_second": 1501.960463681363,
         "optimizer_tensor_bytes": 154368,
         "history": [
           {
@@ -4094,7 +4094,7 @@
           }
         ],
         "device": "cuda:0",
-        "gpu_peak_allocated_bytes": 72172544,
+        "gpu_peak_allocated_bytes": 72003584,
         "gpu_peak_reserved_bytes": 73400320,
         "gpu_memory_scope": "PyTorch allocator peaks on the model's CUDA device during the timed loop; include allocations already live at stage start and reserved cache, but exclude CUDA context and non-PyTorch allocations.",
         "generated_tokens": 832,
@@ -4490,8 +4490,8 @@
         },
         "steps": 100,
         "effective_training_tokens": 4800,
-        "elapsed_seconds": 0.36957300999984,
-        "tokens_per_second": 12987.961431496522,
+        "elapsed_seconds": 0.3586095260006914,
+        "tokens_per_second": 13385.032052915252,
         "optimizer_tensor_bytes": 154368,
         "history": [
           {
@@ -4540,7 +4540,7 @@
           }
         ],
         "device": "cuda:0",
-        "gpu_peak_allocated_bytes": 72634880,
+        "gpu_peak_allocated_bytes": 72465920,
         "gpu_peak_reserved_bytes": 73400320,
         "gpu_memory_scope": "PyTorch allocator peaks on the model's CUDA device during the timed loop; include allocations already live at stage start and reserved cache, but exclude CUDA context and non-PyTorch allocations."
       },
@@ -5818,8 +5818,8 @@
     },
     "steps": 80,
     "effective_training_tokens": 28160,
-    "elapsed_seconds": 0.4757392239998808,
-    "tokens_per_second": 59192.09217864923,
+    "elapsed_seconds": 0.48515106800005015,
+    "tokens_per_second": 58043.77617075985,
     "optimizer_tensor_bytes": 150144,
     "history": [
       {
@@ -5985,6 +5985,6 @@
       "supervised": true
     }
   ],
-  "process_peak_rss_mb": 2368.375,
+  "process_peak_rss_mb": 2369.53515625,
   "raw_outputs": "Each stage includes every held-out prompt, expected response and generated response. Recompute correctness from these, not from train loss."
 }

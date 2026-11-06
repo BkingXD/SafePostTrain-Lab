@@ -40,24 +40,24 @@ def optimize(loss, model, optimizer):
 def start_measurement(model):
     """Time completed GPU work and reset this device's process memory peaks."""
     device = model_device(model)
-    if device.type == "cuda":
-        torch.cuda.synchronize(device)
-        torch.cuda.reset_peak_memory_stats(device)
+    if device.type != "cuda":
+        raise ValueError("CUDA GPU training is required")
+    torch.cuda.synchronize(device)
+    torch.cuda.reset_peak_memory_stats(device)
     return time.perf_counter()
 
 
 def finish(model, optimizer, start, steps, tokens, history):
     device = model_device(model)
-    if device.type == "cuda":
-        torch.cuda.synchronize(device)
+    torch.cuda.synchronize(device)
     elapsed = time.perf_counter() - start
     return {"parameters": parameter_counts(model), "steps": steps, "effective_training_tokens": tokens,
             "elapsed_seconds": elapsed, "tokens_per_second": tokens / max(elapsed, 1e-9),
             "optimizer_tensor_bytes": optimizer_bytes(optimizer), "history": history,
             "device": str(device),
-            "gpu_peak_allocated_bytes": torch.cuda.max_memory_allocated(device) if device.type == "cuda" else None,
-            "gpu_peak_reserved_bytes": torch.cuda.max_memory_reserved(device) if device.type == "cuda" else None,
-            "gpu_memory_scope": "PyTorch allocator peaks on the model's CUDA device during the timed loop; include allocations already live at stage start and reserved cache, but exclude CUDA context and non-PyTorch allocations." if device.type == "cuda" else None}
+            "gpu_peak_allocated_bytes": torch.cuda.max_memory_allocated(device),
+            "gpu_peak_reserved_bytes": torch.cuda.max_memory_reserved(device),
+            "gpu_memory_scope": "PyTorch allocator peaks on the model's CUDA device during the timed loop; include allocations already live at stage start and reserved cache, but exclude CUDA context and non-PyTorch allocations."}
 
 
 def train_sft(model, records, steps, lr=.003):

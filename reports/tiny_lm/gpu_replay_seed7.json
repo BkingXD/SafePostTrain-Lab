@@ -51,12 +51,12 @@
     "personal_data": false
   },
   "source_sha256": {
-    "__init__.py": "847cc51e96e5c9f9bd929a910481d2a1cd6eace34a9603cd73bdd8dc3ed2ce28",
+    "__init__.py": "903126ce86aa5bb799620812f399ea6b4e5bf4563565023b5cbeaf2f759118da",
     "data.py": "496e81e972d7f795fa3675561ad1c0d812b366cf38f7cd1283e1235c206b7f11",
-    "model.py": "ba610be4c6a17ef63458ec6879f5bc1471772f303f3d1d63d814e180c8ec973a",
-    "run.py": "2704816dbed8d029f8c0686d10ec867bdf47121a29b21524a3f530a2c0527c11",
-    "runtime.py": "598da8e5979d0943a845789bfa351c1be0f93a0c7e8fa80b09c40a749737b542",
-    "training.py": "ff0e469fcc68cc8a78b2e32e9437d8176b6c5adcf9f8e176a2056e5d4e138195"
+    "model.py": "a454f4028cc2723779c58dd9422b61c45d3bcd8c465e3d2ad3e17582e0e42d52",
+    "run.py": "4a89d440f4c9faca52e8e0a485951f642933dc05e19c89d58aa2529b8de20cdb",
+    "runtime.py": "39e412b25ac312d4e6e4c928c58f913f100033470ee8ca8835b6b0abbb92495f",
+    "training.py": "cb91cc354d37796dc5158c25e09384d28a5c622a7727489fe3fc1672791f4d41"
   },
   "stages": [
     {
@@ -478,8 +478,8 @@
         },
         "steps": 30,
         "effective_training_tokens": 3600,
-        "elapsed_seconds": 0.3376542370001516,
-        "tokens_per_second": 10661.79424248831,
+        "elapsed_seconds": 0.19280011499995453,
+        "tokens_per_second": 18672.18803267233,
         "optimizer_tensor_bytes": 154368,
         "history": [
           {
@@ -882,8 +882,8 @@
         },
         "steps": 120,
         "effective_training_tokens": 14400,
-        "elapsed_seconds": 0.44517126899972936,
-        "tokens_per_second": 32347.10099857939,
+        "elapsed_seconds": 0.421047835000536,
+        "tokens_per_second": 34200.38960651981,
         "optimizer_tensor_bytes": 154368,
         "history": [
           {
@@ -1344,8 +1344,8 @@
         },
         "steps": 120,
         "effective_training_tokens": 14400,
-        "elapsed_seconds": 0.6071959569999308,
-        "tokens_per_second": 23715.572928298734,
+        "elapsed_seconds": 0.597302662000402,
+        "tokens_per_second": 24108.380752520916,
         "optimizer_tensor_bytes": 26216,
         "history": [
           {
@@ -1802,8 +1802,8 @@
         },
         "steps": 150,
         "effective_training_tokens": 7200,
-        "elapsed_seconds": 0.6004705320001449,
-        "tokens_per_second": 11990.59673422619,
+        "elapsed_seconds": 0.5336005379995186,
+        "tokens_per_second": 13493.239768822152,
         "optimizer_tensor_bytes": 154368,
         "history": [
           {
@@ -2262,8 +2262,8 @@
         },
         "steps": 60,
         "effective_training_tokens": 7200,
-        "elapsed_seconds": 0.4048529450001297,
-        "tokens_per_second": 17784.235211621577,
+        "elapsed_seconds": 0.38238989700039383,
+        "tokens_per_second": 18828.949343273536,
         "optimizer_tensor_bytes": 154368,
         "history": [
           {
@@ -2685,8 +2685,8 @@
         },
         "steps": 60,
         "effective_training_tokens": 7200,
-        "elapsed_seconds": 0.43294388100002834,
-        "tokens_per_second": 16630.330895009298,
+        "elapsed_seconds": 0.386644193000393,
+        "tokens_per_second": 18621.7719814369,
         "optimizer_tensor_bytes": 154368,
         "history": [
           {
@@ -3123,8 +3123,8 @@
         },
         "steps": 60,
         "effective_training_tokens": 7200,
-        "elapsed_seconds": 0.38920068300012645,
-        "tokens_per_second": 18499.453661024694,
+        "elapsed_seconds": 0.3763207570000304,
+        "tokens_per_second": 19132.614574325533,
         "optimizer_tensor_bytes": 154368,
         "history": [
           {
@@ -3560,8 +3560,8 @@
         },
         "steps": 25,
         "effective_training_tokens": 1756,
-        "elapsed_seconds": 1.4418287919997965,
-        "tokens_per_second": 1217.8977211049119,
+        "elapsed_seconds": 1.429236514999502,
+        "tokens_per_second": 1228.627999334744,
         "optimizer_tensor_bytes": 154368,
         "history": [
           {
@@ -4028,8 +4028,8 @@
         },
         "steps": 25,
         "effective_training_tokens": 1664,
-        "elapsed_seconds": 1.128388952000023,
-        "tokens_per_second": 1474.6688161476843,
+        "elapsed_seconds": 1.105245114000354,
+        "tokens_per_second": 1505.5483882460003,
         "optimizer_tensor_bytes": 154368,
         "history": [
           {
@@ -4490,8 +4490,8 @@
         },
         "steps": 100,
         "effective_training_tokens": 4800,
-        "elapsed_seconds": 0.3687519590002921,
-        "tokens_per_second": 13016.8799998055,
+        "elapsed_seconds": 0.3555098379993069,
+        "tokens_per_second": 13501.736061687716,
         "optimizer_tensor_bytes": 154368,
         "history": [
           {
@@ -5818,8 +5818,8 @@
     },
     "steps": 80,
     "effective_training_tokens": 28160,
-    "elapsed_seconds": 0.6458515590002207,
-    "tokens_per_second": 43601.350198165856,
+    "elapsed_seconds": 0.4675391060000038,
+    "tokens_per_second": 60230.25590505315,
     "optimizer_tensor_bytes": 150144,
     "history": [
       {
@@ -5985,6 +5985,6 @@
       "supervised": true
     }
   ],
-  "process_peak_rss_mb": 2372.1484375,
+  "process_peak_rss_mb": 2387.234375,
   "raw_outputs": "Each stage includes every held-out prompt, expected response and generated response. Recompute correctness from these, not from train loss."
 }

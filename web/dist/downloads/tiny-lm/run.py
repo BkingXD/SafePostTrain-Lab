@@ -1,4 +1,4 @@
-"""Run the CUDA-first post-training course, never a safety benchmark."""
+"""Run the CUDA post-training course, never a safety benchmark."""
 import argparse
 import copy
 import hashlib
@@ -137,7 +137,7 @@ if __name__ == "__main__":
     parser.add_argument('--output', default=None)
     parser.add_argument('--seed', type=int, default=7)
     parser.add_argument('--final-eval', action='store_true', help='evaluate the separate final template after freezing the recipe')
-    parser.add_argument('--device', default='cuda', help='cuda (default), cuda:N, or cpu for explicit compatibility runs')
+    parser.add_argument('--device', default='cuda', help='CUDA GPU device: cuda (default) or cuda:N')
     parser.add_argument('--check-device', action='store_true', help='check CUDA kernels and print runtime information without training')
     args = parser.parse_args()
     try:

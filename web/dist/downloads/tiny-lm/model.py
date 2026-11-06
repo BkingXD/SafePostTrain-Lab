@@ -196,7 +196,7 @@ def checkpoint(path, model, optimizer=None, step=0, extra=None):
     torch.save(state, path)
 
 
-def load_checkpoint(path, device="cpu", restore_rng=False):
+def load_checkpoint(path, device="cuda", restore_rng=False):
     """Load on the requested device; optionally restore RNG after construction.
 
     Optimizer restoration remains explicit at the call site. A saved CUDA RNG

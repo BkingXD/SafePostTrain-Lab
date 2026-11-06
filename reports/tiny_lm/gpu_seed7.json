@@ -1,0 +1,5990 @@
+{
+  "schema_version": 2,
+  "scope": "Measured cuda:0 teaching runs on a tiny synthetic copy task. NOT a large-model or safety benchmark.",
+  "primary_evaluation_split": "development probe (used for diagnosis); final_probe is separate and optional",
+  "seed": 7,
+  "final_probe_enabled": true,
+  "environment": {
+    "python": "3.12.14",
+    "torch": "2.9.1+cu128",
+    "platform": "Linux",
+    "device": "cuda:0",
+    "torch_threads": 1,
+    "precision": "float32",
+    "deterministic_algorithms": true,
+    "cuda_runtime": "12.8",
+    "tf32": false,
+    "timing": "CUDA synchronized wall clock",
+    "gpu_name": "NVIDIA GeForce RTX 5070",
+    "gpu_total_memory_bytes": 12322603008,
+    "compute_capability": "12.0",
+    "cublas_workspace_config": ":4096:8"
+  },
+  "config": {
+    "vocab_size": 17,
+    "width": 32,
+    "heads": 4,
+    "layers": 2,
+    "max_length": 32
+  },
+  "budgets": {
+    "warmup": 30,
+    "sft": 120,
+    "lora": 120,
+    "reward": 80,
+    "preference": 60,
+    "online": 25,
+    "distill": 100
+  },
+  "data_card": {
+    "source": "authored-synthetic-copy-v1",
+    "train_rows": 48,
+    "development_rows": 8,
+    "final_probe_rows": 8,
+    "sha256": "63f724526b28352b22ecca5148f48f4cbba9c19356675fa2faa03e1ade4bcd83",
+    "split": "development: please repeat; final probe: repeat please; SAME symbols/intents appear in training",
+    "scope": "Tests template transfer on a tiny copy task, NOT unseen-intent generalization or LLM safety.",
+    "development_use": "The initial held-out template was inspected during recipe diagnosis and is explicitly development data.",
+    "license": "Authored synthetic data within this project; no third-party dataset. Repository distribution license is not selected.",
+    "labels": "Correctness is exact matching; preference favors brief over verbose correct answers.",
+    "external_data": false,
+    "personal_data": false
+  },
+  "source_sha256": {
+    "__init__.py": "847cc51e96e5c9f9bd929a910481d2a1cd6eace34a9603cd73bdd8dc3ed2ce28",
+    "data.py": "496e81e972d7f795fa3675561ad1c0d812b366cf38f7cd1283e1235c206b7f11",
+    "model.py": "ba610be4c6a17ef63458ec6879f5bc1471772f303f3d1d63d814e180c8ec973a",
+    "run.py": "2704816dbed8d029f8c0686d10ec867bdf47121a29b21524a3f530a2c0527c11",
+    "runtime.py": "598da8e5979d0943a845789bfa351c1be0f93a0c7e8fa80b09c40a749737b542",
+    "training.py": "ff0e469fcc68cc8a78b2e32e9437d8176b6c5adcf9f8e176a2056e5d4e138195"
+  },
+  "stages": [
+    {
+      "name": "random",
+      "training": null,
+      "evaluation": {
+        "sample_count": 8,
+        "correct_count": 0,
+        "accuracy": 0.0,
+        "brief_rate": 0.0,
+        "brief_target_nll": 2.899400234222412,
+        "entropy_on_brief_target_prefixes": 2.7053537368774414,
+        "outputs": [
+          {
+            "id": "please-repeat-A-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "A",
+              "<assistant>"
+            ],
+            "expected": [
+              "A",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "<user>",
+              "D",
+              "<assistant>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "please-repeat-B-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "B",
+              "<assistant>"
+            ],
+            "expected": [
+              "B",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "<user>",
+              "D",
+              "<assistant>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "please-repeat-C-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "C",
+              "<assistant>"
+            ],
+            "expected": [
+              "C",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "<user>",
+              "D",
+              "<assistant>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "please-repeat-D-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "D",
+              "<assistant>"
+            ],
+            "expected": [
+              "D",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "<user>",
+              "D",
+              "<assistant>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "please-repeat-E-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "E",
+              "<assistant>"
+            ],
+            "expected": [
+              "E",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "<user>",
+              "D",
+              "<assistant>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "please-repeat-F-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "F",
+              "<assistant>"
+            ],
+            "expected": [
+              "F",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "<user>",
+              "D",
+              "<assistant>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "please-repeat-G-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "G",
+              "<assistant>"
+            ],
+            "expected": [
+              "G",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "<user>",
+              "D",
+              "<assistant>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "please-repeat-H-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "H",
+              "<assistant>"
+            ],
+            "expected": [
+              "H",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "<user>",
+              "D",
+              "<assistant>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          }
+        ],
+        "kl_to_sft_on_brief_target_prefixes": 6.078309059143066
+      },
+      "final_evaluation": {
+        "sample_count": 8,
+        "correct_count": 0,
+        "accuracy": 0.0,
+        "brief_rate": 0.0,
+        "brief_target_nll": 2.8923850059509277,
+        "entropy_on_brief_target_prefixes": 2.703158378601074,
+        "outputs": [
+          {
+            "id": "repeat-please-A-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "A",
+              "<assistant>"
+            ],
+            "expected": [
+              "A",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "<user>",
+              "D",
+              "<assistant>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-B-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "B",
+              "<assistant>"
+            ],
+            "expected": [
+              "B",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "<user>",
+              "D",
+              "<assistant>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-C-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "C",
+              "<assistant>"
+            ],
+            "expected": [
+              "C",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "<user>",
+              "D",
+              "<assistant>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-D-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "D",
+              "<assistant>"
+            ],
+            "expected": [
+              "D",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "<user>",
+              "D",
+              "<assistant>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-E-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "E",
+              "<assistant>"
+            ],
+            "expected": [
+              "E",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "<user>",
+              "D",
+              "<assistant>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-F-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "F",
+              "<assistant>"
+            ],
+            "expected": [
+              "F",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "<user>",
+              "D",
+              "<assistant>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-G-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "G",
+              "<assistant>"
+            ],
+            "expected": [
+              "G",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "<user>",
+              "D",
+              "<assistant>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-H-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "H",
+              "<assistant>"
+            ],
+            "expected": [
+              "H",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "<user>",
+              "D",
+              "<assistant>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          }
+        ],
+        "kl_to_sft_on_brief_target_prefixes": 6.143439292907715
+      }
+    },
+    {
+      "name": "warmup",
+      "training": {
+        "parameters": {
+          "total": 19281,
+          "trainable": 19281
+        },
+        "steps": 30,
+        "effective_training_tokens": 3600,
+        "elapsed_seconds": 0.2026354330000686,
+        "tokens_per_second": 17765.895858888518,
+        "optimizer_tensor_bytes": 154368,
+        "history": [
+          {
+            "step": 1,
+            "loss_before_update": 2.776707887649536
+          },
+          {
+            "step": 10,
+            "loss_before_update": 1.7131538391113281
+          },
+          {
+            "step": 20,
+            "loss_before_update": 1.20891273021698
+          },
+          {
+            "step": 30,
+            "loss_before_update": 0.870441198348999
+          }
+        ],
+        "device": "cuda:0",
+        "gpu_peak_allocated_bytes": 70175232,
+        "gpu_peak_reserved_bytes": 71303168,
+        "gpu_memory_scope": "PyTorch allocator peaks on the model's CUDA device during the timed loop; include allocations already live at stage start and reserved cache, but exclude CUDA context and non-PyTorch allocations."
+      },
+      "evaluation": {
+        "sample_count": 8,
+        "correct_count": 0,
+        "accuracy": 0.0,
+        "brief_rate": 0.0,
+        "brief_target_nll": 1.9857892990112305,
+        "entropy_on_brief_target_prefixes": 0.7850652933120728,
+        "outputs": [
+          {
+            "id": "please-repeat-A-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "A",
+              "<assistant>"
+            ],
+            "expected": [
+              "A",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "please-repeat-B-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "B",
+              "<assistant>"
+            ],
+            "expected": [
+              "B",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "please-repeat-C-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "C",
+              "<assistant>"
+            ],
+            "expected": [
+              "C",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "please-repeat-D-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "D",
+              "<assistant>"
+            ],
+            "expected": [
+              "D",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "please-repeat-E-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "E",
+              "<assistant>"
+            ],
+            "expected": [
+              "E",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "please-repeat-F-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "F",
+              "<assistant>"
+            ],
+            "expected": [
+              "F",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "please-repeat-G-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "G",
+              "<assistant>"
+            ],
+            "expected": [
+              "G",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "please-repeat-H-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "H",
+              "<assistant>"
+            ],
+            "expected": [
+              "H",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          }
+        ],
+        "kl_to_sft_on_brief_target_prefixes": 2.3972439765930176
+      },
+      "final_evaluation": {
+        "sample_count": 8,
+        "correct_count": 2,
+        "accuracy": 0.25,
+        "brief_rate": 0.0,
+        "brief_target_nll": 1.729178786277771,
+        "entropy_on_brief_target_prefixes": 0.9671787023544312,
+        "outputs": [
+          {
+            "id": "repeat-please-A-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "A",
+              "<assistant>"
+            ],
+            "expected": [
+              "A",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "C",
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-B-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "B",
+              "<assistant>"
+            ],
+            "expected": [
+              "B",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-C-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "C",
+              "<assistant>"
+            ],
+            "expected": [
+              "C",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "C",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": false,
+            "reward": 0.5
+          },
+          {
+            "id": "repeat-please-D-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "D",
+              "<assistant>"
+            ],
+            "expected": [
+              "D",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "D",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": false,
+            "reward": 0.5
+          },
+          {
+            "id": "repeat-please-E-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "E",
+              "<assistant>"
+            ],
+            "expected": [
+              "E",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-F-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "F",
+              "<assistant>"
+            ],
+            "expected": [
+              "F",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "C",
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-G-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "G",
+              "<assistant>"
+            ],
+            "expected": [
+              "G",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "C",
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-H-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "H",
+              "<assistant>"
+            ],
+            "expected": [
+              "H",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          }
+        ],
+        "kl_to_sft_on_brief_target_prefixes": 1.733660101890564
+      }
+    },
+    {
+      "name": "sft",
+      "training": {
+        "parameters": {
+          "total": 19281,
+          "trainable": 19281
+        },
+        "steps": 120,
+        "effective_training_tokens": 14400,
+        "elapsed_seconds": 0.4398410070002683,
+        "tokens_per_second": 32739.102927688633,
+        "optimizer_tensor_bytes": 154368,
+        "history": [
+          {
+            "step": 1,
+            "loss_before_update": 0.8194919228553772
+          },
+          {
+            "step": 10,
+            "loss_before_update": 0.47501295804977417
+          },
+          {
+            "step": 20,
+            "loss_before_update": 0.348718523979187
+          },
+          {
+            "step": 30,
+            "loss_before_update": 0.30907970666885376
+          },
+          {
+            "step": 40,
+            "loss_before_update": 0.294751912355423
+          },
+          {
+            "step": 50,
+            "loss_before_update": 0.2885708510875702
+          },
+          {
+            "step": 60,
+            "loss_before_update": 0.2854762077331543
+          },
+          {
+            "step": 70,
+            "loss_before_update": 0.283692866563797
+          },
+          {
+            "step": 80,
+            "loss_before_update": 0.28252899646759033
+          },
+          {
+            "step": 90,
+            "loss_before_update": 0.2816999554634094
+          },
+          {
+            "step": 100,
+            "loss_before_update": 0.2810730040073395
+          },
+          {
+            "step": 110,
+            "loss_before_update": 0.28057998418807983
+          },
+          {
+            "step": 120,
+            "loss_before_update": 0.2801820635795593
+          }
+        ],
+        "device": "cuda:0",
+        "gpu_peak_allocated_bytes": 70597632,
+        "gpu_peak_reserved_bytes": 71303168,
+        "gpu_memory_scope": "PyTorch allocator peaks on the model's CUDA device during the timed loop; include allocations already live at stage start and reserved cache, but exclude CUDA context and non-PyTorch allocations."
+      },
+      "evaluation": {
+        "sample_count": 8,
+        "correct_count": 8,
+        "accuracy": 1.0,
+        "brief_rate": 0.0,
+        "brief_target_nll": 1.596714735031128,
+        "entropy_on_brief_target_prefixes": 0.19447535276412964,
+        "outputs": [
+          {
+            "id": "please-repeat-A-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "A",
+              "<assistant>"
+            ],
+            "expected": [
+              "A",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "A",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": false,
+            "reward": 0.5
+          },
+          {
+            "id": "please-repeat-B-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "B",
+              "<assistant>"
+            ],
+            "expected": [
+              "B",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "B",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": false,
+            "reward": 0.5
+          },
+          {
+            "id": "please-repeat-C-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "C",
+              "<assistant>"
+            ],
+            "expected": [
+              "C",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "C",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": false,
+            "reward": 0.5
+          },
+          {
+            "id": "please-repeat-D-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "D",
+              "<assistant>"
+            ],
+            "expected": [
+              "D",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "D",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": false,
+            "reward": 0.5
+          },
+          {
+            "id": "please-repeat-E-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "E",
+              "<assistant>"
+            ],
+            "expected": [
+              "E",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "E",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": false,
+            "reward": 0.5
+          },
+          {
+            "id": "please-repeat-F-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "F",
+              "<assistant>"
+            ],
+            "expected": [
+              "F",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "F",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": false,
+            "reward": 0.5
+          },
+          {
+            "id": "please-repeat-G-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "G",
+              "<assistant>"
+            ],
+            "expected": [
+              "G",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "G",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": false,
+            "reward": 0.5
+          },
+          {
+            "id": "please-repeat-H-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "H",
+              "<assistant>"
+            ],
+            "expected": [
+              "H",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "H",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": false,
+            "reward": 0.5
+          }
+        ],
+        "kl_to_sft_on_brief_target_prefixes": 0.0
+      },
+      "final_evaluation": {
+        "sample_count": 8,
+        "correct_count": 6,
+        "accuracy": 0.75,
+        "brief_rate": 0.0,
+        "brief_target_nll": 2.1916720867156982,
+        "entropy_on_brief_target_prefixes": 0.1348406970500946,
+        "outputs": [
+          {
+            "id": "repeat-please-A-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "A",
+              "<assistant>"
+            ],
+            "expected": [
+              "A",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "C",
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-B-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "B",
+              "<assistant>"
+            ],
+            "expected": [
+              "B",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "D",
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-C-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "C",
+              "<assistant>"
+            ],
+            "expected": [
+              "C",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "C",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": false,
+            "reward": 0.5
+          },
+          {
+            "id": "repeat-please-D-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "D",
+              "<assistant>"
+            ],
+            "expected": [
+              "D",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "D",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": false,
+            "reward": 0.5
+          },
+          {
+            "id": "repeat-please-E-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "E",
+              "<assistant>"
+            ],
+            "expected": [
+              "E",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "E",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": false,
+            "reward": 0.5
+          },
+          {
+            "id": "repeat-please-F-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "F",
+              "<assistant>"
+            ],
+            "expected": [
+              "F",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "F",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": false,
+            "reward": 0.5
+          },
+          {
+            "id": "repeat-please-G-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "G",
+              "<assistant>"
+            ],
+            "expected": [
+              "G",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "G",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": false,
+            "reward": 0.5
+          },
+          {
+            "id": "repeat-please-H-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "H",
+              "<assistant>"
+            ],
+            "expected": [
+              "H",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "H",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": false,
+            "reward": 0.5
+          }
+        ],
+        "kl_to_sft_on_brief_target_prefixes": 0.0
+      }
+    },
+    {
+      "name": "lora",
+      "training": {
+        "parameters": {
+          "total": 22549,
+          "trainable": 3268
+        },
+        "steps": 120,
+        "effective_training_tokens": 14400,
+        "elapsed_seconds": 0.6187699570000404,
+        "tokens_per_second": 23271.976664502246,
+        "optimizer_tensor_bytes": 26216,
+        "history": [
+          {
+            "step": 1,
+            "loss_before_update": 0.8194919228553772
+          },
+          {
+            "step": 10,
+            "loss_before_update": 0.6419935822486877
+          },
+          {
+            "step": 20,
+            "loss_before_update": 0.4227532148361206
+          },
+          {
+            "step": 30,
+            "loss_before_update": 0.3207380175590515
+          },
+          {
+            "step": 40,
+            "loss_before_update": 0.2950388491153717
+          },
+          {
+            "step": 50,
+            "loss_before_update": 0.2865697145462036
+          },
+          {
+            "step": 60,
+            "loss_before_update": 0.2835998833179474
+          },
+          {
+            "step": 70,
+            "loss_before_update": 0.2816694676876068
+          },
+          {
+            "step": 80,
+            "loss_before_update": 0.280735582113266
+          },
+          {
+            "step": 90,
+            "loss_before_update": 0.27991679310798645
+          },
+          {
+            "step": 100,
+            "loss_before_update": 0.2794373631477356
+          },
+          {
+            "step": 110,
+            "loss_before_update": 0.27996399998664856
+          },
+          {
+            "step": 120,
+            "loss_before_update": 0.2796357572078705
+          }
+        ],
+        "device": "cuda:0",
+        "gpu_peak_allocated_bytes": 70865920,
+        "gpu_peak_reserved_bytes": 71303168,
+        "gpu_memory_scope": "PyTorch allocator peaks on the model's CUDA device during the timed loop; include allocations already live at stage start and reserved cache, but exclude CUDA context and non-PyTorch allocations."
+      },
+      "evaluation": {
+        "sample_count": 8,
+        "correct_count": 8,
+        "accuracy": 1.0,
+        "brief_rate": 0.5,
+        "brief_target_nll": 0.45191189646720886,
+        "entropy_on_brief_target_prefixes": 0.32445228099823,
+        "outputs": [
+          {
+            "id": "please-repeat-A-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "A",
+              "<assistant>"
+            ],
+            "expected": [
+              "A",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "A",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": false,
+            "reward": 0.5
+          },
+          {
+            "id": "please-repeat-B-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "B",
+              "<assistant>"
+            ],
+            "expected": [
+              "B",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "B",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": false,
+            "reward": 0.5
+          },
+          {
+            "id": "please-repeat-C-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "C",
+              "<assistant>"
+            ],
+            "expected": [
+              "C",
+              "<eos>"
+            ],
+            "generated": [
+              "C",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-D-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "D",
+              "<assistant>"
+            ],
+            "expected": [
+              "D",
+              "<eos>"
+            ],
+            "generated": [
+              "D",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-E-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "E",
+              "<assistant>"
+            ],
+            "expected": [
+              "E",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "E",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": false,
+            "reward": 0.5
+          },
+          {
+            "id": "please-repeat-F-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "F",
+              "<assistant>"
+            ],
+            "expected": [
+              "F",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "F",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": false,
+            "reward": 0.5
+          },
+          {
+            "id": "please-repeat-G-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "G",
+              "<assistant>"
+            ],
+            "expected": [
+              "G",
+              "<eos>"
+            ],
+            "generated": [
+              "G",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-H-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "H",
+              "<assistant>"
+            ],
+            "expected": [
+              "H",
+              "<eos>"
+            ],
+            "generated": [
+              "H",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          }
+        ],
+        "kl_to_sft_on_brief_target_prefixes": 0.36474981904029846
+      },
+      "comparison": "Same warmup checkpoint, same training rows and update/token budget as full SFT; different learning rates.",
+      "final_evaluation": {
+        "sample_count": 8,
+        "correct_count": 5,
+        "accuracy": 0.625,
+        "brief_rate": 0.125,
+        "brief_target_nll": 1.8587353229522705,
+        "entropy_on_brief_target_prefixes": 0.20143386721611023,
+        "outputs": [
+          {
+            "id": "repeat-please-A-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "A",
+              "<assistant>"
+            ],
+            "expected": [
+              "A",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "C",
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-B-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "B",
+              "<assistant>"
+            ],
+            "expected": [
+              "B",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "D",
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-C-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "C",
+              "<assistant>"
+            ],
+            "expected": [
+              "C",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "C",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": false,
+            "reward": 0.5
+          },
+          {
+            "id": "repeat-please-D-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "D",
+              "<assistant>"
+            ],
+            "expected": [
+              "D",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "D",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": false,
+            "reward": 0.5
+          },
+          {
+            "id": "repeat-please-E-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "E",
+              "<assistant>"
+            ],
+            "expected": [
+              "E",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "C",
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-F-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "F",
+              "<assistant>"
+            ],
+            "expected": [
+              "F",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "F",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": false,
+            "reward": 0.5
+          },
+          {
+            "id": "repeat-please-G-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "G",
+              "<assistant>"
+            ],
+            "expected": [
+              "G",
+              "<eos>"
+            ],
+            "generated": [
+              "G",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "repeat-please-H-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "H",
+              "<assistant>"
+            ],
+            "expected": [
+              "H",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "H",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": false,
+            "reward": 0.5
+          }
+        ],
+        "kl_to_sft_on_brief_target_prefixes": 0.054807398468256
+      }
+    },
+    {
+      "name": "chosen_sft",
+      "training": {
+        "parameters": {
+          "total": 19281,
+          "trainable": 19281
+        },
+        "steps": 150,
+        "effective_training_tokens": 7200,
+        "elapsed_seconds": 0.5502537470001698,
+        "tokens_per_second": 13084.87227802154,
+        "optimizer_tensor_bytes": 154368,
+        "history": [
+          {
+            "step": 1,
+            "loss_before_update": 0.34963229298591614
+          },
+          {
+            "step": 10,
+            "loss_before_update": 0.010874241590499878
+          },
+          {
+            "step": 20,
+            "loss_before_update": 0.003428233088925481
+          },
+          {
+            "step": 30,
+            "loss_before_update": 0.002242852235212922
+          },
+          {
+            "step": 40,
+            "loss_before_update": 0.0018714388133957982
+          },
+          {
+            "step": 50,
+            "loss_before_update": 0.0016685411101207137
+          },
+          {
+            "step": 60,
+            "loss_before_update": 0.0015212912112474442
+          },
+          {
+            "step": 70,
+            "loss_before_update": 0.001404008362442255
+          },
+          {
+            "step": 80,
+            "loss_before_update": 0.0013065608218312263
+          },
+          {
+            "step": 90,
+            "loss_before_update": 0.0012227565748617053
+          },
+          {
+            "step": 100,
+            "loss_before_update": 0.001148662413470447
+          },
+          {
+            "step": 110,
+            "loss_before_update": 0.0010821014875546098
+          },
+          {
+            "step": 120,
+            "loss_before_update": 0.0010217763483524323
+          },
+          {
+            "step": 130,
+            "loss_before_update": 0.0009667956619523466
+          },
+          {
+            "step": 140,
+            "loss_before_update": 0.0009164738585241139
+          },
+          {
+            "step": 150,
+            "loss_before_update": 0.0008702268823981285
+          }
+        ],
+        "device": "cuda:0",
+        "gpu_peak_allocated_bytes": 70607360,
+        "gpu_peak_reserved_bytes": 73400320,
+        "gpu_memory_scope": "PyTorch allocator peaks on the model's CUDA device during the timed loop; include allocations already live at stage start and reserved cache, but exclude CUDA context and non-PyTorch allocations."
+      },
+      "evaluation": {
+        "sample_count": 8,
+        "correct_count": 7,
+        "accuracy": 0.875,
+        "brief_rate": 0.875,
+        "brief_target_nll": 0.09858664870262146,
+        "entropy_on_brief_target_prefixes": 0.07859285175800323,
+        "outputs": [
+          {
+            "id": "please-repeat-A-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "A",
+              "<assistant>"
+            ],
+            "expected": [
+              "A",
+              "<eos>"
+            ],
+            "generated": [
+              "A",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-B-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "B",
+              "<assistant>"
+            ],
+            "expected": [
+              "B",
+              "<eos>"
+            ],
+            "generated": [
+              "E",
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "please-repeat-C-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "C",
+              "<assistant>"
+            ],
+            "expected": [
+              "C",
+              "<eos>"
+            ],
+            "generated": [
+              "C",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-D-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "D",
+              "<assistant>"
+            ],
+            "expected": [
+              "D",
+              "<eos>"
+            ],
+            "generated": [
+              "D",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-E-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "E",
+              "<assistant>"
+            ],
+            "expected": [
+              "E",
+              "<eos>"
+            ],
+            "generated": [
+              "E",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-F-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "F",
+              "<assistant>"
+            ],
+            "expected": [
+              "F",
+              "<eos>"
+            ],
+            "generated": [
+              "F",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-G-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "G",
+              "<assistant>"
+            ],
+            "expected": [
+              "G",
+              "<eos>"
+            ],
+            "generated": [
+              "G",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-H-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "H",
+              "<assistant>"
+            ],
+            "expected": [
+              "H",
+              "<eos>"
+            ],
+            "generated": [
+              "H",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          }
+        ],
+        "kl_to_sft_on_brief_target_prefixes": 1.4400070905685425
+      },
+      "start": "same sft checkpoint",
+      "comparison": "same effective response-token budget as DPO; different update count",
+      "final_evaluation": {
+        "sample_count": 8,
+        "correct_count": 6,
+        "accuracy": 0.75,
+        "brief_rate": 0.75,
+        "brief_target_nll": 0.5876383781433105,
+        "entropy_on_brief_target_prefixes": 0.13655871152877808,
+        "outputs": [
+          {
+            "id": "repeat-please-A-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "A",
+              "<assistant>"
+            ],
+            "expected": [
+              "A",
+              "<eos>"
+            ],
+            "generated": [
+              "D",
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-B-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "B",
+              "<assistant>"
+            ],
+            "expected": [
+              "B",
+              "<eos>"
+            ],
+            "generated": [
+              "D",
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-C-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "C",
+              "<assistant>"
+            ],
+            "expected": [
+              "C",
+              "<eos>"
+            ],
+            "generated": [
+              "C",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "repeat-please-D-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "D",
+              "<assistant>"
+            ],
+            "expected": [
+              "D",
+              "<eos>"
+            ],
+            "generated": [
+              "D",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "repeat-please-E-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "E",
+              "<assistant>"
+            ],
+            "expected": [
+              "E",
+              "<eos>"
+            ],
+            "generated": [
+              "E",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "repeat-please-F-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "F",
+              "<assistant>"
+            ],
+            "expected": [
+              "F",
+              "<eos>"
+            ],
+            "generated": [
+              "F",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "repeat-please-G-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "G",
+              "<assistant>"
+            ],
+            "expected": [
+              "G",
+              "<eos>"
+            ],
+            "generated": [
+              "G",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "repeat-please-H-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "H",
+              "<assistant>"
+            ],
+            "expected": [
+              "H",
+              "<eos>"
+            ],
+            "generated": [
+              "H",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          }
+        ],
+        "kl_to_sft_on_brief_target_prefixes": 1.7855209112167358
+      }
+    },
+    {
+      "name": "dpo",
+      "training": {
+        "parameters": {
+          "total": 19281,
+          "trainable": 19281
+        },
+        "steps": 60,
+        "effective_training_tokens": 7200,
+        "elapsed_seconds": 0.38757682799996473,
+        "tokens_per_second": 18576.96198494265,
+        "optimizer_tensor_bytes": 154368,
+        "history": [
+          {
+            "step": 1,
+            "loss_before_update": 0.6931471824645996,
+            "chosen_logp": -0.699264645576477,
+            "rejected_logp": -0.701467752456665
+          },
+          {
+            "step": 10,
+            "loss_before_update": 0.3443363606929779,
+            "chosen_logp": -0.01909126155078411,
+            "rejected_logp": -4.483684539794922
+          },
+          {
+            "step": 20,
+            "loss_before_update": 0.200181782245636,
+            "chosen_logp": -0.013384471647441387,
+            "rejected_logp": -7.580328941345215
+          },
+          {
+            "step": 30,
+            "loss_before_update": 0.13768774271011353,
+            "chosen_logp": -0.014523766934871674,
+            "rejected_logp": -9.614221572875977
+          },
+          {
+            "step": 40,
+            "loss_before_update": 0.10563437640666962,
+            "chosen_logp": -0.029792282730340958,
+            "rejected_logp": -11.025754928588867
+          },
+          {
+            "step": 50,
+            "loss_before_update": 0.06796388328075409,
+            "chosen_logp": -0.19155173003673553,
+            "rejected_logp": -13.689482688903809
+          },
+          {
+            "step": 60,
+            "loss_before_update": 0.028328707441687584,
+            "chosen_logp": -1.59336519241333,
+            "rejected_logp": -19.678756713867188
+          }
+        ],
+        "device": "cuda:0",
+        "gpu_peak_allocated_bytes": 71642624,
+        "gpu_peak_reserved_bytes": 73400320,
+        "gpu_memory_scope": "PyTorch allocator peaks on the model's CUDA device during the timed loop; include allocations already live at stage start and reserved cache, but exclude CUDA context and non-PyTorch allocations."
+      },
+      "evaluation": {
+        "sample_count": 8,
+        "correct_count": 0,
+        "accuracy": 0.0,
+        "brief_rate": 0.0,
+        "brief_target_nll": 2.8964316844940186,
+        "entropy_on_brief_target_prefixes": 0.105191171169281,
+        "outputs": [
+          {
+            "id": "please-repeat-A-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "A",
+              "<assistant>"
+            ],
+            "expected": [
+              "A",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "please-repeat-B-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "B",
+              "<assistant>"
+            ],
+            "expected": [
+              "B",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "please-repeat-C-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "C",
+              "<assistant>"
+            ],
+            "expected": [
+              "C",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "please-repeat-D-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "D",
+              "<assistant>"
+            ],
+            "expected": [
+              "D",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "please-repeat-E-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "E",
+              "<assistant>"
+            ],
+            "expected": [
+              "E",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "please-repeat-F-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "F",
+              "<assistant>"
+            ],
+            "expected": [
+              "F",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "please-repeat-G-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "G",
+              "<assistant>"
+            ],
+            "expected": [
+              "G",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "please-repeat-H-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "H",
+              "<assistant>"
+            ],
+            "expected": [
+              "H",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          }
+        ],
+        "kl_to_sft_on_brief_target_prefixes": 3.6067934036254883
+      },
+      "start": "same sft checkpoint",
+      "preference": "brief correct over verbose correct",
+      "anchor_weight": 0,
+      "final_evaluation": {
+        "sample_count": 8,
+        "correct_count": 0,
+        "accuracy": 0.0,
+        "brief_rate": 0.0,
+        "brief_target_nll": 2.6896848678588867,
+        "entropy_on_brief_target_prefixes": 0.15040075778961182,
+        "outputs": [
+          {
+            "id": "repeat-please-A-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "A",
+              "<assistant>"
+            ],
+            "expected": [
+              "A",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-B-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "B",
+              "<assistant>"
+            ],
+            "expected": [
+              "B",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-C-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "C",
+              "<assistant>"
+            ],
+            "expected": [
+              "C",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-D-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "D",
+              "<assistant>"
+            ],
+            "expected": [
+              "D",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-E-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "E",
+              "<assistant>"
+            ],
+            "expected": [
+              "E",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-F-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "F",
+              "<assistant>"
+            ],
+            "expected": [
+              "F",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-G-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "G",
+              "<assistant>"
+            ],
+            "expected": [
+              "G",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-H-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "H",
+              "<assistant>"
+            ],
+            "expected": [
+              "H",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          }
+        ],
+        "kl_to_sft_on_brief_target_prefixes": 3.923349380493164
+      }
+    },
+    {
+      "name": "dpo_anchor",
+      "training": {
+        "parameters": {
+          "total": 19281,
+          "trainable": 19281
+        },
+        "steps": 60,
+        "effective_training_tokens": 7200,
+        "elapsed_seconds": 0.39167760800000906,
+        "tokens_per_second": 18382.46520337163,
+        "optimizer_tensor_bytes": 154368,
+        "history": [
+          {
+            "step": 1,
+            "loss_before_update": 0.7630736231803894,
+            "chosen_logp": -0.699264645576477,
+            "rejected_logp": -0.701467752456665
+          },
+          {
+            "step": 10,
+            "loss_before_update": 0.3452642858028412,
+            "chosen_logp": -0.018515322357416153,
+            "rejected_logp": -4.498357772827148
+          },
+          {
+            "step": 20,
+            "loss_before_update": 0.20188327133655548,
+            "chosen_logp": -0.010234030894935131,
+            "rejected_logp": -7.55804443359375
+          },
+          {
+            "step": 30,
+            "loss_before_update": 0.14030762016773224,
+            "chosen_logp": -0.009987466968595982,
+            "rejected_logp": -9.547098159790039
+          },
+          {
+            "step": 40,
+            "loss_before_update": 0.10975758731365204,
+            "chosen_logp": -0.01926744356751442,
+            "rejected_logp": -10.908587455749512
+          },
+          {
+            "step": 50,
+            "loss_before_update": 0.09169783443212509,
+            "chosen_logp": -0.04036954045295715,
+            "rejected_logp": -12.009346008300781
+          },
+          {
+            "step": 60,
+            "loss_before_update": 0.056660283356904984,
+            "chosen_logp": -0.06311405450105667,
+            "rejected_logp": -15.54742431640625
+          }
+        ],
+        "device": "cuda:0",
+        "gpu_peak_allocated_bytes": 72065024,
+        "gpu_peak_reserved_bytes": 73400320,
+        "gpu_memory_scope": "PyTorch allocator peaks on the model's CUDA device during the timed loop; include allocations already live at stage start and reserved cache, but exclude CUDA context and non-PyTorch allocations."
+      },
+      "evaluation": {
+        "sample_count": 8,
+        "correct_count": 7,
+        "accuracy": 0.875,
+        "brief_rate": 0.875,
+        "brief_target_nll": 0.1849537193775177,
+        "entropy_on_brief_target_prefixes": 0.44332075119018555,
+        "outputs": [
+          {
+            "id": "please-repeat-A-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "A",
+              "<assistant>"
+            ],
+            "expected": [
+              "A",
+              "<eos>"
+            ],
+            "generated": [
+              "A",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-B-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "B",
+              "<assistant>"
+            ],
+            "expected": [
+              "B",
+              "<eos>"
+            ],
+            "generated": [
+              "B",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-C-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "C",
+              "<assistant>"
+            ],
+            "expected": [
+              "C",
+              "<eos>"
+            ],
+            "generated": [
+              "C",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-D-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "D",
+              "<assistant>"
+            ],
+            "expected": [
+              "D",
+              "<eos>"
+            ],
+            "generated": [
+              "D",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-E-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "E",
+              "<assistant>"
+            ],
+            "expected": [
+              "E",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "please-repeat-F-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "F",
+              "<assistant>"
+            ],
+            "expected": [
+              "F",
+              "<eos>"
+            ],
+            "generated": [
+              "F",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-G-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "G",
+              "<assistant>"
+            ],
+            "expected": [
+              "G",
+              "<eos>"
+            ],
+            "generated": [
+              "G",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-H-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "H",
+              "<assistant>"
+            ],
+            "expected": [
+              "H",
+              "<eos>"
+            ],
+            "generated": [
+              "H",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          }
+        ],
+        "kl_to_sft_on_brief_target_prefixes": 1.791395902633667
+      },
+      "start": "same sft checkpoint",
+      "preference": "brief correct over verbose correct",
+      "anchor_weight": 0.2,
+      "final_evaluation": {
+        "sample_count": 8,
+        "correct_count": 8,
+        "accuracy": 1.0,
+        "brief_rate": 1.0,
+        "brief_target_nll": 0.20386119186878204,
+        "entropy_on_brief_target_prefixes": 0.577723503112793,
+        "outputs": [
+          {
+            "id": "repeat-please-A-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "A",
+              "<assistant>"
+            ],
+            "expected": [
+              "A",
+              "<eos>"
+            ],
+            "generated": [
+              "A",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "repeat-please-B-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "B",
+              "<assistant>"
+            ],
+            "expected": [
+              "B",
+              "<eos>"
+            ],
+            "generated": [
+              "B",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "repeat-please-C-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "C",
+              "<assistant>"
+            ],
+            "expected": [
+              "C",
+              "<eos>"
+            ],
+            "generated": [
+              "C",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "repeat-please-D-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "D",
+              "<assistant>"
+            ],
+            "expected": [
+              "D",
+              "<eos>"
+            ],
+            "generated": [
+              "D",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "repeat-please-E-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "E",
+              "<assistant>"
+            ],
+            "expected": [
+              "E",
+              "<eos>"
+            ],
+            "generated": [
+              "E",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "repeat-please-F-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "F",
+              "<assistant>"
+            ],
+            "expected": [
+              "F",
+              "<eos>"
+            ],
+            "generated": [
+              "F",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "repeat-please-G-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "G",
+              "<assistant>"
+            ],
+            "expected": [
+              "G",
+              "<eos>"
+            ],
+            "generated": [
+              "G",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "repeat-please-H-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "H",
+              "<assistant>"
+            ],
+            "expected": [
+              "H",
+              "<eos>"
+            ],
+            "generated": [
+              "H",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          }
+        ],
+        "kl_to_sft_on_brief_target_prefixes": 2.2665810585021973
+      }
+    },
+    {
+      "name": "simpo",
+      "training": {
+        "parameters": {
+          "total": 19281,
+          "trainable": 19281
+        },
+        "steps": 60,
+        "effective_training_tokens": 7200,
+        "elapsed_seconds": 0.39016456300032587,
+        "tokens_per_second": 18453.751782665066,
+        "optimizer_tensor_bytes": 154368,
+        "history": [
+          {
+            "step": 1,
+            "loss_before_update": 1.124433994293213,
+            "chosen_logp": -0.699264645576477,
+            "rejected_logp": -0.701467752456665
+          },
+          {
+            "step": 10,
+            "loss_before_update": 0.08145889639854431,
+            "chosen_logp": -0.018122151494026184,
+            "rejected_logp": -4.5351948738098145
+          },
+          {
+            "step": 20,
+            "loss_before_update": 0.014683438464999199,
+            "chosen_logp": -0.014186849817633629,
+            "rejected_logp": -7.171210289001465
+          },
+          {
+            "step": 30,
+            "loss_before_update": 0.006631520576775074,
+            "chosen_logp": -0.013166991993784904,
+            "rejected_logp": -8.372520446777344
+          },
+          {
+            "step": 40,
+            "loss_before_update": 0.004367728717625141,
+            "chosen_logp": -0.01146184466779232,
+            "rejected_logp": -8.996116638183594
+          },
+          {
+            "step": 50,
+            "loss_before_update": 0.0033982708118855953,
+            "chosen_logp": -0.011173548176884651,
+            "rejected_logp": -9.370197296142578
+          },
+          {
+            "step": 60,
+            "loss_before_update": 0.0028427145443856716,
+            "chosen_logp": -0.011818714439868927,
+            "rejected_logp": -9.636421203613281
+          }
+        ],
+        "device": "cuda:0",
+        "gpu_peak_allocated_bytes": 72402944,
+        "gpu_peak_reserved_bytes": 73400320,
+        "gpu_memory_scope": "PyTorch allocator peaks on the model's CUDA device during the timed loop; include allocations already live at stage start and reserved cache, but exclude CUDA context and non-PyTorch allocations."
+      },
+      "evaluation": {
+        "sample_count": 8,
+        "correct_count": 8,
+        "accuracy": 1.0,
+        "brief_rate": 1.0,
+        "brief_target_nll": 0.09150645136833191,
+        "entropy_on_brief_target_prefixes": 0.21990016102790833,
+        "outputs": [
+          {
+            "id": "please-repeat-A-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "A",
+              "<assistant>"
+            ],
+            "expected": [
+              "A",
+              "<eos>"
+            ],
+            "generated": [
+              "A",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-B-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "B",
+              "<assistant>"
+            ],
+            "expected": [
+              "B",
+              "<eos>"
+            ],
+            "generated": [
+              "B",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-C-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "C",
+              "<assistant>"
+            ],
+            "expected": [
+              "C",
+              "<eos>"
+            ],
+            "generated": [
+              "C",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-D-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "D",
+              "<assistant>"
+            ],
+            "expected": [
+              "D",
+              "<eos>"
+            ],
+            "generated": [
+              "D",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-E-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "E",
+              "<assistant>"
+            ],
+            "expected": [
+              "E",
+              "<eos>"
+            ],
+            "generated": [
+              "E",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-F-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "F",
+              "<assistant>"
+            ],
+            "expected": [
+              "F",
+              "<eos>"
+            ],
+            "generated": [
+              "F",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-G-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "G",
+              "<assistant>"
+            ],
+            "expected": [
+              "G",
+              "<eos>"
+            ],
+            "generated": [
+              "G",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-H-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "H",
+              "<assistant>"
+            ],
+            "expected": [
+              "H",
+              "<eos>"
+            ],
+            "generated": [
+              "H",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          }
+        ],
+        "kl_to_sft_on_brief_target_prefixes": 1.599931001663208
+      },
+      "start": "same sft checkpoint",
+      "preference": "brief correct over verbose correct",
+      "anchor_weight": 0,
+      "final_evaluation": {
+        "sample_count": 8,
+        "correct_count": 6,
+        "accuracy": 0.75,
+        "brief_rate": 0.75,
+        "brief_target_nll": 0.20848624408245087,
+        "entropy_on_brief_target_prefixes": 0.3256306052207947,
+        "outputs": [
+          {
+            "id": "repeat-please-A-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "A",
+              "<assistant>"
+            ],
+            "expected": [
+              "A",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-B-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "B",
+              "<assistant>"
+            ],
+            "expected": [
+              "B",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-C-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "C",
+              "<assistant>"
+            ],
+            "expected": [
+              "C",
+              "<eos>"
+            ],
+            "generated": [
+              "C",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "repeat-please-D-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "D",
+              "<assistant>"
+            ],
+            "expected": [
+              "D",
+              "<eos>"
+            ],
+            "generated": [
+              "D",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "repeat-please-E-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "E",
+              "<assistant>"
+            ],
+            "expected": [
+              "E",
+              "<eos>"
+            ],
+            "generated": [
+              "E",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "repeat-please-F-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "F",
+              "<assistant>"
+            ],
+            "expected": [
+              "F",
+              "<eos>"
+            ],
+            "generated": [
+              "F",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "repeat-please-G-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "G",
+              "<assistant>"
+            ],
+            "expected": [
+              "G",
+              "<eos>"
+            ],
+            "generated": [
+              "G",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "repeat-please-H-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "H",
+              "<assistant>"
+            ],
+            "expected": [
+              "H",
+              "<eos>"
+            ],
+            "generated": [
+              "H",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          }
+        ],
+        "kl_to_sft_on_brief_target_prefixes": 2.0242204666137695
+      }
+    },
+    {
+      "name": "ppo",
+      "training": {
+        "parameters": {
+          "total": 19281,
+          "trainable": 19281
+        },
+        "steps": 25,
+        "effective_training_tokens": 1756,
+        "elapsed_seconds": 1.4641745869998886,
+        "tokens_per_second": 1199.3105300359468,
+        "optimizer_tensor_bytes": 154368,
+        "history": [
+          {
+            "step": 1,
+            "loss_before_update": -1.4545012712478638,
+            "rollout_reward": 0.75,
+            "kl_on_sampled_prefixes": 0.008873115293681622,
+            "entropy": 0.2932368814945221,
+            "mean_response_tokens": 2.5,
+            "ratio_outside_clip_range": 0.20000000298023224,
+            "critic_loss": 0.9518051147460938
+          },
+          {
+            "step": 5,
+            "loss_before_update": -0.5303241014480591,
+            "rollout_reward": 0.6875,
+            "kl_on_sampled_prefixes": 0.032143622636795044,
+            "entropy": 0.25862088799476624,
+            "mean_response_tokens": 2.625,
+            "ratio_outside_clip_range": 0.0,
+            "critic_loss": 0.13152000308036804
+          },
+          {
+            "step": 10,
+            "loss_before_update": 0.2093764692544937,
+            "rollout_reward": 0.90625,
+            "kl_on_sampled_prefixes": 0.18818019330501556,
+            "entropy": 0.15067721903324127,
+            "mean_response_tokens": 2.1875,
+            "ratio_outside_clip_range": 0.0,
+            "critic_loss": 0.037236105650663376
+          },
+          {
+            "step": 15,
+            "loss_before_update": -0.05422145128250122,
+            "rollout_reward": 0.90625,
+            "kl_on_sampled_prefixes": 0.19725707173347473,
+            "entropy": 0.14941741526126862,
+            "mean_response_tokens": 2.1875,
+            "ratio_outside_clip_range": 0.0,
+            "critic_loss": 0.018919190391898155
+          },
+          {
+            "step": 20,
+            "loss_before_update": 0.04001405090093613,
+            "rollout_reward": 0.96875,
+            "kl_on_sampled_prefixes": 0.30074453353881836,
+            "entropy": 0.0590243823826313,
+            "mean_response_tokens": 2.0625,
+            "ratio_outside_clip_range": 0.0,
+            "critic_loss": 0.009780674241483212
+          },
+          {
+            "step": 25,
+            "loss_before_update": 0.07815875113010406,
+            "rollout_reward": 1.0,
+            "kl_on_sampled_prefixes": 0.3158873915672302,
+            "entropy": 0.05469374358654022,
+            "mean_response_tokens": 2.0,
+            "ratio_outside_clip_range": 0.0,
+            "critic_loss": 0.004689939320087433
+          }
+        ],
+        "device": "cuda:0",
+        "gpu_peak_allocated_bytes": 72168960,
+        "gpu_peak_reserved_bytes": 73400320,
+        "gpu_memory_scope": "PyTorch allocator peaks on the model's CUDA device during the timed loop; include allocations already live at stage start and reserved cache, but exclude CUDA context and non-PyTorch allocations.",
+        "generated_tokens": 878,
+        "rollout_group_size": 4,
+        "sampling_seed": 107,
+        "reward": "exact task verifier: brief correct=1, verbose correct=0.5, wrong=0",
+        "reference": "fixed shared SFT checkpoint",
+        "kl_coefficient": 0.02,
+        "critic_parameters": {
+          "total": 19314,
+          "trainable": 18753
+        },
+        "critic_optimizer_tensor_bytes": 150144,
+        "cost_scope": "parameters, effective_training_tokens and optimizer_tensor_bytes describe the actor; wall time includes sampling, actor and critic updates",
+        "total_trainable_parameters": 38034,
+        "total_optimizer_tensor_bytes": 304512
+      },
+      "evaluation": {
+        "sample_count": 8,
+        "correct_count": 7,
+        "accuracy": 0.875,
+        "brief_rate": 0.75,
+        "brief_target_nll": 0.41883039474487305,
+        "entropy_on_brief_target_prefixes": 0.3110103905200958,
+        "outputs": [
+          {
+            "id": "please-repeat-A-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "A",
+              "<assistant>"
+            ],
+            "expected": [
+              "A",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "A",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": false,
+            "reward": 0.5
+          },
+          {
+            "id": "please-repeat-B-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "B",
+              "<assistant>"
+            ],
+            "expected": [
+              "B",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "please-repeat-C-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "C",
+              "<assistant>"
+            ],
+            "expected": [
+              "C",
+              "<eos>"
+            ],
+            "generated": [
+              "C",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-D-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "D",
+              "<assistant>"
+            ],
+            "expected": [
+              "D",
+              "<eos>"
+            ],
+            "generated": [
+              "D",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-E-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "E",
+              "<assistant>"
+            ],
+            "expected": [
+              "E",
+              "<eos>"
+            ],
+            "generated": [
+              "E",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-F-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "F",
+              "<assistant>"
+            ],
+            "expected": [
+              "F",
+              "<eos>"
+            ],
+            "generated": [
+              "F",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-G-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "G",
+              "<assistant>"
+            ],
+            "expected": [
+              "G",
+              "<eos>"
+            ],
+            "generated": [
+              "G",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-H-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "H",
+              "<assistant>"
+            ],
+            "expected": [
+              "H",
+              "<eos>"
+            ],
+            "generated": [
+              "H",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          }
+        ],
+        "kl_to_sft_on_brief_target_prefixes": 1.0059032440185547
+      },
+      "start": "same sft checkpoint",
+      "final_evaluation": {
+        "sample_count": 8,
+        "correct_count": 5,
+        "accuracy": 0.625,
+        "brief_rate": 0.625,
+        "brief_target_nll": 0.7807733416557312,
+        "entropy_on_brief_target_prefixes": 0.3408372700214386,
+        "outputs": [
+          {
+            "id": "repeat-please-A-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "A",
+              "<assistant>"
+            ],
+            "expected": [
+              "A",
+              "<eos>"
+            ],
+            "generated": [
+              "answer",
+              "C",
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-B-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "B",
+              "<assistant>"
+            ],
+            "expected": [
+              "B",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-C-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "C",
+              "<assistant>"
+            ],
+            "expected": [
+              "C",
+              "<eos>"
+            ],
+            "generated": [
+              "C",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "repeat-please-D-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "D",
+              "<assistant>"
+            ],
+            "expected": [
+              "D",
+              "<eos>"
+            ],
+            "generated": [
+              "D",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "repeat-please-E-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "E",
+              "<assistant>"
+            ],
+            "expected": [
+              "E",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-F-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "F",
+              "<assistant>"
+            ],
+            "expected": [
+              "F",
+              "<eos>"
+            ],
+            "generated": [
+              "F",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "repeat-please-G-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "G",
+              "<assistant>"
+            ],
+            "expected": [
+              "G",
+              "<eos>"
+            ],
+            "generated": [
+              "G",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "repeat-please-H-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "H",
+              "<assistant>"
+            ],
+            "expected": [
+              "H",
+              "<eos>"
+            ],
+            "generated": [
+              "H",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          }
+        ],
+        "kl_to_sft_on_brief_target_prefixes": 1.2265222072601318
+      }
+    },
+    {
+      "name": "grpo",
+      "training": {
+        "parameters": {
+          "total": 19281,
+          "trainable": 19281
+        },
+        "steps": 25,
+        "effective_training_tokens": 1664,
+        "elapsed_seconds": 1.120550916999946,
+        "tokens_per_second": 1484.983836749723,
+        "optimizer_tensor_bytes": 154368,
+        "history": [
+          {
+            "step": 1,
+            "loss_before_update": -0.07974448055028915,
+            "rollout_reward": 0.75,
+            "kl_on_sampled_prefixes": 0.008856227621436119,
+            "entropy": 0.293340265750885,
+            "mean_response_tokens": 2.5,
+            "ratio_outside_clip_range": 0.20000000298023224,
+            "zero_variance_group_fraction": 0.0
+          },
+          {
+            "step": 5,
+            "loss_before_update": -0.013873613439500332,
+            "rollout_reward": 0.9375,
+            "kl_on_sampled_prefixes": 0.11497071385383606,
+            "entropy": 0.2351287603378296,
+            "mean_response_tokens": 2.125,
+            "ratio_outside_clip_range": 0.0,
+            "zero_variance_group_fraction": 0.5
+          },
+          {
+            "step": 10,
+            "loss_before_update": 0.005503717344254255,
+            "rollout_reward": 1.0,
+            "kl_on_sampled_prefixes": 0.27518588304519653,
+            "entropy": 0.091102734208107,
+            "mean_response_tokens": 2.0,
+            "ratio_outside_clip_range": 0.0,
+            "zero_variance_group_fraction": 1.0
+          },
+          {
+            "step": 15,
+            "loss_before_update": -0.0018455288372933865,
+            "rollout_reward": 0.9375,
+            "kl_on_sampled_prefixes": 0.30700913071632385,
+            "entropy": 0.049766018986701965,
+            "mean_response_tokens": 2.125,
+            "ratio_outside_clip_range": 0.0,
+            "zero_variance_group_fraction": 0.5
+          },
+          {
+            "step": 20,
+            "loss_before_update": 0.006403113249689341,
+            "rollout_reward": 1.0,
+            "kl_on_sampled_prefixes": 0.32015568017959595,
+            "entropy": 0.050328243523836136,
+            "mean_response_tokens": 2.0,
+            "ratio_outside_clip_range": 0.0,
+            "zero_variance_group_fraction": 1.0
+          },
+          {
+            "step": 25,
+            "loss_before_update": 0.006750168278813362,
+            "rollout_reward": 1.0,
+            "kl_on_sampled_prefixes": 0.3375084102153778,
+            "entropy": 0.03838537260890007,
+            "mean_response_tokens": 2.0,
+            "ratio_outside_clip_range": 0.0,
+            "zero_variance_group_fraction": 1.0
+          }
+        ],
+        "device": "cuda:0",
+        "gpu_peak_allocated_bytes": 72172544,
+        "gpu_peak_reserved_bytes": 73400320,
+        "gpu_memory_scope": "PyTorch allocator peaks on the model's CUDA device during the timed loop; include allocations already live at stage start and reserved cache, but exclude CUDA context and non-PyTorch allocations.",
+        "generated_tokens": 832,
+        "rollout_group_size": 4,
+        "sampling_seed": 107,
+        "reward": "exact task verifier: brief correct=1, verbose correct=0.5, wrong=0",
+        "reference": "fixed shared SFT checkpoint",
+        "kl_coefficient": 0.02,
+        "critic_parameters": null,
+        "critic_optimizer_tensor_bytes": 0,
+        "cost_scope": "parameters, effective_training_tokens and optimizer_tensor_bytes describe the actor; wall time includes sampling, actor and critic updates",
+        "total_trainable_parameters": 19281,
+        "total_optimizer_tensor_bytes": 154368
+      },
+      "evaluation": {
+        "sample_count": 8,
+        "correct_count": 6,
+        "accuracy": 0.75,
+        "brief_rate": 0.75,
+        "brief_target_nll": 0.2916351854801178,
+        "entropy_on_brief_target_prefixes": 0.21321024000644684,
+        "outputs": [
+          {
+            "id": "please-repeat-A-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "A",
+              "<assistant>"
+            ],
+            "expected": [
+              "A",
+              "<eos>"
+            ],
+            "generated": [
+              "A",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-B-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "B",
+              "<assistant>"
+            ],
+            "expected": [
+              "B",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "please-repeat-C-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "C",
+              "<assistant>"
+            ],
+            "expected": [
+              "C",
+              "<eos>"
+            ],
+            "generated": [
+              "C",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-D-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "D",
+              "<assistant>"
+            ],
+            "expected": [
+              "D",
+              "<eos>"
+            ],
+            "generated": [
+              "D",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-E-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "E",
+              "<assistant>"
+            ],
+            "expected": [
+              "E",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "please-repeat-F-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "F",
+              "<assistant>"
+            ],
+            "expected": [
+              "F",
+              "<eos>"
+            ],
+            "generated": [
+              "F",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-G-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "G",
+              "<assistant>"
+            ],
+            "expected": [
+              "G",
+              "<eos>"
+            ],
+            "generated": [
+              "G",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-H-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "H",
+              "<assistant>"
+            ],
+            "expected": [
+              "H",
+              "<eos>"
+            ],
+            "generated": [
+              "H",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          }
+        ],
+        "kl_to_sft_on_brief_target_prefixes": 1.5414620637893677
+      },
+      "start": "same sft checkpoint",
+      "final_evaluation": {
+        "sample_count": 8,
+        "correct_count": 5,
+        "accuracy": 0.625,
+        "brief_rate": 0.625,
+        "brief_target_nll": 0.49474191665649414,
+        "entropy_on_brief_target_prefixes": 0.28889578580856323,
+        "outputs": [
+          {
+            "id": "repeat-please-A-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "A",
+              "<assistant>"
+            ],
+            "expected": [
+              "A",
+              "<eos>"
+            ],
+            "generated": [
+              "C",
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-B-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "B",
+              "<assistant>"
+            ],
+            "expected": [
+              "B",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-C-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "C",
+              "<assistant>"
+            ],
+            "expected": [
+              "C",
+              "<eos>"
+            ],
+            "generated": [
+              "C",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "repeat-please-D-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "D",
+              "<assistant>"
+            ],
+            "expected": [
+              "D",
+              "<eos>"
+            ],
+            "generated": [
+              "D",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "repeat-please-E-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "E",
+              "<assistant>"
+            ],
+            "expected": [
+              "E",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-F-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "F",
+              "<assistant>"
+            ],
+            "expected": [
+              "F",
+              "<eos>"
+            ],
+            "generated": [
+              "F",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "repeat-please-G-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "G",
+              "<assistant>"
+            ],
+            "expected": [
+              "G",
+              "<eos>"
+            ],
+            "generated": [
+              "G",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "repeat-please-H-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "H",
+              "<assistant>"
+            ],
+            "expected": [
+              "H",
+              "<eos>"
+            ],
+            "generated": [
+              "H",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          }
+        ],
+        "kl_to_sft_on_brief_target_prefixes": 1.6790965795516968
+      }
+    },
+    {
+      "name": "distill",
+      "training": {
+        "parameters": {
+          "total": 19281,
+          "trainable": 19281
+        },
+        "steps": 100,
+        "effective_training_tokens": 4800,
+        "elapsed_seconds": 0.36957300999984,
+        "tokens_per_second": 12987.961431496522,
+        "optimizer_tensor_bytes": 154368,
+        "history": [
+          {
+            "step": 1,
+            "loss_before_update": 0.8693177103996277
+          },
+          {
+            "step": 10,
+            "loss_before_update": 0.19180338084697723
+          },
+          {
+            "step": 20,
+            "loss_before_update": 0.06200585141777992
+          },
+          {
+            "step": 30,
+            "loss_before_update": 0.02650492824614048
+          },
+          {
+            "step": 40,
+            "loss_before_update": 0.014567159116268158
+          },
+          {
+            "step": 50,
+            "loss_before_update": 0.009518742561340332
+          },
+          {
+            "step": 60,
+            "loss_before_update": 0.007001569960266352
+          },
+          {
+            "step": 70,
+            "loss_before_update": 0.005543975159525871
+          },
+          {
+            "step": 80,
+            "loss_before_update": 0.004586461000144482
+          },
+          {
+            "step": 90,
+            "loss_before_update": 0.003896925365552306
+          },
+          {
+            "step": 100,
+            "loss_before_update": 0.003370399819687009
+          }
+        ],
+        "device": "cuda:0",
+        "gpu_peak_allocated_bytes": 72634880,
+        "gpu_peak_reserved_bytes": 73400320,
+        "gpu_memory_scope": "PyTorch allocator peaks on the model's CUDA device during the timed loop; include allocations already live at stage start and reserved cache, but exclude CUDA context and non-PyTorch allocations."
+      },
+      "evaluation": {
+        "sample_count": 8,
+        "correct_count": 7,
+        "accuracy": 0.875,
+        "brief_rate": 0.875,
+        "brief_target_nll": 0.2901550233364105,
+        "entropy_on_brief_target_prefixes": 0.1884072870016098,
+        "outputs": [
+          {
+            "id": "please-repeat-A-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "A",
+              "<assistant>"
+            ],
+            "expected": [
+              "A",
+              "<eos>"
+            ],
+            "generated": [
+              "A",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-B-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "B",
+              "<assistant>"
+            ],
+            "expected": [
+              "B",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "please-repeat-C-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "C",
+              "<assistant>"
+            ],
+            "expected": [
+              "C",
+              "<eos>"
+            ],
+            "generated": [
+              "C",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-D-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "D",
+              "<assistant>"
+            ],
+            "expected": [
+              "D",
+              "<eos>"
+            ],
+            "generated": [
+              "D",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-E-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "E",
+              "<assistant>"
+            ],
+            "expected": [
+              "E",
+              "<eos>"
+            ],
+            "generated": [
+              "E",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-F-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "F",
+              "<assistant>"
+            ],
+            "expected": [
+              "F",
+              "<eos>"
+            ],
+            "generated": [
+              "F",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-G-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "G",
+              "<assistant>"
+            ],
+            "expected": [
+              "G",
+              "<eos>"
+            ],
+            "generated": [
+              "G",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "please-repeat-H-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "please",
+              "repeat",
+              "H",
+              "<assistant>"
+            ],
+            "expected": [
+              "H",
+              "<eos>"
+            ],
+            "generated": [
+              "H",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          }
+        ],
+        "kl_to_sft_on_brief_target_prefixes": 1.6761581897735596
+      },
+      "selection": {
+        "candidates": [
+          {
+            "prompt_id": "repeat-A-brief",
+            "attempt": 0,
+            "response": [
+              "A",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "repeat-A-brief",
+            "attempt": 1,
+            "response": [
+              "<pad>",
+              "<eos>"
+            ],
+            "accepted": false
+          },
+          {
+            "prompt_id": "repeat-A-brief",
+            "attempt": 2,
+            "response": [
+              "A",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "repeat-A-brief",
+            "attempt": 3,
+            "response": [
+              "A",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "repeat-B-brief",
+            "attempt": 0,
+            "response": [
+              "<eos>"
+            ],
+            "accepted": false
+          },
+          {
+            "prompt_id": "repeat-B-brief",
+            "attempt": 1,
+            "response": [
+              "<eos>"
+            ],
+            "accepted": false
+          },
+          {
+            "prompt_id": "repeat-B-brief",
+            "attempt": 2,
+            "response": [
+              "B",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "repeat-B-brief",
+            "attempt": 3,
+            "response": [
+              "B",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "repeat-C-brief",
+            "attempt": 0,
+            "response": [
+              "C",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "repeat-C-brief",
+            "attempt": 1,
+            "response": [
+              "C",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "repeat-C-brief",
+            "attempt": 2,
+            "response": [
+              "repeat",
+              "B",
+              "<eos>"
+            ],
+            "accepted": false
+          },
+          {
+            "prompt_id": "repeat-C-brief",
+            "attempt": 3,
+            "response": [
+              "C",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "repeat-D-brief",
+            "attempt": 0,
+            "response": [
+              "D",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "repeat-D-brief",
+            "attempt": 1,
+            "response": [
+              "D",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "repeat-D-brief",
+            "attempt": 2,
+            "response": [
+              "D",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "repeat-D-brief",
+            "attempt": 3,
+            "response": [
+              "<eos>"
+            ],
+            "accepted": false
+          },
+          {
+            "prompt_id": "repeat-E-brief",
+            "attempt": 0,
+            "response": [
+              "E",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "repeat-E-brief",
+            "attempt": 1,
+            "response": [
+              "B",
+              "<eos>"
+            ],
+            "accepted": false
+          },
+          {
+            "prompt_id": "repeat-E-brief",
+            "attempt": 2,
+            "response": [
+              "<user>",
+              "E",
+              "<eos>"
+            ],
+            "accepted": false
+          },
+          {
+            "prompt_id": "repeat-E-brief",
+            "attempt": 3,
+            "response": [
+              "E",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "repeat-F-brief",
+            "attempt": 0,
+            "response": [
+              "F",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "repeat-F-brief",
+            "attempt": 1,
+            "response": [
+              "F",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "repeat-F-brief",
+            "attempt": 2,
+            "response": [
+              "repeat",
+              "D",
+              "<eos>"
+            ],
+            "accepted": false
+          },
+          {
+            "prompt_id": "repeat-F-brief",
+            "attempt": 3,
+            "response": [
+              "F",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "repeat-G-brief",
+            "attempt": 0,
+            "response": [
+              "<bos>",
+              "<eos>"
+            ],
+            "accepted": false
+          },
+          {
+            "prompt_id": "repeat-G-brief",
+            "attempt": 1,
+            "response": [
+              "G",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "repeat-G-brief",
+            "attempt": 2,
+            "response": [
+              "G",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "repeat-G-brief",
+            "attempt": 3,
+            "response": [
+              "<user>",
+              "<bos>",
+              "<eos>"
+            ],
+            "accepted": false
+          },
+          {
+            "prompt_id": "repeat-H-brief",
+            "attempt": 0,
+            "response": [
+              "H",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "repeat-H-brief",
+            "attempt": 1,
+            "response": [
+              "copy",
+              "B",
+              "<eos>"
+            ],
+            "accepted": false
+          },
+          {
+            "prompt_id": "repeat-H-brief",
+            "attempt": 2,
+            "response": [
+              "H",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "repeat-H-brief",
+            "attempt": 3,
+            "response": [
+              "please",
+              "<eos>"
+            ],
+            "accepted": false
+          },
+          {
+            "prompt_id": "copy-A-brief",
+            "attempt": 0,
+            "response": [
+              "B",
+              "<eos>"
+            ],
+            "accepted": false
+          },
+          {
+            "prompt_id": "copy-A-brief",
+            "attempt": 1,
+            "response": [
+              "A",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "copy-A-brief",
+            "attempt": 2,
+            "response": [
+              "A",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "copy-A-brief",
+            "attempt": 3,
+            "response": [
+              "A",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "copy-B-brief",
+            "attempt": 0,
+            "response": [
+              "B",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "copy-B-brief",
+            "attempt": 1,
+            "response": [
+              "B",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "copy-B-brief",
+            "attempt": 2,
+            "response": [
+              "B",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "copy-B-brief",
+            "attempt": 3,
+            "response": [
+              "B",
+              "A",
+              "<eos>"
+            ],
+            "accepted": false
+          },
+          {
+            "prompt_id": "copy-C-brief",
+            "attempt": 0,
+            "response": [
+              "C",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "copy-C-brief",
+            "attempt": 1,
+            "response": [
+              "C",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "copy-C-brief",
+            "attempt": 2,
+            "response": [
+              "C",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "copy-C-brief",
+            "attempt": 3,
+            "response": [
+              "C",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "copy-D-brief",
+            "attempt": 0,
+            "response": [
+              "D",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "copy-D-brief",
+            "attempt": 1,
+            "response": [
+              "D",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "copy-D-brief",
+            "attempt": 2,
+            "response": [
+              "D",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "copy-D-brief",
+            "attempt": 3,
+            "response": [
+              "D",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "copy-E-brief",
+            "attempt": 0,
+            "response": [
+              "E",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "copy-E-brief",
+            "attempt": 1,
+            "response": [
+              "E",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "copy-E-brief",
+            "attempt": 2,
+            "response": [
+              "E",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "copy-E-brief",
+            "attempt": 3,
+            "response": [
+              "E",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "copy-F-brief",
+            "attempt": 0,
+            "response": [
+              "F",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "copy-F-brief",
+            "attempt": 1,
+            "response": [
+              "F",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "copy-F-brief",
+            "attempt": 2,
+            "response": [
+              "F",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "copy-F-brief",
+            "attempt": 3,
+            "response": [
+              "F",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "copy-G-brief",
+            "attempt": 0,
+            "response": [
+              "G",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "copy-G-brief",
+            "attempt": 1,
+            "response": [
+              "<pad>",
+              "<eos>"
+            ],
+            "accepted": false
+          },
+          {
+            "prompt_id": "copy-G-brief",
+            "attempt": 2,
+            "response": [
+              "G",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "copy-G-brief",
+            "attempt": 3,
+            "response": [
+              "G",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "copy-H-brief",
+            "attempt": 0,
+            "response": [
+              "H",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "copy-H-brief",
+            "attempt": 1,
+            "response": [
+              "H",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "copy-H-brief",
+            "attempt": 2,
+            "response": [
+              "<assistant>",
+              "<eos>"
+            ],
+            "accepted": false
+          },
+          {
+            "prompt_id": "copy-H-brief",
+            "attempt": 3,
+            "response": [
+              "H",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "please-copy-A-brief",
+            "attempt": 0,
+            "response": [
+              "A",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "please-copy-A-brief",
+            "attempt": 1,
+            "response": [
+              "A",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "please-copy-A-brief",
+            "attempt": 2,
+            "response": [
+              "A",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "please-copy-A-brief",
+            "attempt": 3,
+            "response": [
+              "<bos>",
+              "<eos>"
+            ],
+            "accepted": false
+          },
+          {
+            "prompt_id": "please-copy-B-brief",
+            "attempt": 0,
+            "response": [
+              "B",
+              "<user>",
+              "<eos>"
+            ],
+            "accepted": false
+          },
+          {
+            "prompt_id": "please-copy-B-brief",
+            "attempt": 1,
+            "response": [
+              "B",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "please-copy-B-brief",
+            "attempt": 2,
+            "response": [
+              "B",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "please-copy-B-brief",
+            "attempt": 3,
+            "response": [
+              "B",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "please-copy-C-brief",
+            "attempt": 0,
+            "response": [
+              "C",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "please-copy-C-brief",
+            "attempt": 1,
+            "response": [
+              "C",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "please-copy-C-brief",
+            "attempt": 2,
+            "response": [
+              "C",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "please-copy-C-brief",
+            "attempt": 3,
+            "response": [
+              "C",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "please-copy-D-brief",
+            "attempt": 0,
+            "response": [
+              "D",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "please-copy-D-brief",
+            "attempt": 1,
+            "response": [
+              "D",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "please-copy-D-brief",
+            "attempt": 2,
+            "response": [
+              "D",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "please-copy-D-brief",
+            "attempt": 3,
+            "response": [
+              "D",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "please-copy-E-brief",
+            "attempt": 0,
+            "response": [
+              "E",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "please-copy-E-brief",
+            "attempt": 1,
+            "response": [
+              "E",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "please-copy-E-brief",
+            "attempt": 2,
+            "response": [
+              "E",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "please-copy-E-brief",
+            "attempt": 3,
+            "response": [
+              "<eos>"
+            ],
+            "accepted": false
+          },
+          {
+            "prompt_id": "please-copy-F-brief",
+            "attempt": 0,
+            "response": [
+              "F",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "please-copy-F-brief",
+            "attempt": 1,
+            "response": [
+              "B",
+              "<eos>"
+            ],
+            "accepted": false
+          },
+          {
+            "prompt_id": "please-copy-F-brief",
+            "attempt": 2,
+            "response": [
+              "F",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "please-copy-F-brief",
+            "attempt": 3,
+            "response": [
+              "F",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "please-copy-G-brief",
+            "attempt": 0,
+            "response": [
+              "G",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "please-copy-G-brief",
+            "attempt": 1,
+            "response": [
+              "<eos>"
+            ],
+            "accepted": false
+          },
+          {
+            "prompt_id": "please-copy-G-brief",
+            "attempt": 2,
+            "response": [
+              "G",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "please-copy-G-brief",
+            "attempt": 3,
+            "response": [
+              "<pad>",
+              "<eos>"
+            ],
+            "accepted": false
+          },
+          {
+            "prompt_id": "please-copy-H-brief",
+            "attempt": 0,
+            "response": [
+              "H",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "please-copy-H-brief",
+            "attempt": 1,
+            "response": [
+              "H",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "please-copy-H-brief",
+            "attempt": 2,
+            "response": [
+              "H",
+              "<eos>"
+            ],
+            "accepted": true
+          },
+          {
+            "prompt_id": "please-copy-H-brief",
+            "attempt": 3,
+            "response": [
+              "H",
+              "<eos>"
+            ],
+            "accepted": true
+          }
+        ],
+        "generated": 96,
+        "accepted": 74,
+        "selected": 24,
+        "selection_rule": "first correct candidate per training prompt; no gold-response fallback",
+        "temperature": 1.5,
+        "teacher": "dpo_anchor",
+        "teacher_gate": [
+          {
+            "name": "dpo_anchor",
+            "training_prompt_accuracy": 1.0
+          }
+        ],
+        "gate_threshold": 0.95,
+        "gate_split": "training prompts only"
+      },
+      "start": "warmup checkpoint; teacher passes a training-side quality gate",
+      "final_evaluation": {
+        "sample_count": 8,
+        "correct_count": 6,
+        "accuracy": 0.75,
+        "brief_rate": 0.75,
+        "brief_target_nll": 0.5980480313301086,
+        "entropy_on_brief_target_prefixes": 0.07676149159669876,
+        "outputs": [
+          {
+            "id": "repeat-please-A-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "A",
+              "<assistant>"
+            ],
+            "expected": [
+              "A",
+              "<eos>"
+            ],
+            "generated": [
+              "C",
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-B-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "B",
+              "<assistant>"
+            ],
+            "expected": [
+              "B",
+              "<eos>"
+            ],
+            "generated": [
+              "<eos>"
+            ],
+            "correct": false,
+            "brief": false,
+            "reward": 0.0
+          },
+          {
+            "id": "repeat-please-C-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "C",
+              "<assistant>"
+            ],
+            "expected": [
+              "C",
+              "<eos>"
+            ],
+            "generated": [
+              "C",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "repeat-please-D-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "D",
+              "<assistant>"
+            ],
+            "expected": [
+              "D",
+              "<eos>"
+            ],
+            "generated": [
+              "D",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "repeat-please-E-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "E",
+              "<assistant>"
+            ],
+            "expected": [
+              "E",
+              "<eos>"
+            ],
+            "generated": [
+              "E",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "repeat-please-F-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "F",
+              "<assistant>"
+            ],
+            "expected": [
+              "F",
+              "<eos>"
+            ],
+            "generated": [
+              "F",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "repeat-please-G-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "G",
+              "<assistant>"
+            ],
+            "expected": [
+              "G",
+              "<eos>"
+            ],
+            "generated": [
+              "G",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          },
+          {
+            "id": "repeat-please-H-brief",
+            "prompt": [
+              "<bos>",
+              "<user>",
+              "repeat",
+              "please",
+              "H",
+              "<assistant>"
+            ],
+            "expected": [
+              "H",
+              "<eos>"
+            ],
+            "generated": [
+              "H",
+              "<eos>"
+            ],
+            "correct": true,
+            "brief": true,
+            "reward": 1.0
+          }
+        ],
+        "kl_to_sft_on_brief_target_prefixes": 1.9532990455627441
+      }
+    }
+  ],
+  "limitations": [
+    "Only 8 held-out symbol cases; do not infer general LLM capability.",
+    "Held-out templates share symbols/intents with training; this is not unseen-intent OOD.",
+    "Wall-clock timing depends on host load. CUDA timings synchronize the device; optimizer bytes omit activations and allocator memory. GPU peaks include resident models and cache, not isolated algorithm memory.",
+    "DPO/SimPO/PPO/GRPO use different objectives and compute; their loss values are not rankings.",
+    "No QLoRA or distributed GPU execution is claimed."
+  ],
+  "model_parameters": 19281,
+  "reward_model": {
+    "parameters": {
+      "total": 19314,
+      "trainable": 18753
+    },
+    "steps": 80,
+    "effective_training_tokens": 28160,
+    "elapsed_seconds": 0.4757392239998808,
+    "tokens_per_second": 59192.09217864923,
+    "optimizer_tensor_bytes": 150144,
+    "history": [
+      {
+        "step": 1,
+        "loss_before_update": 0.6979820728302002
+      },
+      {
+        "step": 10,
+        "loss_before_update": 0.593156099319458
+      },
+      {
+        "step": 20,
+        "loss_before_update": 0.3713648021221161
+      },
+      {
+        "step": 30,
+        "loss_before_update": 0.10920353978872299
+      },
+      {
+        "step": 40,
+        "loss_before_update": 0.014941168949007988
+      },
+      {
+        "step": 50,
+        "loss_before_update": 0.0043068560771644115
+      },
+      {
+        "step": 60,
+        "loss_before_update": 0.00179720064625144
+      },
+      {
+        "step": 70,
+        "loss_before_update": 0.0009553844574838877
+      },
+      {
+        "step": 80,
+        "loss_before_update": 0.0006718816584907472
+      }
+    ],
+    "device": "cuda:0",
+    "gpu_peak_allocated_bytes": 71246336,
+    "gpu_peak_reserved_bytes": 73400320,
+    "gpu_memory_scope": "PyTorch allocator peaks on the model's CUDA device during the timed loop; include allocations already live at stage start and reserved cache, but exclude CUDA context and non-PyTorch allocations.",
+    "before": {
+      "pair_accuracy": 0.5,
+      "brier_score": 0.2556741237640381,
+      "mean_preferred_probability": 0.496709942817688,
+      "probabilities": [
+        0.46680182218551636,
+        0.515139639377594,
+        0.46485820412635803,
+        0.5685924887657166,
+        0.45375338196754456,
+        0.5601218938827515,
+        0.4247588813304901,
+        0.5196529626846313
+      ]
+    },
+    "train": {
+      "pair_accuracy": 1.0,
+      "brier_score": 1.2088926268916111e-06,
+      "mean_preferred_probability": 0.9993464946746826,
+      "probabilities": [
+        0.9998854398727417,
+        0.9998607635498047,
+        0.9998716115951538,
+        0.9995669722557068,
+        0.9997864365577698,
+        0.9997976422309875,
+        0.9994999170303345,
+        0.998803973197937,
+        0.9998689889907837,
+        0.9998810291290283,
+        0.9998683929443359,
+        0.9996360540390015,
+        0.9997984766960144,
+        0.9998136162757874,
+        0.999503493309021,
+        0.9987537860870361,
+        0.9998975992202759,
+        0.9996744394302368,
+        0.9996216297149658,
+        0.9989957213401794,
+        0.9997968077659607,
+        0.9987877011299133,
+        0.9967971444129944,
+        0.9965479969978333
+      ]
+    },
+    "heldout": {
+      "pair_accuracy": 1.0,
+      "brier_score": 4.380280006444082e-05,
+      "mean_preferred_probability": 0.995879590511322,
+      "probabilities": [
+        0.9998949766159058,
+        0.9836906790733337,
+        0.9992703795433044,
+        0.9979865550994873,
+        0.9996199607849121,
+        0.9991061091423035,
+        0.9933092594146729,
+        0.9941586256027222
+      ]
+    },
+    "scope": "Correct-vs-wrong response ranking; labels are NOT features. This scorer is NOT the online RL reward."
+  },
+  "checkpoint_reload_max_logit_difference": 0.0,
+  "mask_walkthrough": [
+    {
+      "position": 0,
+      "input": "<bos>",
+      "next_token": "<user>",
+      "label": -100,
+      "supervised": false
+    },
+    {
+      "position": 1,
+      "input": "<user>",
+      "next_token": "please",
+      "label": -100,
+      "supervised": false
+    },
+    {
+      "position": 2,
+      "input": "please",
+      "next_token": "copy",
+      "label": -100,
+      "supervised": false
+    },
+    {
+      "position": 3,
+      "input": "copy",
+      "next_token": "H",
+      "label": -100,
+      "supervised": false
+    },
+    {
+      "position": 4,
+      "input": "H",
+      "next_token": "<assistant>",
+      "label": -100,
+      "supervised": false
+    },
+    {
+      "position": 5,
+      "input": "<assistant>",
+      "next_token": "answer",
+      "label": 8,
+      "supervised": true
+    },
+    {
+      "position": 6,
+      "input": "answer",
+      "next_token": "H",
+      "label": 16,
+      "supervised": true
+    },
+    {
+      "position": 7,
+      "input": "H",
+      "next_token": "<eos>",
+      "label": 4,
+      "supervised": true
+    }
+  ],
+  "process_peak_rss_mb": 2368.375,
+  "raw_outputs": "Each stage includes every held-out prompt, expected response and generated response. Recompute correctness from these, not from train loss."
+}

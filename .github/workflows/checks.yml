@@ -19,7 +19,7 @@ jobs:
         run: node scripts/build.mjs
       - name: Check numerical examples and course structure
         run: node --test tests/*.test.mjs
-      - name: Check CPU teaching labs
+      - name: Check formulas and report integrity (CUDA tests require a GPU runner)
         run: python3 -m unittest discover -s tests -p 'test_*.py'
       - name: Check browser JavaScript syntax
         run: node --check web/dist/app.mjs

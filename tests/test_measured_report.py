@@ -16,7 +16,7 @@ class MeasuredReportTests(unittest.TestCase):
         cls.report = json.loads((ROOT/'reports/tiny_lm/verified_seed7.json').read_text())
 
     def test_metrics_recalculate_and_sources_match(self):
-        AUDIT.validate_source(self.report, ROOT/'labs/tiny_lm')
+        AUDIT.validate_source(self.report, ROOT/'reports/tiny_lm/cpu_reference_source')
         summary = AUDIT.validate_results(self.report)
         self.assertEqual(len(summary), 22)  # Eleven stages × development/final.
 
@@ -31,3 +31,14 @@ class MeasuredReportTests(unittest.TestCase):
         pilot = json.loads((ROOT/'reports/tiny_lm/pilot_seed7.json').read_text())
         with self.assertRaises(ValueError):
             AUDIT.validate_results(pilot)
+
+    def test_cpu_reference_is_not_claimed_as_current_gpu_source(self):
+        with self.assertRaisesRegex(ValueError, 'different source revision'):
+            AUDIT.validate_source(self.report, ROOT/'labs/tiny_lm')
+
+    def test_gpu_report_has_actual_cuda_provenance_and_current_sources(self):
+        report = json.loads((ROOT/'reports/tiny_lm/gpu_seed7.json').read_text())
+        self.assertTrue(report['environment']['device'].startswith('cuda'))
+        self.assertTrue(report['environment']['gpu_name'])
+        AUDIT.validate_source(report, ROOT/'labs/tiny_lm')
+        self.assertEqual(len(AUDIT.validate_results(report)), 22)

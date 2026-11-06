@@ -46,8 +46,9 @@ def validate_source(report, directory):
 if __name__ == "__main__":
     root = Path(__file__).resolve().parents[1]
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--report', default=str(root/'reports/tiny_lm/verified_seed7.json'))
+    parser.add_argument('--report', default=str(root/'reports/tiny_lm/gpu_seed7.json'))
+    parser.add_argument('--source-dir', default=None, help='explicit frozen source directory when auditing a historical report')
     args = parser.parse_args()
     report = json.loads(Path(args.report).read_text())
-    validate_source(report, root/'labs/tiny_lm')
+    validate_source(report, Path(args.source_dir) if args.source_dir else root/'labs/tiny_lm')
     print(json.dumps(validate_results(report), ensure_ascii=False, indent=2))

@@ -10,7 +10,7 @@
 |---|---|---|
 | 阅读与交互 | 浏览器；本地站点使用 Python HTTP 服务 | 看正文、调整参数、计算 loss/优势/指标；不训练神经网络 |
 | 标准库实验 | Python 3.10+ | 运行数学、数据审计、线性奖励模型和单参数策略；不下载外部模型 |
-| TinyLM 实验 | 本项目已有 `.venv-teaching`；其他机器使用 Python 3.12 与[锁定依赖](../labs/tiny_lm/requirements-lock.txt)，详见[实战说明](../labs/tiny_lm/README.md) | 训练约 1.9 万参数的因果 Transformer；使用项目手写符号数据，不需要 GPU 或模型 API |
+| TinyLM GPU 实验 | 可用 NVIDIA GPU、驱动与 CUDA 版 PyTorch；按[实战说明](../labs/tiny_lm/README.md)准备独立环境 | 用 CUDA / FP32 训练约 1.9 万参数的因果 Transformer；使用项目手写符号数据，不下载外部权重 |
 
 在项目根目录启动本地学习站：
 
@@ -33,7 +33,7 @@ python3 -m http.server 4173 --bind 127.0.0.1 --directory web/dist
 | 3 | **06 → 07** | 训练两个教学奖励模型，推导 DPO margin，检查长度捷径 | 数据是偏好还是分类？为什么 DPO loss 下降仍可能答错？ |
 | 4 | **10 → 08 → 09** | 先区分反馈，再计算 GAE/PPO/组优势并跟踪一次 rollout | old policy、reference、critic 和 reward 分别是谁？全组同分为何没有区分信号？ |
 | 5 | **12 → 15** | 写政策/威胁模型，标边界数据，计算两种 ASR | 如何同时测有害完成、过度拒绝和正常能力？哪些错误会污染最终测试？ |
-| 6 | **14 → TinyLM 完整实践 → 11** | 检查运行条件和保存/加载，完成训练链，再分析生成—筛选—训练 | 哪一步产生数据，哪一步更新权重？如何解释损失、输出和成本不一致？ |
+| 6 | **14 → TinyLM GPU 实践 → 11** | 通过 CUDA 预检，完成训练链和保存/加载，再分析生成—筛选—训练 | 哪一步产生数据，哪一步更新权重？如何解释损失、输出和成本不一致？ |
 | 7 | **13 → 16 → 17** | 完成广义安全与专项案例，整理研究包和十分钟讲解 | 什么证据仍然缺失？第二阶段具体要验证什么？ |
 
 尚不熟悉 Python 的学习者先补列表/字典、函数、循环、文件读写。进入 TinyLM 前应能读懂张量形状、广播、`log_softmax`、`gather`、`backward` 和 `optimizer.step`；遇到这些操作不理解时，停在一个 batch 上打印/手算，不急着追求更大模型。
@@ -102,52 +102,52 @@ python3 labs/toy_training.py --method all --steps 80 --seed 7
 
 将上面的符号逐项对应到 `token_statistics`、`preference_loss`、`gae_tensor` 和 `train_online`。验收不是背完整证明，而是能指出每一次求和覆盖哪个维度、哪个量停止梯度、哪个分布提供样本，以及公式在哪些环境假设下不再适用。
 
-## 第三组作业：完整 TinyLM 训练链（04～11、14、15、17）
+## 第三组作业：在 GPU 上完成 TinyLM 训练链（04～11、14、15、17）
 
-先检查环境；该实验依赖 PyTorch，四个标准库脚本不依赖它：
+这部分实际训练使用 GPU。先阅读 [TinyLM GPU 实战说明](../labs/tiny_lm/README.md)，在可访问设备的环境中检查驱动，再使用 [PyTorch 官方选择器](https://pytorch.org/get-started/locally/)安装与设备兼容的 CUDA 构建。本项目原有 `.venv-teaching` 和 CPU 锁文件仅保留历史 CPU 环境；GPU 主流程使用已准备的 `.venv-gpu`，本机可直接激活复用；其他机器参考 [GPU 基础依赖](../labs/tiny_lm/requirements-gpu.txt)与 [GPU 依赖锁](../labs/tiny_lm/requirements-gpu-lock.txt)。
 
-```bash
-.venv-teaching/bin/python -c 'import torch; print(torch.__version__)'
-```
+本机已在沙箱外识别 RTX 5070 12GB。沙箱内无法访问设备不等于驱动损坏；实际训练需要在能够访问 GPU 的环境执行。安装、预检和完整运行是三个不同步骤，完成前一步不自动代表后一步成功。
 
-以上命令针对本机已准备的 Python 3.12 / PyTorch 2.9.1+cpu 环境。其他机器按 [TinyLM 实战说明](../labs/tiny_lm/README.md)及[锁定依赖](../labs/tiny_lm/requirements-lock.txt)准备隔离环境，再将命令中的 `.venv-teaching/bin/python` 换成对应解释器；阅读和标准库练习可继续。
-
-从项目根目录执行，使用新的输出目录保存每次结果：
+在项目根目录激活本机已验证环境，再执行：
 
 ```bash
-.venv-teaching/bin/python -m labs.tiny_lm.run --seed 7 --output artifacts/study-tiny-full-seed7
-.venv-teaching/bin/python -m unittest discover -s tests -p 'test_tiny_lm.py' -v
-python3 labs/evaluate_measured.py
+source .venv-gpu/bin/activate
+nvidia-smi
+python -m labs.tiny_lm.run --check-device
+python -m labs.tiny_lm.run --device cuda --final-eval --output artifacts/tiny-lm-cuda-seed7 --seed 7
 ```
 
-当前入口使用完整教学预算。若目录已有 `report.json`，它会拒绝覆盖，应改用新目录。最后一条命令默认复算项目保存的 verified 报告，不会重新训练；要检查自己的报告，传入 `--report artifacts/study-tiny-full-seed7/report.json`。教师未达到质量门槛时应保留失败，不用标准答案伪造生成成功。
+入口默认 CUDA，CUDA 不可用会失败，不自动回退 CPU。当前使用 FP32；BF16、QLoRA 与多卡是原理和后续扩展，尚未宣称实现。每次使用新的输出目录；同一目录已有报告时不能覆盖。教师未达到质量门槛就保留失败，不用标准答案替代生成。
 
-已有验证可先阅读再复跑：[verified_seed7.json](../reports/tiny_lm/verified_seed7.json)来自冻结后的 schema 2 源码，11 个阶段都包含开发与最终探针原始输出。11 项 TinyLM 不变量测试和 3 项报告复算测试已通过；同环境 seed=7 的复跑在排除时间/吞吐/RSS 和未启用的最终探针字段后，训练与开发记录一致。这些是材料已交付的证据，你自己的复跑用于练习和确认理解。
+**GPU 结果状态：已完成全量运行。** 已在 cuda:0 / NVIDIA GeForce RTX 5070 上完成全量训练，环境为 Python 3.12.14、PyTorch 2.9.1+cu128、CUDA 12.8、FP32。[gpu_seed7.json](../reports/tiny_lm/gpu_seed7.json)保存 11 阶段的开发/最终探针，22 组原始指标和源码摘要已复核，重载 logits 差值为 0。[同环境复跑记录](../reports/tiny_lm/gpu_reproducibility.json)确认排除资源测量字段后全部训练/开发/最终记录一致；21 项 TinyLM 与设备测试通过，其中 4 项真实 CUDA 测试未跳过。实战页读取实际设备；历史 [CPU 报告](../reports/tiny_lm/verified_seed7.json)单列保留。个人复跑用于理解与复现，课程交付不要求你已完成这些练习。
 
 训练链的阅读顺序：
 
-1. [data.py](../labs/tiny_lm/data.py)：辨认训练、开发和最终探针；明确共享符号与意图，只留出模板组合。
-2. [model.py](../labs/tiny_lm/model.py)：跟踪一个样本到一个 batch；确认因果注意力、padding、单次 shift 和 assistant-only loss。
-3. [training.py](../labs/tiny_lm/training.py)：依次走读 SFT、LoRA、评分模型、DPO/SimPO、PPO/GRPO 与筛选。
-4. [run.py](../labs/tiny_lm/run.py)：确认每条分支从哪个 checkpoint 起步、哪些状态被冻结、哪些指标写入报告。
+1. [data.py](../labs/tiny_lm/data.py)：辨认训练、开发和最终探针；它们共享符号/意图，只留出模板组合。
+2. [model.py](../labs/tiny_lm/model.py)：跟踪一个样本到一个 batch；检查因果注意力、padding、单次 shift、assistant-only loss，以及输入和模型是否在同一设备。
+3. [training.py](../labs/tiny_lm/training.py)：走读 SFT、LoRA、评分模型、DPO/SimPO、PPO/GRPO 与筛选；检查策略、参考、critic 和随机采样的设备。
+4. [run.py](../labs/tiny_lm/run.py)：确认每条分支的起始 checkpoint、冻结对象、设备预检、计时与显存记录。
 
-拿到报告后，不要只看控制台的最终分数，完成下面的分析：
+拿到自己的 GPU 报告后，完成以下分析；没有对应字段或日志时写“未测”，不从 CPU 数据补数：
 
 | 要看什么 | 在报告或代码中查什么 | 应写出的解释 |
 |---|---|---|
+| 设备与精度 | `environment.device`、GPU 名称、CUDA/PyTorch 版本、precision | 确认是实际 CUDA 运行，而不是导入 PyTorch 成功或 CPU 兼容运行 |
 | 实际更新 | random、warmup、sft 的 loss 和逐条输出 | loss 下降与生成答对为何可能不同时发生 |
-| LoRA 与全参数 | 起始 checkpoint、参数数目、步数、有效 token、学习率、时间 | 成本口径有哪些相同/不同；CPU 时间不是显卡峰值显存 |
-| 奖励模型 | 训练/开发 pair accuracy、Brier、逐对概率 | 与 oracle 特征示例的差别；为何小样本不足以证明校准 |
-| 偏好优化 | chosen/rejected log-prob、正确率、简短率；chosen-only SFT 与 SimPO 对照 | margin 改善可能来自 rejected 降得更快；不能跨方法比较 loss 数值排名 |
-| 在线优化 | reward、KL、entropy、响应长度、裁剪区间外比例、零方差组比例 | 数值变化对应哪些行为；GRPO 同分组为什么可能缺乏信号 |
-| 蒸馏 | 教师质量门槛、候选、接受率、最终选中数、学生逐条输出 | 筛选量不足和覆盖不足怎样影响学习；生成数据不等于训练收益 |
-| 重载与恢复 | 报告的重载 logits 差值；测试中模型/AdamW/RNG 状态及下一次更新 | 已验证全参数/LoRA 的限定范围恢复；完整在线 PPO 的 critic/优化器/rollout 恢复仍不在保证范围 |
+| LoRA 与全参数 | 起点、参数量、有效 token、学习率、同步耗时和显存 | 对比口径有哪些相同/不同；微型模型的启动开销不代表大模型加速比 |
+| 奖励模型 | pair accuracy、Brier 和逐对概率 | 与 oracle 特征示例的差别；小样本不足以证明校准 |
+| 偏好优化 | chosen/rejected log-prob、正确率和简短率；chosen-only SFT 与 SimPO 对照 | margin 改善可能来自 rejected 降得更多；不能跨目标比较 loss 排名 |
+| 在线优化 | reward、KL、entropy、长度、裁剪区间外比例、零方差组 | 曲线对应哪些行为；GRPO 同分组为何可能缺乏区分信号 |
+| 蒸馏 | 教师质量门槛、候选、接受率、选中数与学生生成 | 数据覆盖不足怎样影响学习；生成数据不等于训练收益 |
+| 保存与恢复 | 重载 logits、设备映射、优化器和随机状态 | 已提供真实 CUDA 上全参数/LoRA 的模型、优化器、双 RNG 与下一步一致测试；仍不等于完整在线 PPO 恢复 |
 
-报告中的指标要能自己重算：`correct_count / sample_count`、简短正确回答数/样本数。[evaluate_measured.py](../labs/evaluate_measured.py)已提供自动复算，学习时再抽取一阶段手动核对。保留全部生成，包括错误、空答案和控制 token。当前证据使用 [verified 报告](../reports/tiny_lm/verified_seed7.json)；历史 [pilot](../reports/tiny_lm/pilot_seed7.json)只用于比较配方和分析失败，不能当作当前运行结果。
+GPU 计时需要在测量边界同步设备；否则异步执行可能只量到 CPU 提交工作耗时。阶段显存峰值仅统计所选设备的 PyTorch 分配器，包含阶段开始已驻留模型和缓存，不含 CUDA 上下文及非 PyTorch 外部库显存；它不是全进程总显存，也不等于算法独占占用。分别记录已分配和保留显存，并说明范围。
 
-作为个人扩展练习，增加一个 seed，解释不同随机种子是否改变结论；有条件完成三个 seed。项目已有冻结配方后的 `final_evaluation`。复现固定配方时可使用新输出目录运行 `--final-eval`；若你修改配方且已看过这些最终探针结果，它们就不再是你研究中的未触碰测试，应另留集合。这个极小任务本身无法支持广泛统计结论。
+从原始回答重新计算 `correct_count / sample_count` 和简短正确率。保留错误、空答案和控制 token。历史 [pilot](../reports/tiny_lm/pilot_seed7.json)与 CPU verified 可以提供失败分析思路，但不能代替 GPU 新结果；旧 CPU 报告通过 `--source-dir reports/tiny_lm/cpu_reference_source` 对照冻结源码，不能强行匹配当前代码。当前 GPU 报告可运行 `python labs/evaluate_measured.py` 复算；该命令不启动训练。
 
-**验收**：提交当前报告路径、源码/依赖版本、主要结果表、逐条失败分析、一次公平性审查，以及至少三条不能从实验推出的结论。成功标准是流程可解释和可复算，不要求每条算法都提高分数。
+个人扩展练习可增加一个 seed，条件允许时做三个 seed。不要要求 CPU 与 GPU 逐位相同；先在相同 GPU/依赖环境复跑，记录数值差异和允许误差。已有探针结果已公开，若据此修改配方，这些探针就参与了开发；需要另留集合才能支持新的独立测试结论。
+
+**个人验收**：提交 GPU 设备预检、当前运行报告、环境/源码版本、结果复算、失败分析和至少三条不能推出的结论。当前阶段不以 CPU 兼容训练替代 GPU 验收，也不要求所有算法都改善分数。
 
 ## 第四组作业：用具体案例学安全与评测（02、10、12、13、15）
 
@@ -237,7 +237,7 @@ python3 labs/evaluate_measured.py
 | 组内奖励都相同，GRPO 是否完全没有更新？ | 偏好区分优势为零；若有 KL 等其他项，仍可能更新。不能把零优势说成所有梯度必为零 |
 | 模型全部拒绝，是不是安全训练成功？ | 有害完成可能低，但误拒绝和正常任务质量会失败；必须联合评价 |
 | 8 个开发样例全部答对能证明什么？ | 仅证明在指定设置下这 8 条通过；不能证明新意图、长文本、其他语言或内容安全 |
-| 保存并重载权重一致，能否证明可恢复训练？ | 仅重载不够；本项目另有模型/AdamW/RNG 下一步一致测试，但完整在线 PPO 仍需 critic、其优化器与 rollout 等状态 |
+| 保存并重载权重一致，能否证明可恢复训练？ | 仅重载不够；本项目真实 CUDA 测试另验证模型/AdamW/CPU 与 CUDA RNG 和下一步一致；完整在线 PPO 还需 critic、其优化器与 rollout 等状态 |
 | 网站显示 17/17 完成，能否写“完成大模型安全后训练”？ | 只能说明完成课程自检；实际训练和 benchmark 需模型、配置、原始结果与独立评测证据 |
 
 ## 第一阶段毕业包与通过标准
@@ -245,7 +245,7 @@ python3 labs/evaluate_measured.py
 以下是你学习过程中的个人毕业练习，课程与实验材料已经交付，并不等待这些作业完成后才可使用。整理自己的材料时，未运行的结果写“待实验”，不要把项目示例结果当作自己独立完成的实验：
 
 1. **知识与推导**：17 章的自主笔记，CE/BT/DPO/PPO/GAE/GRPO 关键计算及假设。
-2. **实践记录**：标准库实验、当前 TinyLM 运行、原始输出复算、至少一个负结果分析。
+2. **实践记录**：标准库练习、CUDA 预检与 GPU TinyLM 运行、原始输出复算、至少一个负结果分析。
 3. **安全规范**：政策、威胁模型、双向偏好样例、数据卡和污染控制范围。
 4. **专题案例**：广义安全案例表、一个专项任务的完整设计。
 5. **第二阶段实验卡**：候选模型/数据选择条件，E0→安全 SFT→DPO→改进路线，chosen-only SFT 与随机数据对照，安全/误拒绝/能力/成本指标，冻结与停止条件。
@@ -253,4 +253,4 @@ python3 labs/evaluate_measured.py
 
 通过的标准是：能从原始样例解释到损失，再从损失解释到更新和真实输出；能发现评价口径、数据泄漏或代理奖励的问题；能诚实说明实验边界。无需先获得漂亮的提升数字，也不把上传 GitHub 作为学习通过条件。
 
-QLoRA、GPU 峰值显存、BF16、多卡及部署量化回归按可用资源开展。第一阶段已经给出它们的原理与实践设计；没有这些硬件不影响阅读、数值交互和 CPU 教学闭环，也不能把设计稿写成已经完成的硬件实测。
+GPU 训练、同步耗时与显存记录是当前实战主线。BF16、QLoRA、多卡及部署量化回归仍按资源扩展；课程讲解不等于这些能力已经实现。没有可用 GPU 时可以继续阅读和数学练习，但 GPU 实战应保留为未完成，不能改用 CPU 结果充数。

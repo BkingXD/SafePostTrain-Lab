@@ -1,0 +1,5 @@
+# Tested target: NVIDIA CUDA 12.8 build, Linux x86_64, Python 3.12.
+# Other hardware should select its compatible build at pytorch.org.
+--index-url https://download.pytorch.org/whl/cu128
+torch==2.9.1+cu128
+numpy==2.2.6

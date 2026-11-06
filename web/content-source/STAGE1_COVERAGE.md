@@ -1,6 +1,6 @@
 # 第一阶段：17 个模块的实质覆盖与证据边界
 
-审查日期：2026-11-07。依据：[原项目大纲](PROJECT_OUTLINE.md)、[课程源文件](../web/course.mjs)、[教学实验](../labs/README.md)、[TinyLM 实战说明](../labs/tiny_lm/README.md)和[冻结源码后的运行记录](../reports/tiny_lm/verified_seed7.json)。本阶段交付学习内容、交互前端和教学实验；暂不上传 GitHub，仓库同步不是本阶段的前置条件或验收项。
+审查日期：2026-11-07。依据：[原项目大纲](PROJECT_OUTLINE.md)、[课程源文件](../web/course.mjs)、[教学实验](../labs/README.md)、[GPU 实战说明](../labs/tiny_lm/README.md)、[GPU 全量报告](../reports/tiny_lm/gpu_seed7.json)及独立保存的[历史 CPU 记录](../reports/tiny_lm/verified_seed7.json)。当前训练主流程为 **CUDA GPU / FP32**；默认设备不可用时失败，不自动回退 CPU。暂不上传 GitHub，仓库同步不是本阶段的前置条件或验收项。
 
 这份审查回答“已经提供什么学习材料和实践证据”，不替学习者勾选“已经掌握”。章节标题、两道选择题、脚本正常退出，均不能单独证明一个模块已被深入掌握。**本阶段交付可学习、可操作、可核对的材料与实验，不要求用户已经完成个人学习作业。**实际学习顺序和个人自检任务见 [学习指南](STUDY_GUIDE.md)。
 
@@ -15,6 +15,8 @@
 
 当前材料覆盖前面三层，并提供第四层的设计方法。TinyLM 是约 1.9 万参数、17 个词元、2 层的自定义因果 Transformer，任务是复制 A～H 符号并学习简短回答偏好。它确实进行神经网络训练，但不是预训练大模型，也没有学习内容安全政策。
 
+**GPU 验证状态：已完成全量运行与同环境复跑。** 实际设备为 `cuda:0` / NVIDIA GeForce RTX 5070，Python 3.12.14、PyTorch 2.9.1+cu128、CUDA 12.8、FP32。11 阶段均保留开发/最终探针，22 组指标及源码摘要已复核，重载 logits 差值为 0。CPU 历史证据独立保留。
+
 ## 逐模块审查
 
 | 模块与原大纲目标 | 已提供的学习内容 | 可定位的实践证据 | 深度、缺口与限制 |
@@ -23,7 +25,7 @@
 | **02 后训练目标与问题建模**：写清目标、约束、代理奖励及分布边界 | [02 章](curriculum/02.md)含帮助性/代价约束、KL 例子、奖励投机和可否证假设 | 安全指标交互；本指南配套的实验卡和“全部拒绝”反例；TinyLM 的正确率与简短率分开记录 | 已有问题建模案例。TinyLM 的简短偏好不是安全代价；尚无安全约束优化的训练结果。学习者应交一张包含否证条件的实验卡 |
 | **03 数据工程**：数据卡、校验、去重、分组切分、溯源 | [03 章](curriculum/03.md)区分 messages、偏好和轨迹，解释标签、混配、有效 token 和语义去重边界 | [data_audit.py](../labs/data_audit.py)演示结构校验、精确去重、按问题簇切分；[TinyLM 数据卡](../labs/tiny_lm/data.py)记录手写数据与模板 | 已实现有限数据审计。没有语义去重系统、外部许可审查或真实标注一致性研究。TinyLM 特意共享训练符号/意图，只留出模板组合，不可当成按意图隔离的安全数据切分 |
 | **04 SFT**：assistant-only loss、shift、模板、EOS、packing 与诊断 | [04 章](curriculum/04.md)给出带 mask 的 CE、teacher forcing、标签位移及空监督反例 | SFT mask 交互；`collate`、`token_statistics`、`sft_loss` 和 `train_sft` 真实更新 TinyLM；报告保存逐条生成及 `mask_walkthrough`，测试验证 shift、padding 的 loss/梯度与空监督 | 已有序列训练实现及关键不变量测试。TinyLM 使用自定义单轮格式；多轮模板与隔离式 packing 有教学说明，未宣称完成其真实模型兼容实测 |
-| **05 参数高效微调**：LoRA/QLoRA、成本和加载依赖 | [05 章](curriculum/05.md)解释低秩更新、rank、冻结底模、量化和合并 | LoRA 参数交互；`LoRALinear`/`apply_lora`；同 warmup 起点的全参数/LoRA 运行，另有底模冻结、适配器更新与恢复测试 | 已有实际 LoRA。学习率不同，不能据此普遍排名。QLoRA、GPU 峰值显存和合并回归是资源允许时的硬件实践，本阶段提供原理与设计，不虚称已实测；优化器张量大小不等于峰值内存 |
+| **05 参数高效微调**：LoRA/QLoRA、成本和加载依赖 | [05 章](curriculum/05.md)解释低秩更新、rank、冻结底模、量化和合并 | LoRA 参数交互；`LoRALinear`/`apply_lora`；同 warmup 起点的全参数/LoRA 运行，另有底模冻结、适配器更新与恢复测试 | 已有实际 LoRA。学习率不同，不能据此普遍排名。GPU 峰值显存纳入本轮训练验收；QLoRA 和合并回归仍按资源扩展，不虚称已实测；优化器张量大小不等于峰值内存 |
 | **06 偏好数据与奖励模型**：Bradley–Terry、校准、长度和噪声 | [06 章](curriculum/06.md)解释偏好概率、奖励平移不变性、ORM/PRM 与代理偏差 | 成对奖励交互；[线性奖励模型](../labs/reward_model.py)；TinyLM `ScoreModel`/`train_reward` 从 token 隐状态学习，报告 pair accuracy、Brier 与概率 | 两种教学模型假设不同：线性示例输入含“正确性”特征，神经评分器不含这个 oracle。现有神经评分诊断样本很小、偏好方向固定；不能据此宣称普遍校准、抗长度偏差或抗噪声。PRM 仅学习说明 |
 | **07 离线偏好优化**：DPO 推导、参考、beta 与变体对照 | [07 章](curriculum/07.md)从 KL 奖励目标说明最优策略形式及偏好差分，给出四个 log-prob 手算；区分 IPO/KTO/ORPO/SimPO | DPO 交互；`preference_loss`/`train_preference` 实现 DPO、带 chosen NLL 锚定的教学分支、SimPO；入口包含 chosen-only SFT 对照 | 已有 DPO 和一个变体的真实小模型训练。锚定分支是教学配方，不宣称新算法。当前数据只偏好简短正确回答；总 token 相近不代表所有计算成本相同，也未完成大规模调参或安全偏好比较 |
 | **08 RL 基础与 PPO**：策略梯度、GAE、裁剪、四个角色 | [08 章](curriculum/08.md)有正/负优势裁剪、三步 GAE、正常终止/截断区别和 old/ref/critic/reward 说明 | PPO/GAE 交互；标准库 `gae_trace`；TinyLM `train_online` 采样序列、训练 critic、计算 token 级 GAE 和裁剪目标 | 已超出单步 bandit，具备有限时域文本教学闭环。此任务把最大输出步数定义为终止边界；不能照搬到需要 bootstrap 的其他环境。它不是完整工业 PPO：无异步 rollout、多机与生产级恢复证据 |
@@ -32,33 +34,40 @@
 | **11 推理后训练与自改进**：结果/过程监督、筛选、蒸馏、迭代 | [11 章](curriculum/11.md)区分 best-of-N、序列/软标签蒸馏和更新权重，说明独立成功率公式假设 | `sample_and_filter` 真实采样、验证和保留候选，`run` 用筛选数据训练学生；记录教师选择和数据覆盖 | 已提供一轮生成—筛选—训练闭环，不能称已复现推理能力涌现。没有两轮困难挖掘与随机扩充对照，也没有 PRM 或软标签蒸馏训练。失败和少量接受样本是应报告的结果 |
 | **12 安全对齐原理**：政策、威胁模型、边界偏好、多目标 | [12 章](curriculum/12.md)解释允许行为、部分安全回答、直接请求/越狱/注入，以及合法敏感请求的双向偏好 | 安全—误拒绝交互；[学习指南](STUDY_GUIDE.md)提供抽象边界标签案例、偏好对与威胁模型练习 | 第一阶段完成政策与数据设计层面的教学，不声称已训练安全模型。浏览器滑块是输入计数的算术，不是攻击器、模型裁判或正式 benchmark；必须提交有标签理由的边界样例 |
 | **13 广义安全专题**：诚实、隐私、公平、遗忘、投毒与退化 | [13 章](curriculum/13.md)区分各风险的目标、攻击假设与证据，并给出量化/后续微调回归要求 | [学习指南](STUDY_GUIDE.md)逐风险给出合成案例、所需对照与错误结论辨析，并补 TruthfulQA、BBQ、TOFU 等一手阅读任务 | 当前为专题案例学习，未复现遗忘算法、后门检测或公平性训练。已有资料入口不等于学习者完成了精读；进一步深挖须按选定专题完成阅读卡及专项实验 |
-| **14 训练系统与效率**：状态/激活、并行、恢复和资源测量 | [14 章](curriculum/14.md)拆解显存、有效 batch、精度、checkpointing、ZeRO/FSDP 与多种并行 | 显存估算交互；记录 CPU 时间、token、参数、优化器状态及 RSS；测试对全参数与 LoRA 显式恢复模型/AdamW/RNG，验证下一步更新一致 | 已有 CPU 成本、重载与限定范围恢复证据。完整在线 PPO 尚未统一保存 critic/其优化器/rollout 状态；不能扩大恢复结论。GPU、BF16/QLoRA、多卡属于按资源开展的条件性实践，并非本次本地学习材料交付的阻碍 |
-| **15 评测与实验方法**：协议、分母、独立裁判、消融和区间 | [15 章](curriculum/15.md)解释 ASR@预算、误拒绝、能力保持、分组重采样、多种子与裁判偏差 | 指标交互；[verified 报告](../reports/tiny_lm/verified_seed7.json)含 11 阶段的开发/最终探针原始回答；[复算脚本](../labs/evaluate_measured.py)与 3 项测试校验指标、预算、源码及篡改检测 | 已有统计口径教学、冻结后的最终探针和可复算结果。开发模板用于过诊断；两探针仍共享训练意图且各仅 8 条。正式安全 benchmark、人工裁判校准、区间和多 seed 研究结论未宣称完成 |
+| **14 训练系统与效率**：状态/激活、并行、恢复和资源测量 | [14 章](curriculum/14.md)拆解显存、batch、精度、分片/并行，并新增 CUDA 设备预检与 FP32 训练说明 | GPU 全量报告记录 CUDA 同步耗时、已分配/保留显存峰值；真实 CUDA 测试验证模型/AdamW/CPU 与 CUDA RNG 恢复及下一步更新一致 | 已完成单卡 FP32 GPU 实测。BF16/QLoRA、多卡仍是后续扩展；完整在线 PPO 的 critic/优化器/rollout 恢复未承诺实现。显存只统计 PyTorch 分配器，含已有模型/缓存，不含 CUDA 上下文或非 PyTorch 库；不是全进程或算法独占成本 |
+| **15 评测与实验方法**：协议、分母、独立裁判、消融和区间 | [15 章](curriculum/15.md)解释 ASR@预算、误拒绝、能力保持、分组重采样、多种子与裁判偏差 | 指标交互；[GPU 报告](../reports/tiny_lm/gpu_seed7.json)含 11 阶段的开发/最终探针原始回答；[复算脚本](../labs/evaluate_measured.py)校验 22 组指标、预算及源码，报告测试检测原始回答篡改 | 已有统计口径教学、冻结后的最终探针和可复算结果。开发模板用于过诊断；两探针仍共享训练意图且各仅 8 条。正式安全 benchmark、人工裁判校准、区间和多 seed 研究结论未宣称完成 |
 | **16 专项能力后训练**：领域、长文、多语言、工具/Agent、多模态 | [16 章](curriculum/16.md)说明各方向的数据接口、可训练组件、反馈和特殊风险 | [学习指南](STUDY_GUIDE.md)提供五类代表案例、沙盒工具轨迹分析，以及 Aya、Toolformer、Visual Instruction Tuning 等专题一手阅读任务 | 已提供专题说明和案例，不等于训练过长上下文、Agent 或 VLM。深度扩展须补相应模型/环境、专项数据与任务指标；TinyLM 的符号复制不能替代这些任务 |
-| **17 交付与持续改进**：实验卡、模型卡、部署回归和版本 | [17 章](curriculum/17.md)和 [验收清单](LEARNING_CHECKLIST.md)提供配置、日志、原始输出、负结果和讲解任务 | 本地学习前端、进度导入导出、实战 README、锁定依赖、当前运行报告、关键测试、同环境复跑与指标复算 | 当前课程和教学实验已有可检查制品，个人作业由学习者后续完成。GitHub 上传暂缓；正式安全模型卡和生产部署属于后续项目。学习进度不等于经过外部认证的训练能力 |
+| **17 交付与持续改进**：实验卡、模型卡、部署回归和版本 | [17 章](curriculum/17.md)和 [验收清单](LEARNING_CHECKLIST.md)提供配置、日志、原始输出、负结果和讲解任务 | 本地学习前端、GPU 环境/依赖锁、全量报告、同环境复跑和独立 CPU 历史；实战页按报告设备显示实测类型 | 课程材料、GPU 运行与对应验证已有制品，个人作业由学习者后续完成。GitHub 暂缓；正式安全模型卡和生产部署属于后续项目 |
 
-## 当前版本的验证证据
+## GPU 实测证据与历史数据边界
 
-| 证据 | 已核验内容 | 适用边界 |
+| 证据 | 已核验内容 | 适用范围 |
 |---|---|---|
-| [verified_seed7.json](../reports/tiny_lm/verified_seed7.json) | schema 2、完整训练预算、5 个源码文件 SHA256 均匹配；11 阶段均含开发探针和 `final_evaluation`；保存每条生成及 mask 对齐表 | seed=7、当前 CPU 环境、合成符号任务 |
-| [test_tiny_lm.py](../tests/test_tiny_lm.py) | 11 项通过：因果依赖、shift/监督边界、padding loss/梯度、空监督、LoRA 冻结/更新、DPO 梯度/参考冻结、GAE 边界、模型/优化器/RNG 恢复和切分/验证器 | 核心教学实现的不变量；不等于真实大模型或完整在线恢复测试 |
-| [test_measured_report.py](../tests/test_measured_report.py) | 3 项通过：源码匹配和 22 个阶段×集合结果复算；修改原始回答可被发现；历史 pilot 不可冒充当前证据 | 证明保存指标与该次原始回答一致，不证明分布外泛化 |
-| [同环境复跑](../artifacts/tiny-lm-replay-seed7/report.json) | 排除计时/吞吐/RSS 及该次未启用的最终探针字段后，训练数值与开发生成记录和 verified 完全一致 | 相同环境和 seed 的确定性；不宣称跨硬件或最终探针重复验证 |
-| [TinyLM 实战说明](../labs/tiny_lm/README.md) | 直接运行命令、锁定依赖、数据定义、各训练分支、成本口径、负结果和恢复范围 | 读者可据此复跑和走读；个人掌握程度另由自检任务衡量 |
+| [GPU 全量报告](../reports/tiny_lm/gpu_seed7.json) | RTX 5070 / cuda:0 / FP32；6 个训练源码文件摘要匹配；11 阶段、22 组开发/最终结果可由原始回答复算；重载差值为 0 | 当前代码、数据和单卡环境，不是大模型安全成绩 |
+| [TinyLM 测试](../tests/test_tiny_lm.py)与[设备测试](../tests/test_tiny_lm_device.py) | 共 21 项在 `.venv-gpu` 通过；其中 4 项真实 CUDA 测试实际执行、没有跳过，覆盖设备、训练算法、在线采样及 checkpoint 恢复 | 包含全参数/LoRA 的模型、优化器、CPU/CUDA RNG 与下一步更新；不宣称完整在线 PPO 续训 |
+| [GPU 复跑报告](../reports/tiny_lm/gpu_replay_seed7.json)与[比较记录](../reports/tiny_lm/gpu_reproducibility.json) | 相同 seed=7 和环境，排除耗时、吞吐、RSS、阶段显存峰值后，全部训练/开发/最终记录完全一致 | 同环境数值复现，不承诺不同硬件或软件版本逐位一致 |
+| [历史 CPU verified](../reports/tiny_lm/verified_seed7.json)与[冻结源码](../reports/tiny_lm/cpu_reference_source/) | 原 CPU JSON 保留设备、数值和源码摘要，通过显式历史源目录审计 | CPU 参考，不能改名成为 GPU 数据 |
+| [GPU 实战说明](../labs/tiny_lm/README.md)与[GPU 依赖锁](../labs/tiny_lm/requirements-gpu-lock.txt) | 已运行环境可复用，包含 CUDA 预检、训练、复算、资源口径、负结果与恢复限制 | 学习者可依环境条件复跑，不表示已完成个人学习任务 |
 
-可以运行 `python3 labs/evaluate_measured.py`，无需 PyTorch 即可从原始回答重新计算正确率和简短率，并核对源码。当前代码修改后，如果哈希不再匹配，应重跑或明确保留为历史版本。
+当前 GPU 报告及 CPU 历史报告分别审计：
 
-[历史 pilot](../reports/tiny_lm/pilot_seed7.json)仍保留最初配方的失败记录，其 schema/源码不同，不能替代 verified。当前 DPO 分支也保留目标改善而输出退化的结果，材料不以每个算法“都成功”作为教学可信性的条件。
+```bash
+python labs/evaluate_measured.py
+python labs/evaluate_measured.py --report reports/tiny_lm/verified_seed7.json --source-dir reports/tiny_lm/cpu_reference_source
+```
+
+默认命令审核 `gpu_seed7.json` 与当前源码；显式 CPU 命令审核旧报告与冻结源码。两者只读取和复算保存结果，不启动训练，也不修改原始 JSON。
+
+当前 GPU DPO 的开发/最终探针均为 0/8，带辅助 SFT 的 DPO 最终探针为 8/8，负结果与对照都被保留。历史 [pilot](../reports/tiny_lm/pilot_seed7.json)用于理解早期配方，不能替代当前 GPU 报告。8 个样例的差异不能据此推广为算法优劣。
 
 最初留出的模板已明确为开发探针；最终探针在配方冻结后评测。二者仍共享训练符号和任务意图、各只有 8 个样例，因此仅验证这个小任务中的模板组合迁移。若再根据最终探针调参，它就参与了开发。
 
 ## 材料交付、个人学习与后续研究的分界
 
-**本阶段已提供**：17 模块正文和案例、核心数值交互、标准库实验、真实 TinyLM 训练链、冻结版本报告、原始结果复算、关键测试、实战说明及个人学习验收任务。当前课程交付不依赖用户先完成作业。
+**已提供的材料与实验**：17 模块正文和案例、核心数值交互、标准库练习、TinyLM GPU 训练链、全量运行/复跑/资源记录、独立 CPU 历史、可复用 GPU 环境及个人验收任务。课程交付不依赖用户先完成作业；GPU 完成结论来自对应设备上的实际运行。
 
 **学习者后续自检**：完成手算与代码对应表、复跑与失败分析、数据/奖励反例、广义安全及专项案例、原始指标复算和第二阶段实验卡。它们用于判断个人是否理解，并非尚未交付的课程功能。
 
-**按资源扩展的工程实践**：QLoRA、GPU 峰值显存、BF16、多卡通信和吞吐、适配器合并/量化回归。原大纲允许按资源实践，本阶段提供原理、成本解释和设计入口，未把这些项目虚称为已实测。完整在线 PPO 续训也有明确状态缺口，不能由 actor 恢复测试代替。
+**当前 GPU 主线**：CUDA 预检、FP32 训练、同步耗时与阶段显存。**后续工程扩展**：QLoRA、BF16、多卡通信/吞吐、适配器合并/量化回归；这些仍按资源实践，不由 GPU 可用自动推断为已实现。完整在线 PPO 续训不能由 actor 恢复测试代替。
 
 **第二阶段研究**：选定开放权重大模型的安全 SFT/DPO、受控数据迭代、独立安全 benchmark、人工裁判校准、统计与消融、可核验的求职项目结果。当前教学训练不能预支这些效果数字。

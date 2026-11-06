@@ -1,11 +1,10 @@
-"""Run a reproducible CPU post-training course, never a safety benchmark."""
+"""Run the CUDA-first post-training course, never a safety benchmark."""
 import argparse
 import copy
 import hashlib
 import json
 import platform
 import resource
-import sys
 from pathlib import Path
 
 import torch
@@ -13,6 +12,7 @@ import torch
 from .data import assess, brief, data_card, datasets, final_probe, preference_rows
 from .model import ModelConfig, TOKENS, TinyLM, apply_lora, checkpoint, collate, generate, load_checkpoint, parameter_counts, token_statistics
 from .training import entropy, exact_kl, frozen, sample_and_filter, train_online, train_preference, train_reward, train_sft
+from .runtime import configure_runtime, environment, resolve_device
 
 
 @torch.no_grad()
@@ -22,7 +22,7 @@ def evaluate(model, rows, reference=None):
     for row in rows:
         answer = generate(model, row["prompt"])
         outputs.append({"id": row["id"], "prompt": row["prompt"], "expected": brief(row), "generated": answer, **assess(row, answer)})
-    ids, labels = collate(rows, [brief(r) for r in rows])
+    ids, labels = collate(rows, [brief(r) for r in rows], device=next(model.parameters()).device)
     stats = token_statistics(model, ids, labels)
     result = {"sample_count": len(rows), "correct_count": sum(o["correct"] for o in outputs),
               "accuracy": sum(o["correct"] for o in outputs)/len(rows),
@@ -34,28 +34,26 @@ def evaluate(model, rows, reference=None):
     return result
 
 
-def run(output, seed=7, final_eval=False):
+def run(output, seed=7, final_eval=False, device="cuda"):
+    device = resolve_device(device)  # Fail before creating any output artifacts.
+    configure_runtime(device, seed)
     output = Path(output)
     output.mkdir(parents=True, exist_ok=True)
     if (output/"report.json").exists():
         raise ValueError("report.json already exists; choose a new output directory to preserve results")
-    torch.set_num_threads(1)
-    torch.use_deterministic_algorithms(True)
-    torch.manual_seed(seed)
     train, heldout = datasets()
     pairs = preference_rows()
     budgets = {"warmup":30, "sft":120, "lora":120, "reward":80,
                "preference":60, "online":25, "distill":100}
     root = Path(__file__).parent
     source_hashes = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(root.glob('*.py'))}
-    report = {"schema_version": 2, "scope": "Measured CPU teaching runs on a tiny synthetic copy task. NOT a large-model or safety benchmark.",
+    report = {"schema_version": 2, "scope": f"Measured {device} teaching runs on a tiny synthetic copy task. NOT a large-model or safety benchmark.",
               "primary_evaluation_split": "development probe (used for diagnosis); final_probe is separate and optional",
-              "seed": seed, "final_probe_enabled": final_eval, "environment": {"python": sys.version.split()[0], "torch": torch.__version__,
-              "platform": platform.system(), "device": "cpu", "torch_threads": 1, "deterministic_algorithms": True},
+              "seed": seed, "final_probe_enabled": final_eval, "environment": environment(device),
               "config": vars(ModelConfig()), "budgets": budgets, "data_card": data_card(), "source_sha256": source_hashes,
               "stages": [], "limitations": ["Only 8 held-out symbol cases; do not infer general LLM capability.",
               "Held-out templates share symbols/intents with training; this is not unseen-intent OOD.",
-              "CPU timing depends on host load; optimizer bytes omit activation and allocator memory.",
+              "Wall-clock timing depends on host load. CUDA timings synchronize the device; optimizer bytes omit activations and allocator memory. GPU peaks include resident models and cache, not isolated algorithm memory.",
               "DPO/SimPO/PPO/GRPO use different objectives and compute; their loss values are not rankings.",
               "No QLoRA or distributed GPU execution is claimed."]}
     models = {}
@@ -68,7 +66,7 @@ def run(output, seed=7, final_eval=False):
         checkpoint(output/(name+'.pt'), model, optimizer, (training or {}).get('steps',0), {"lora_rank": 4} if name=='lora' else {})
         print(f'{name}: accuracy={entry["evaluation"]["correct_count"]}/{len(heldout)}, brief={entry["evaluation"]["brief_rate"]:.3f}', flush=True)
 
-    base = TinyLM()
+    base = TinyLM().to(device)
     report["model_parameters"] = parameter_counts(base)["total"]
     record("random", base)
     warmup, warm_optimizer = train_sft(base, train, budgets["warmup"])
@@ -117,8 +115,8 @@ def run(output, seed=7, final_eval=False):
         entry["evaluation"] = evaluate(models[entry["name"]], heldout, reference)
         if final_eval:
             entry["final_evaluation"] = evaluate(models[entry["name"]], final_probe(), reference)
-    loaded, state = load_checkpoint(output/'sft.pt')
-    ids, _ = collate(heldout)
+    loaded, state = load_checkpoint(output/'sft.pt', device=device)
+    ids, _ = collate(heldout, device=device)
     with torch.no_grad():
         max_difference = (loaded(ids)-full(ids)).abs().max().item()
     report["checkpoint_reload_max_logit_difference"] = max_difference
@@ -136,8 +134,19 @@ def run(output, seed=7, final_eval=False):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--output', default='artifacts/tiny-lm-seed7')
+    parser.add_argument('--output', default=None)
     parser.add_argument('--seed', type=int, default=7)
     parser.add_argument('--final-eval', action='store_true', help='evaluate the separate final template after freezing the recipe')
+    parser.add_argument('--device', default='cuda', help='cuda (default), cuda:N, or cpu for explicit compatibility runs')
+    parser.add_argument('--check-device', action='store_true', help='check CUDA kernels and print runtime information without training')
     args = parser.parse_args()
-    run(args.output, args.seed, args.final_eval)
+    try:
+        if args.check_device:
+            selected_device = resolve_device(args.device)
+            configure_runtime(selected_device, args.seed)
+            print(json.dumps(environment(selected_device), ensure_ascii=False, indent=2))
+        else:
+            output = args.output or f'artifacts/tiny-lm-{args.device.replace(":", "-")}-seed{args.seed}'
+            run(output, args.seed, args.final_eval, args.device)
+    except (RuntimeError, ValueError) as exc:
+        parser.exit(1, f"Training stopped: {exc}\n")

@@ -4,19 +4,21 @@
 
 第一阶段提供中文课程和交互学习前端：**17 章、34 道理解检查、12 个交互实验、56 个术语**。课程覆盖基础、数据、SFT、LoRA/QLoRA、奖励建模、DPO、PPO、GAE、GRPO、反馈设计、蒸馏、安全、工程、评测与专项任务。每章都有学习目标、白话解释、数值或场景示例、误区、练习和一手资料。
 
-[打开私人学习站](https://safeposttrain-learning-lab.cappedcone1.chatgpt.site) · [当前交付核对](reports/STAGE1_FINAL_AUDIT.md)
+[打开私人学习站](https://safeposttrain-learning-lab.cappedcone1.chatgpt.site) · [GPU 实测验收](reports/GPU_MIGRATION_AUDIT.md)
 
-新增 [完整学习指南](docs/STUDY_GUIDE.md)、[17 模块覆盖表](docs/STAGE1_COVERAGE.md)及 [CPU 微型模型实战](labs/tiny_lm/README.md)。本地前端包含“学习指南”和“训练实战”入口，直接展示推导、案例和真实运行记录。
+新增 [完整学习指南](docs/STUDY_GUIDE.md)、[17 模块覆盖表](docs/STAGE1_COVERAGE.md)及 [GPU 训练实战](labs/tiny_lm/README.md)。训练主流程使用 CUDA GPU、FP32；本地前端提供设备预检、训练命令和 GPU 实测，历史 CPU 报告独立保留。
 
-新增学习指南与 TinyLM 实战已按确认同步到上述私人站点。访问需要使用拥有该站点的 ChatGPT 账号登录；本地项目也可独立启动。
+私人学习站已更新为 GPU 训练版，包含 RTX 5070 实测报告、训练源码与下载包。访问需要使用拥有该站点的 ChatGPT 账号登录。
 
 在线站点采用创建者私有访问。按 2026-11-07 的要求，本阶段交付本地项目与学习前端，暂不上传 GitHub；GitHub 同步不作为本阶段完成条件。
 
-当前范围：知识学习与教学实验。参数计算器使用教学输入；“训练实战”展示 19,281 参数因果 Transformer 的真实 CPU 运行。两者均**不是大模型安全训练或 benchmark 成绩**。后续安全主项目的研究设计见 [项目大纲](docs/PROJECT_OUTLINE.md)。
+当前范围：知识学习与教学实验。参数计算器使用教学输入；TinyLM 是 19,281 参数因果 Transformer，已完成 RTX 5070 上的 FP32 GPU 训练。[GPU 报告](reports/tiny_lm/gpu_seed7.json)包含 11 阶段的开发/最终探针及资源记录，22 组原始指标已复算；历史 `verified_seed7.json` 保留原 CPU 设备标签；这些教学数据均**不是大模型安全训练或 benchmark 成绩**。后续安全主项目的研究设计见 [项目大纲](docs/PROJECT_OUTLINE.md)。
+
+本机已在沙箱外识别 RTX 5070 12GB；最初沙箱内访问失败不能当作驱动损坏。原 `.venv-teaching` 安装的是 `torch+cpu`，GPU 训练使用独立 `.venv-gpu` 环境。GPU 全量训练、报告源码摘要和原始指标复算已通过；入口默认 CUDA，不可用时会报错，不自动回退 CPU。
 
 ## 直接打开本地学习站
 
-需要 Python 3.10+；网页资源已经生成，无需安装前端依赖、GPU 或 API Key。
+网页阅读使用 Python 3.10+ 的静态服务，无需前端依赖或 API Key；GPU 用于后面的模型训练。
 
 ```bash
 python3 -m http.server 4173 --bind 127.0.0.1 --directory web/dist
@@ -56,9 +58,9 @@ python3 -m http.server 4173 --bind 127.0.0.1 --directory web/dist
 | [16](docs/curriculum/16.md) | 长上下文、多语言、工具、Agent 与多模态 |
 | [17](docs/curriculum/17.md) | 可复现项目与第二阶段准备 |
 
-## 无 GPU 教学实验
+## 公式与数据练习
 
-所有脚本仅用 Python 标准库，不会下载模型或调用外部服务。
+这些辅助脚本仅用 Python 标准库，不会下载模型或调用外部服务。完成数学练习后，进入下方 GPU 模型训练。
 
 ```bash
 python3 labs/core_math.py
@@ -74,19 +76,21 @@ python3 labs/toy_training.py --method all --steps 80 --seed 7
 
 详细假设和观察任务见 [实验指南](labs/README.md)。
 
-## Token 级训练实战
+## GPU 上的 token 级训练实战
 
 在同一个微型因果 Transformer 上运行 SFT、LoRA、神经奖励建模、DPO/SimPO、PPO/GRPO 和生成—验证—筛选—蒸馏。保留 chosen-only SFT、辅助 SFT 对照、失败结果、开发与最终探针、原始回答及成本。
 
-本工作区已安装隔离环境；不需要 GPU 或外部模型权重：
+本机可直接复用 `.venv-gpu`，先执行 `source .venv-gpu/bin/activate`。其他机器按 [PyTorch 官方安装选择器](https://pytorch.org/get-started/locally/)和 [GPU 依赖](labs/tiny_lm/requirements-gpu.txt)准备环境；完整版本记录见 [GPU 依赖锁](labs/tiny_lm/requirements-gpu-lock.txt)。模型和数据为项目自带，不下载外部模型权重。然后从项目根目录执行：
 
 ```bash
-.venv-teaching/bin/python -m labs.tiny_lm.run --output artifacts/my-run --seed 7
-.venv-teaching/bin/python -m unittest discover -s tests -p 'test_tiny_lm.py' -v
-python3 labs/evaluate_measured.py
+nvidia-smi
+python -m labs.tiny_lm.run --check-device
+python -m labs.tiny_lm.run --device cuda --final-eval --output artifacts/tiny-lm-cuda-seed7 --seed 7
 ```
 
-第三条命令不需要 PyTorch，可从保存的原始回答重新计算指标。其他机器的安装方法、配方假设、失败诊断和恢复边界见 [实战 README](labs/tiny_lm/README.md)。本例只有符号复制任务；真实安全策略训练属于下一阶段。
+设备预检通过后再启动正式训练，使用新的输出目录。首版采用 FP32；BF16、QLoRA 与多卡仍是课程原理和后续扩展，未宣称实现或实测。安装、设备验收、历史数据与恢复边界见 [实战 README](labs/tiny_lm/README.md)。本例只有符号复制任务；真实安全策略训练属于下一阶段。
+
+`--device cpu` 只用于显式兼容性验证。现有 CPU 依赖锁文件只描述历史 CPU 环境，不能用于安装 GPU 主流程。
 
 ## 修改内容与验证
 
@@ -101,7 +105,7 @@ node --check web/dist/app.mjs
 
 构建同步生成浏览器数据与 GitHub 可读课程。数值测试验证手算例子、不变性与边界；课程检查验证章节、引用、前置关系和生成一致性。这些自动检查不等于教学质量的全部证明，还需人工审阅与浏览器交互验证。
 
-默认 Python 未安装 PyTorch 时，11 项 TinyLM 测试会明确跳过。完整验证应再用 `.venv-teaching/bin/python -m unittest discover -s tests -p 'test_*.py'` 执行全部 Python 测试。网页记录来自 `reports/tiny_lm/verified_seed7.json`，历史 pilot 单独保留。
+未安装 PyTorch 时，TinyLM 相关测试会明确跳过。应在目标训练环境运行对应测试，并另外完成 CUDA 设备预检与真实 GPU 运行；CPU 测试通过不能代替 GPU 验证。网页主报告来自 `reports/tiny_lm/gpu_seed7.json`；CPU `verified_seed7.json` 与 pilot 独立保留。每次新运行另存，并标明设备和精度。
 
 ## 文件结构
 

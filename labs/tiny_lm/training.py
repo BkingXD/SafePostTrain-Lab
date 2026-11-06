@@ -7,7 +7,7 @@ import torch
 from torch.nn import functional as F
 
 from .data import assess, brief, incorrect, verbose
-from .model import ScoreModel, collate, generate, parameter_counts, sft_loss, token_statistics
+from .model import ScoreModel, collate, generate, model_device, parameter_counts, sft_loss, token_statistics
 
 
 def optimizer_bytes(optimizer):
@@ -37,18 +37,34 @@ def optimize(loss, model, optimizer):
     optimizer.step()
 
 
+def start_measurement(model):
+    """Time completed GPU work and reset this device's process memory peaks."""
+    device = model_device(model)
+    if device.type == "cuda":
+        torch.cuda.synchronize(device)
+        torch.cuda.reset_peak_memory_stats(device)
+    return time.perf_counter()
+
+
 def finish(model, optimizer, start, steps, tokens, history):
+    device = model_device(model)
+    if device.type == "cuda":
+        torch.cuda.synchronize(device)
     elapsed = time.perf_counter() - start
     return {"parameters": parameter_counts(model), "steps": steps, "effective_training_tokens": tokens,
             "elapsed_seconds": elapsed, "tokens_per_second": tokens / max(elapsed, 1e-9),
-            "optimizer_tensor_bytes": optimizer_bytes(optimizer), "history": history}
+            "optimizer_tensor_bytes": optimizer_bytes(optimizer), "history": history,
+            "device": str(device),
+            "gpu_peak_allocated_bytes": torch.cuda.max_memory_allocated(device) if device.type == "cuda" else None,
+            "gpu_peak_reserved_bytes": torch.cuda.max_memory_reserved(device) if device.type == "cuda" else None,
+            "gpu_memory_scope": "PyTorch allocator peaks on the model's CUDA device during the timed loop; include allocations already live at stage start and reserved cache, but exclude CUDA context and non-PyTorch allocations." if device.type == "cuda" else None}
 
 
 def train_sft(model, records, steps, lr=.003):
     optimizer = torch.optim.AdamW([p for p in model.parameters() if p.requires_grad], lr=lr, weight_decay=0.)
-    ids, labels = collate(records)
+    ids, labels = collate(records, device=model_device(model))
     count = labels[:, 1:].ne(-100).sum().item()
-    start, history = time.perf_counter(), []
+    start, history = start_measurement(model), []
     for step in range(steps):
         model.train()
         loss = sft_loss(model, ids, labels)
@@ -72,13 +88,16 @@ def preference_loss(chosen, rejected, reference_chosen=None, reference_rejected=
 
 
 def train_preference(model, reference, records, steps, method):
-    chosen_ids, chosen_labels = collate(records, [brief(r) for r in records])
-    rejected_ids, rejected_labels = collate(records, [verbose(r) for r in records])
+    device = model_device(model)
+    if model_device(reference) != device:
+        raise ValueError("policy and reference must use the same device")
+    chosen_ids, chosen_labels = collate(records, [brief(r) for r in records], device=device)
+    rejected_ids, rejected_labels = collate(records, [verbose(r) for r in records], device=device)
     with torch.no_grad():
         ref_w = token_statistics(reference, chosen_ids, chosen_labels)
         ref_l = token_statistics(reference, rejected_ids, rejected_labels)
     optimizer = torch.optim.AdamW(model.parameters(), lr=.0007, weight_decay=0.)
-    start, history = time.perf_counter(), []
+    start, history = start_measurement(model), []
     for step in range(steps):
         chosen = token_statistics(model, chosen_ids, chosen_labels)
         rejected = token_statistics(model, rejected_ids, rejected_labels)
@@ -92,8 +111,9 @@ def train_preference(model, reference, records, steps, method):
 
 
 def reward_accuracy(model, rows):
-    ids_w, _ = collate(rows, [brief(r) for r in rows])
-    ids_l, _ = collate(rows, [incorrect(r) for r in rows])
+    device = model_device(model)
+    ids_w, _ = collate(rows, [brief(r) for r in rows], device=device)
+    ids_l, _ = collate(rows, [incorrect(r) for r in rows], device=device)
     with torch.no_grad():
         probs = (model(ids_w)-model(ids_l)).sigmoid()
     return {"pair_accuracy": (probs > .5).float().mean().item(),
@@ -104,11 +124,12 @@ def reward_accuracy(model, rows):
 
 def train_reward(backbone, train, heldout, steps):
     model = ScoreModel(copy.deepcopy(backbone))
-    ids_w, labels_w = collate(train, [brief(r) for r in train])
-    ids_l, labels_l = collate(train, [incorrect(r) for r in train])
+    device = model_device(model)
+    ids_w, labels_w = collate(train, [brief(r) for r in train], device=device)
+    ids_l, labels_l = collate(train, [incorrect(r) for r in train], device=device)
     optimizer = torch.optim.AdamW([p for p in model.parameters() if p.requires_grad], lr=.001, weight_decay=0.)
     before = reward_accuracy(model, heldout)
-    start, history = time.perf_counter(), []
+    start, history = start_measurement(model), []
     for step in range(steps):
         loss = -F.logsigmoid(model(ids_w) - model(ids_l)).mean()
         optimize(loss, model, optimizer)
@@ -138,18 +159,22 @@ def gae_tensor(rewards, values, mask, gamma=1., lam=.95):
 def train_online(model, reference, rows, steps, method, seed=107):
     if method not in {"ppo", "grpo"}:
         raise ValueError("expected ppo or grpo")
+    device = model_device(model)
+    if model_device(reference) != device:
+        raise ValueError("policy and reference must use the same device")
     optimizer = torch.optim.AdamW(model.parameters(), lr=.0004, weight_decay=0.)
     critic = ScoreModel(copy.deepcopy(model)) if method == "ppo" else None
     critic_optimizer = torch.optim.AdamW([p for p in critic.parameters() if p.requires_grad], lr=.001) if critic else None
-    start, history, training_tokens, generated_tokens = time.perf_counter(), [], 0, 0
+    start, history, training_tokens, generated_tokens = start_measurement(model), [], 0, 0
     group_size = 4
-    generator = torch.Generator().manual_seed(seed)
+    generator = torch.Generator(device=device).manual_seed(seed)
     for step in range(steps):
         prompts = [rows[(step*4+i) % len(rows)] for i in range(4)]
         batch = [r for r in prompts for _ in range(group_size)]
         answers = [generate(model, r["prompt"], sample=True, generator=generator) for r in batch]
-        score = torch.tensor([assess(r, answer)["reward"] for r, answer in zip(batch, answers)])
-        ids, labels = collate(batch, answers)
+        score = torch.tensor([assess(r, answer)["reward"] for r, answer in zip(batch, answers)],
+                             device=device, dtype=next(model.parameters()).dtype)
+        ids, labels = collate(batch, answers, device=device)
         with torch.no_grad():
             old = token_statistics(model, ids, labels)
             ref = token_statistics(reference, ids, labels)
@@ -205,7 +230,7 @@ def train_online(model, reference, rows, steps, method, seed=107):
 
 def sample_and_filter(teacher, rows, seed=207, teacher_name="verified-teacher"):
     candidates, selected = [], []
-    generator = torch.Generator().manual_seed(seed)
+    generator = torch.Generator(device=model_device(teacher)).manual_seed(seed)
     for row in rows:
         accepted = []
         for attempt in range(4):

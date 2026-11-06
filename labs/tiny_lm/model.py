@@ -68,13 +68,19 @@ class TinyLM(nn.Module):
         return self.lm_head(self.features(tokens))
 
 
+def model_device(model):
+    """The model's parameters, rather than a global default, own placement."""
+    return next(model.parameters()).device
+
+
 class LoRALinear(nn.Module):
     def __init__(self, base, rank=4, alpha=4):
         super().__init__()
         self.base = base
         self.base.requires_grad_(False)
-        self.a = nn.Parameter(torch.randn(rank, base.in_features) * .02)
-        self.b = nn.Parameter(torch.zeros(base.out_features, rank))
+        factory = {"device": base.weight.device, "dtype": base.weight.dtype}
+        self.a = nn.Parameter(torch.randn(rank, base.in_features, **factory) * .02)
+        self.b = nn.Parameter(torch.zeros(base.out_features, rank, **factory))
         self.scale = alpha / rank
 
     def forward(self, x):
@@ -100,21 +106,22 @@ class ScoreModel(nn.Module):
         super().__init__()
         self.backbone = backbone
         self.backbone.lm_head.requires_grad_(False)  # Unused by the scalar head.
-        self.head = nn.Linear(backbone.config.width, 1)
+        parameter = next(backbone.parameters())
+        self.head = nn.Linear(backbone.config.width, 1, device=parameter.device, dtype=parameter.dtype)
 
     def token_values(self, tokens):
         return self.head(self.backbone.features(tokens)).squeeze(-1)
 
     def forward(self, tokens):
         end = tokens.ne(PAD).sum(dim=1) - 1
-        return self.token_values(tokens)[torch.arange(len(tokens)), end]
+        return self.token_values(tokens)[torch.arange(len(tokens), device=tokens.device), end]
 
 
 def encode(tokens):
     return [TOKEN_TO_ID[t] for t in tokens]
 
 
-def collate(records, responses=None):
+def collate(records, responses=None, device=None):
     """Shift ONCE: logits at t predict token t+1; only assistant labels count."""
     if not records:
         raise ValueError("empty batch")
@@ -127,8 +134,8 @@ def collate(records, responses=None):
         rows.append(prefix + response)
         labels.append([-100] * len(prefix) + response)
     length = max(map(len, rows))
-    ids = torch.tensor([r + [PAD] * (length - len(r)) for r in rows])
-    targets = torch.tensor([r + [-100] * (length - len(r)) for r in labels])
+    ids = torch.tensor([r + [PAD] * (length - len(r)) for r in rows], dtype=torch.long, device=device)
+    targets = torch.tensor([r + [-100] * (length - len(r)) for r in labels], dtype=torch.long, device=device)
     return ids, targets
 
 
@@ -157,11 +164,14 @@ def generate(model, prompt, sample=False, max_new_tokens=4, temperature=1., gene
         raise ValueError("temperature must be positive and generation budget nonzero")
     if len(prompt) + max_new_tokens - 1 > model.config.max_length:
         raise ValueError("generation budget exceeds the context window")
+    device = model_device(model)
+    if sample and generator is not None and torch.device(generator.device) != device:
+        raise ValueError("sampling generator and model must use the same device")
     model.eval()
     ids = encode(prompt)
     generated = []
     for _ in range(max_new_tokens):
-        logits = model(torch.tensor([ids]))[0, -1] / temperature
+        logits = model(torch.tensor([ids], dtype=torch.long, device=device))[0, -1] / temperature
         token = torch.multinomial(logits.softmax(-1), 1, generator=generator).item() if sample else logits.argmax().item()
         generated.append(TOKENS[token])
         ids.append(token)
@@ -178,15 +188,29 @@ def parameter_counts(model):
 def checkpoint(path, model, optimizer=None, step=0, extra=None):
     state = {"config": asdict(model.config), "model": model.state_dict(), "step": step,
              "torch_rng": torch.get_rng_state(), "extra": extra or {}}
+    device = model_device(model)
+    if device.type == "cuda":
+        state["torch_cuda_rng"] = {"device": str(device), "state": torch.cuda.get_rng_state(device)}
     if optimizer is not None:
         state["optimizer"] = optimizer.state_dict()
     torch.save(state, path)
 
 
-def load_checkpoint(path):
+def load_checkpoint(path, device="cpu", restore_rng=False):
+    """Load on the requested device; optionally restore RNG after construction.
+
+    Optimizer restoration remains explicit at the call site. A saved CUDA RNG
+    is restored to the requested CUDA device, allowing device-index remapping.
+    Explicit rollout Generators and PPO critic state are not in this checkpoint.
+    """
     state = torch.load(path, map_location="cpu", weights_only=True)
     model = TinyLM(ModelConfig(**state["config"]))
     if state["extra"].get("lora_rank"):
         apply_lora(model, state["extra"]["lora_rank"])
     model.load_state_dict(state["model"])
+    model.to(device)
+    if restore_rng:
+        torch.set_rng_state(state["torch_rng"])
+        if model_device(model).type == "cuda" and "torch_cuda_rng" in state:
+            torch.cuda.set_rng_state(state["torch_cuda_rng"]["state"], model_device(model))
     return model, state

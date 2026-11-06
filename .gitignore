@@ -1,0 +1,15 @@
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store
+.env
+.env.*
+!.env.example
+artifacts/
+checkpoints/
+runs/
+*.safetensors
+*.pt
+*.tar.gz
+web/.git/
+.site-deploy/

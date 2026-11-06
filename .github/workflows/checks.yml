@@ -1,0 +1,27 @@
+name: Learning checks
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build course data and readable chapters
+        run: node scripts/build.mjs
+      - name: Check numerical examples and course structure
+        run: node --test tests/*.test.mjs
+      - name: Check CPU teaching labs
+        run: python3 -m unittest discover -s tests -p 'test_*.py'
+      - name: Check browser JavaScript syntax
+        run: node --check web/dist/app.mjs
+      - name: Ensure generated materials are current
+        run: git diff --exit-code -- docs/curriculum web/dist/content web/dist/downloads

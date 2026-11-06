@@ -13,3 +13,4 @@ runs/
 *.tar.gz
 web/.git/
 .site-deploy/
+.venv*/

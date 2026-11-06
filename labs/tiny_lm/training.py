@@ -59,13 +59,16 @@ def train_sft(model, records, steps, lr=.003):
 
 
 def preference_loss(chosen, rejected, reference_chosen=None, reference_rejected=None, method="dpo"):
-    if method == "dpo":
+    if method in {"dpo", "dpo_anchor"}:
         margin = (chosen["sums"] - rejected["sums"]) - (reference_chosen["sums"] - reference_rejected["sums"])
-        return -F.logsigmoid(.2 * margin).mean()
+        loss = -F.logsigmoid(.2 * margin).mean()
+        if method == "dpo_anchor":
+            loss = loss + .2 * (-chosen["logps"].sum()/chosen["mask"].sum())
+        return loss
     if method == "simpo":
         margin = chosen["sums"] / chosen["lengths"] - rejected["sums"] / rejected["lengths"]
         return -F.logsigmoid(2. * margin - .5).mean()
-    raise ValueError("expected dpo or simpo")
+    raise ValueError("expected dpo, dpo_anchor or simpo")
 
 
 def train_preference(model, reference, records, steps, method):
@@ -132,7 +135,7 @@ def gae_tensor(rewards, values, mask, gamma=1., lam=.95):
     return advantages, advantages + values
 
 
-def train_online(model, reference, rows, steps, method):
+def train_online(model, reference, rows, steps, method, seed=107):
     if method not in {"ppo", "grpo"}:
         raise ValueError("expected ppo or grpo")
     optimizer = torch.optim.AdamW(model.parameters(), lr=.0004, weight_decay=0.)
@@ -140,10 +143,11 @@ def train_online(model, reference, rows, steps, method):
     critic_optimizer = torch.optim.AdamW([p for p in critic.parameters() if p.requires_grad], lr=.001) if critic else None
     start, history, training_tokens, generated_tokens = time.perf_counter(), [], 0, 0
     group_size = 4
+    generator = torch.Generator().manual_seed(seed)
     for step in range(steps):
         prompts = [rows[(step*4+i) % len(rows)] for i in range(4)]
         batch = [r for r in prompts for _ in range(group_size)]
-        answers = [generate(model, r["prompt"], sample=True) for r in batch]
+        answers = [generate(model, r["prompt"], sample=True, generator=generator) for r in batch]
         score = torch.tensor([assess(r, answer)["reward"] for r, answer in zip(batch, answers)])
         ids, labels = collate(batch, answers)
         with torch.no_grad():
@@ -188,24 +192,30 @@ def train_online(model, reference, rows, steps, method):
             history.append(entry)
     result = finish(model, optimizer, start, steps, training_tokens, history)
     result.update({"generated_tokens": generated_tokens, "rollout_group_size": group_size,
+                   "sampling_seed": seed,
                    "reward": "exact task verifier: brief correct=1, verbose correct=0.5, wrong=0",
                    "reference": "fixed shared SFT checkpoint", "kl_coefficient": .02,
-                   "critic_parameters": parameter_counts(critic) if critic else None})
+                   "critic_parameters": parameter_counts(critic) if critic else None,
+                   "critic_optimizer_tensor_bytes": optimizer_bytes(critic_optimizer) if critic else 0,
+                   "cost_scope": "parameters, effective_training_tokens and optimizer_tensor_bytes describe the actor; wall time includes sampling, actor and critic updates",
+                   "total_trainable_parameters": parameter_counts(model)["trainable"] + (parameter_counts(critic)["trainable"] if critic else 0),
+                   "total_optimizer_tensor_bytes": optimizer_bytes(optimizer) + (optimizer_bytes(critic_optimizer) if critic else 0)})
     return result, optimizer
 
 
-def sample_and_filter(teacher, rows):
+def sample_and_filter(teacher, rows, seed=207, teacher_name="verified-teacher"):
     candidates, selected = [], []
+    generator = torch.Generator().manual_seed(seed)
     for row in rows:
         accepted = []
         for attempt in range(4):
-            response = generate(teacher, row["prompt"], sample=True, temperature=1.5)
+            response = generate(teacher, row["prompt"], sample=True, temperature=1.5, generator=generator)
             valid = assess(row, response)["correct"]
             candidates.append({"prompt_id": row["id"], "attempt": attempt, "response": response, "accepted": valid})
             if valid:
                 accepted.append(response)
         if accepted:
-            selected.append({**row, "response": accepted[0], "source": "generated-by-dpo-teacher-and-verified"})
+            selected.append({**row, "response": accepted[0], "source": f"generated-by-{teacher_name}-and-verified"})
     return selected, {"candidates": candidates, "generated": len(candidates),
                       "accepted": sum(c["accepted"] for c in candidates), "selected": len(selected),
                       "selection_rule": "first correct candidate per training prompt; no gold-response fallback",

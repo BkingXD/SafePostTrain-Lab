@@ -1,0 +1,1216 @@
+{
+  "train": [
+    {
+      "id": "repeat-A-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "repeat",
+      "intent_group": "A",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "repeat",
+        "A",
+        "<assistant>"
+      ],
+      "response": [
+        "A",
+        "<eos>"
+      ],
+      "symbol": "A"
+    },
+    {
+      "id": "repeat-A-verbose",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "repeat",
+      "intent_group": "A",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "repeat",
+        "A",
+        "<assistant>"
+      ],
+      "response": [
+        "answer",
+        "A",
+        "<eos>"
+      ],
+      "symbol": "A"
+    },
+    {
+      "id": "repeat-B-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "repeat",
+      "intent_group": "B",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "repeat",
+        "B",
+        "<assistant>"
+      ],
+      "response": [
+        "B",
+        "<eos>"
+      ],
+      "symbol": "B"
+    },
+    {
+      "id": "repeat-B-verbose",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "repeat",
+      "intent_group": "B",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "repeat",
+        "B",
+        "<assistant>"
+      ],
+      "response": [
+        "answer",
+        "B",
+        "<eos>"
+      ],
+      "symbol": "B"
+    },
+    {
+      "id": "repeat-C-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "repeat",
+      "intent_group": "C",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "repeat",
+        "C",
+        "<assistant>"
+      ],
+      "response": [
+        "C",
+        "<eos>"
+      ],
+      "symbol": "C"
+    },
+    {
+      "id": "repeat-C-verbose",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "repeat",
+      "intent_group": "C",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "repeat",
+        "C",
+        "<assistant>"
+      ],
+      "response": [
+        "answer",
+        "C",
+        "<eos>"
+      ],
+      "symbol": "C"
+    },
+    {
+      "id": "repeat-D-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "repeat",
+      "intent_group": "D",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "repeat",
+        "D",
+        "<assistant>"
+      ],
+      "response": [
+        "D",
+        "<eos>"
+      ],
+      "symbol": "D"
+    },
+    {
+      "id": "repeat-D-verbose",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "repeat",
+      "intent_group": "D",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "repeat",
+        "D",
+        "<assistant>"
+      ],
+      "response": [
+        "answer",
+        "D",
+        "<eos>"
+      ],
+      "symbol": "D"
+    },
+    {
+      "id": "repeat-E-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "repeat",
+      "intent_group": "E",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "repeat",
+        "E",
+        "<assistant>"
+      ],
+      "response": [
+        "E",
+        "<eos>"
+      ],
+      "symbol": "E"
+    },
+    {
+      "id": "repeat-E-verbose",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "repeat",
+      "intent_group": "E",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "repeat",
+        "E",
+        "<assistant>"
+      ],
+      "response": [
+        "answer",
+        "E",
+        "<eos>"
+      ],
+      "symbol": "E"
+    },
+    {
+      "id": "repeat-F-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "repeat",
+      "intent_group": "F",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "repeat",
+        "F",
+        "<assistant>"
+      ],
+      "response": [
+        "F",
+        "<eos>"
+      ],
+      "symbol": "F"
+    },
+    {
+      "id": "repeat-F-verbose",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "repeat",
+      "intent_group": "F",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "repeat",
+        "F",
+        "<assistant>"
+      ],
+      "response": [
+        "answer",
+        "F",
+        "<eos>"
+      ],
+      "symbol": "F"
+    },
+    {
+      "id": "repeat-G-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "repeat",
+      "intent_group": "G",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "repeat",
+        "G",
+        "<assistant>"
+      ],
+      "response": [
+        "G",
+        "<eos>"
+      ],
+      "symbol": "G"
+    },
+    {
+      "id": "repeat-G-verbose",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "repeat",
+      "intent_group": "G",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "repeat",
+        "G",
+        "<assistant>"
+      ],
+      "response": [
+        "answer",
+        "G",
+        "<eos>"
+      ],
+      "symbol": "G"
+    },
+    {
+      "id": "repeat-H-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "repeat",
+      "intent_group": "H",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "repeat",
+        "H",
+        "<assistant>"
+      ],
+      "response": [
+        "H",
+        "<eos>"
+      ],
+      "symbol": "H"
+    },
+    {
+      "id": "repeat-H-verbose",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "repeat",
+      "intent_group": "H",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "repeat",
+        "H",
+        "<assistant>"
+      ],
+      "response": [
+        "answer",
+        "H",
+        "<eos>"
+      ],
+      "symbol": "H"
+    },
+    {
+      "id": "copy-A-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "copy",
+      "intent_group": "A",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "copy",
+        "A",
+        "<assistant>"
+      ],
+      "response": [
+        "A",
+        "<eos>"
+      ],
+      "symbol": "A"
+    },
+    {
+      "id": "copy-A-verbose",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "copy",
+      "intent_group": "A",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "copy",
+        "A",
+        "<assistant>"
+      ],
+      "response": [
+        "answer",
+        "A",
+        "<eos>"
+      ],
+      "symbol": "A"
+    },
+    {
+      "id": "copy-B-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "copy",
+      "intent_group": "B",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "copy",
+        "B",
+        "<assistant>"
+      ],
+      "response": [
+        "B",
+        "<eos>"
+      ],
+      "symbol": "B"
+    },
+    {
+      "id": "copy-B-verbose",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "copy",
+      "intent_group": "B",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "copy",
+        "B",
+        "<assistant>"
+      ],
+      "response": [
+        "answer",
+        "B",
+        "<eos>"
+      ],
+      "symbol": "B"
+    },
+    {
+      "id": "copy-C-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "copy",
+      "intent_group": "C",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "copy",
+        "C",
+        "<assistant>"
+      ],
+      "response": [
+        "C",
+        "<eos>"
+      ],
+      "symbol": "C"
+    },
+    {
+      "id": "copy-C-verbose",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "copy",
+      "intent_group": "C",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "copy",
+        "C",
+        "<assistant>"
+      ],
+      "response": [
+        "answer",
+        "C",
+        "<eos>"
+      ],
+      "symbol": "C"
+    },
+    {
+      "id": "copy-D-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "copy",
+      "intent_group": "D",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "copy",
+        "D",
+        "<assistant>"
+      ],
+      "response": [
+        "D",
+        "<eos>"
+      ],
+      "symbol": "D"
+    },
+    {
+      "id": "copy-D-verbose",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "copy",
+      "intent_group": "D",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "copy",
+        "D",
+        "<assistant>"
+      ],
+      "response": [
+        "answer",
+        "D",
+        "<eos>"
+      ],
+      "symbol": "D"
+    },
+    {
+      "id": "copy-E-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "copy",
+      "intent_group": "E",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "copy",
+        "E",
+        "<assistant>"
+      ],
+      "response": [
+        "E",
+        "<eos>"
+      ],
+      "symbol": "E"
+    },
+    {
+      "id": "copy-E-verbose",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "copy",
+      "intent_group": "E",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "copy",
+        "E",
+        "<assistant>"
+      ],
+      "response": [
+        "answer",
+        "E",
+        "<eos>"
+      ],
+      "symbol": "E"
+    },
+    {
+      "id": "copy-F-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "copy",
+      "intent_group": "F",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "copy",
+        "F",
+        "<assistant>"
+      ],
+      "response": [
+        "F",
+        "<eos>"
+      ],
+      "symbol": "F"
+    },
+    {
+      "id": "copy-F-verbose",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "copy",
+      "intent_group": "F",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "copy",
+        "F",
+        "<assistant>"
+      ],
+      "response": [
+        "answer",
+        "F",
+        "<eos>"
+      ],
+      "symbol": "F"
+    },
+    {
+      "id": "copy-G-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "copy",
+      "intent_group": "G",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "copy",
+        "G",
+        "<assistant>"
+      ],
+      "response": [
+        "G",
+        "<eos>"
+      ],
+      "symbol": "G"
+    },
+    {
+      "id": "copy-G-verbose",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "copy",
+      "intent_group": "G",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "copy",
+        "G",
+        "<assistant>"
+      ],
+      "response": [
+        "answer",
+        "G",
+        "<eos>"
+      ],
+      "symbol": "G"
+    },
+    {
+      "id": "copy-H-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "copy",
+      "intent_group": "H",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "copy",
+        "H",
+        "<assistant>"
+      ],
+      "response": [
+        "H",
+        "<eos>"
+      ],
+      "symbol": "H"
+    },
+    {
+      "id": "copy-H-verbose",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "copy",
+      "intent_group": "H",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "copy",
+        "H",
+        "<assistant>"
+      ],
+      "response": [
+        "answer",
+        "H",
+        "<eos>"
+      ],
+      "symbol": "H"
+    },
+    {
+      "id": "please-copy-A-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "please copy",
+      "intent_group": "A",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "please",
+        "copy",
+        "A",
+        "<assistant>"
+      ],
+      "response": [
+        "A",
+        "<eos>"
+      ],
+      "symbol": "A"
+    },
+    {
+      "id": "please-copy-A-verbose",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "please copy",
+      "intent_group": "A",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "please",
+        "copy",
+        "A",
+        "<assistant>"
+      ],
+      "response": [
+        "answer",
+        "A",
+        "<eos>"
+      ],
+      "symbol": "A"
+    },
+    {
+      "id": "please-copy-B-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "please copy",
+      "intent_group": "B",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "please",
+        "copy",
+        "B",
+        "<assistant>"
+      ],
+      "response": [
+        "B",
+        "<eos>"
+      ],
+      "symbol": "B"
+    },
+    {
+      "id": "please-copy-B-verbose",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "please copy",
+      "intent_group": "B",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "please",
+        "copy",
+        "B",
+        "<assistant>"
+      ],
+      "response": [
+        "answer",
+        "B",
+        "<eos>"
+      ],
+      "symbol": "B"
+    },
+    {
+      "id": "please-copy-C-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "please copy",
+      "intent_group": "C",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "please",
+        "copy",
+        "C",
+        "<assistant>"
+      ],
+      "response": [
+        "C",
+        "<eos>"
+      ],
+      "symbol": "C"
+    },
+    {
+      "id": "please-copy-C-verbose",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "please copy",
+      "intent_group": "C",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "please",
+        "copy",
+        "C",
+        "<assistant>"
+      ],
+      "response": [
+        "answer",
+        "C",
+        "<eos>"
+      ],
+      "symbol": "C"
+    },
+    {
+      "id": "please-copy-D-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "please copy",
+      "intent_group": "D",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "please",
+        "copy",
+        "D",
+        "<assistant>"
+      ],
+      "response": [
+        "D",
+        "<eos>"
+      ],
+      "symbol": "D"
+    },
+    {
+      "id": "please-copy-D-verbose",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "please copy",
+      "intent_group": "D",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "please",
+        "copy",
+        "D",
+        "<assistant>"
+      ],
+      "response": [
+        "answer",
+        "D",
+        "<eos>"
+      ],
+      "symbol": "D"
+    },
+    {
+      "id": "please-copy-E-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "please copy",
+      "intent_group": "E",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "please",
+        "copy",
+        "E",
+        "<assistant>"
+      ],
+      "response": [
+        "E",
+        "<eos>"
+      ],
+      "symbol": "E"
+    },
+    {
+      "id": "please-copy-E-verbose",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "please copy",
+      "intent_group": "E",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "please",
+        "copy",
+        "E",
+        "<assistant>"
+      ],
+      "response": [
+        "answer",
+        "E",
+        "<eos>"
+      ],
+      "symbol": "E"
+    },
+    {
+      "id": "please-copy-F-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "please copy",
+      "intent_group": "F",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "please",
+        "copy",
+        "F",
+        "<assistant>"
+      ],
+      "response": [
+        "F",
+        "<eos>"
+      ],
+      "symbol": "F"
+    },
+    {
+      "id": "please-copy-F-verbose",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "please copy",
+      "intent_group": "F",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "please",
+        "copy",
+        "F",
+        "<assistant>"
+      ],
+      "response": [
+        "answer",
+        "F",
+        "<eos>"
+      ],
+      "symbol": "F"
+    },
+    {
+      "id": "please-copy-G-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "please copy",
+      "intent_group": "G",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "please",
+        "copy",
+        "G",
+        "<assistant>"
+      ],
+      "response": [
+        "G",
+        "<eos>"
+      ],
+      "symbol": "G"
+    },
+    {
+      "id": "please-copy-G-verbose",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "please copy",
+      "intent_group": "G",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "please",
+        "copy",
+        "G",
+        "<assistant>"
+      ],
+      "response": [
+        "answer",
+        "G",
+        "<eos>"
+      ],
+      "symbol": "G"
+    },
+    {
+      "id": "please-copy-H-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "please copy",
+      "intent_group": "H",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "please",
+        "copy",
+        "H",
+        "<assistant>"
+      ],
+      "response": [
+        "H",
+        "<eos>"
+      ],
+      "symbol": "H"
+    },
+    {
+      "id": "please-copy-H-verbose",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "please copy",
+      "intent_group": "H",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "please",
+        "copy",
+        "H",
+        "<assistant>"
+      ],
+      "response": [
+        "answer",
+        "H",
+        "<eos>"
+      ],
+      "symbol": "H"
+    }
+  ],
+  "development": [
+    {
+      "id": "please-repeat-A-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "please repeat",
+      "intent_group": "A",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "please",
+        "repeat",
+        "A",
+        "<assistant>"
+      ],
+      "response": [
+        "A",
+        "<eos>"
+      ],
+      "symbol": "A"
+    },
+    {
+      "id": "please-repeat-B-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "please repeat",
+      "intent_group": "B",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "please",
+        "repeat",
+        "B",
+        "<assistant>"
+      ],
+      "response": [
+        "B",
+        "<eos>"
+      ],
+      "symbol": "B"
+    },
+    {
+      "id": "please-repeat-C-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "please repeat",
+      "intent_group": "C",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "please",
+        "repeat",
+        "C",
+        "<assistant>"
+      ],
+      "response": [
+        "C",
+        "<eos>"
+      ],
+      "symbol": "C"
+    },
+    {
+      "id": "please-repeat-D-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "please repeat",
+      "intent_group": "D",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "please",
+        "repeat",
+        "D",
+        "<assistant>"
+      ],
+      "response": [
+        "D",
+        "<eos>"
+      ],
+      "symbol": "D"
+    },
+    {
+      "id": "please-repeat-E-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "please repeat",
+      "intent_group": "E",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "please",
+        "repeat",
+        "E",
+        "<assistant>"
+      ],
+      "response": [
+        "E",
+        "<eos>"
+      ],
+      "symbol": "E"
+    },
+    {
+      "id": "please-repeat-F-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "please repeat",
+      "intent_group": "F",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "please",
+        "repeat",
+        "F",
+        "<assistant>"
+      ],
+      "response": [
+        "F",
+        "<eos>"
+      ],
+      "symbol": "F"
+    },
+    {
+      "id": "please-repeat-G-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "please repeat",
+      "intent_group": "G",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "please",
+        "repeat",
+        "G",
+        "<assistant>"
+      ],
+      "response": [
+        "G",
+        "<eos>"
+      ],
+      "symbol": "G"
+    },
+    {
+      "id": "please-repeat-H-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "please repeat",
+      "intent_group": "H",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "please",
+        "repeat",
+        "H",
+        "<assistant>"
+      ],
+      "response": [
+        "H",
+        "<eos>"
+      ],
+      "symbol": "H"
+    }
+  ],
+  "final_probe": [
+    {
+      "id": "repeat-please-A-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "repeat please",
+      "intent_group": "A",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "repeat",
+        "please",
+        "A",
+        "<assistant>"
+      ],
+      "response": [
+        "A",
+        "<eos>"
+      ],
+      "symbol": "A"
+    },
+    {
+      "id": "repeat-please-B-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "repeat please",
+      "intent_group": "B",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "repeat",
+        "please",
+        "B",
+        "<assistant>"
+      ],
+      "response": [
+        "B",
+        "<eos>"
+      ],
+      "symbol": "B"
+    },
+    {
+      "id": "repeat-please-C-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "repeat please",
+      "intent_group": "C",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "repeat",
+        "please",
+        "C",
+        "<assistant>"
+      ],
+      "response": [
+        "C",
+        "<eos>"
+      ],
+      "symbol": "C"
+    },
+    {
+      "id": "repeat-please-D-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "repeat please",
+      "intent_group": "D",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "repeat",
+        "please",
+        "D",
+        "<assistant>"
+      ],
+      "response": [
+        "D",
+        "<eos>"
+      ],
+      "symbol": "D"
+    },
+    {
+      "id": "repeat-please-E-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "repeat please",
+      "intent_group": "E",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "repeat",
+        "please",
+        "E",
+        "<assistant>"
+      ],
+      "response": [
+        "E",
+        "<eos>"
+      ],
+      "symbol": "E"
+    },
+    {
+      "id": "repeat-please-F-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "repeat please",
+      "intent_group": "F",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "repeat",
+        "please",
+        "F",
+        "<assistant>"
+      ],
+      "response": [
+        "F",
+        "<eos>"
+      ],
+      "symbol": "F"
+    },
+    {
+      "id": "repeat-please-G-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "repeat please",
+      "intent_group": "G",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "repeat",
+        "please",
+        "G",
+        "<assistant>"
+      ],
+      "response": [
+        "G",
+        "<eos>"
+      ],
+      "symbol": "G"
+    },
+    {
+      "id": "repeat-please-H-brief",
+      "source": "authored-synthetic-copy-v1",
+      "template_family": "repeat please",
+      "intent_group": "H",
+      "prompt": [
+        "<bos>",
+        "<user>",
+        "repeat",
+        "please",
+        "H",
+        "<assistant>"
+      ],
+      "response": [
+        "H",
+        "<eos>"
+      ],
+      "symbol": "H"
+    }
+  ]
+}

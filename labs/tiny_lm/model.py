@@ -152,13 +152,17 @@ def sft_loss(model, ids, labels):
 
 
 @torch.no_grad()
-def generate(model, prompt, sample=False, max_new_tokens=4, temperature=1.):
+def generate(model, prompt, sample=False, max_new_tokens=4, temperature=1., generator=None):
+    if not math.isfinite(temperature) or temperature <= 0 or max_new_tokens < 1:
+        raise ValueError("temperature must be positive and generation budget nonzero")
+    if len(prompt) + max_new_tokens - 1 > model.config.max_length:
+        raise ValueError("generation budget exceeds the context window")
     model.eval()
     ids = encode(prompt)
     generated = []
     for _ in range(max_new_tokens):
         logits = model(torch.tensor([ids]))[0, -1] / temperature
-        token = torch.multinomial(logits.softmax(-1), 1).item() if sample else logits.argmax().item()
+        token = torch.multinomial(logits.softmax(-1), 1, generator=generator).item() if sample else logits.argmax().item()
         generated.append(TOKENS[token])
         ids.append(token)
         if token == EOS:

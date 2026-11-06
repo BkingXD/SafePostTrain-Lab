@@ -15,6 +15,13 @@ def build():
             info.external_attr = 0o100644 << 16
             archive.writestr(info, (ROOT / name).read_bytes())
     print(f"Teaching bundle: {OUT.name} ({len(FILES)} files)")
+    tiny_files = ["labs/__init__.py", "labs/evaluate_measured.py", "tests/test_tiny_lm.py", "reports/tiny_lm/verified_seed7.json"]
+    tiny_files += [str(p.relative_to(ROOT)) for p in sorted((ROOT/'labs/tiny_lm').iterdir()) if p.suffix in {'.py','.txt','.md'}]
+    with ZipFile(OUT.parent/'safeposttrain-tiny-lm.zip', 'w', compression=ZIP_STORED) as archive:
+        for name in tiny_files:
+            info=ZipInfo(name,date_time=(2026,1,1,0,0,0));info.external_attr=0o100644<<16
+            archive.writestr(info,(ROOT/name).read_bytes())
+    print(f"TinyLM source bundle: {len(tiny_files)} files")
 
 
 if __name__ == "__main__":

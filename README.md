@@ -4,11 +4,15 @@
 
 第一阶段提供中文课程和交互学习前端：**17 章、34 道理解检查、12 个交互实验、56 个术语**。课程覆盖基础、数据、SFT、LoRA/QLoRA、奖励建模、DPO、PPO、GAE、GRPO、反馈设计、蒸馏、安全、工程、评测与专项任务。每章都有学习目标、白话解释、数值或场景示例、误区、练习和一手资料。
 
-[打开私人学习站](https://safeposttrain-learning-lab.cappedcone1.chatgpt.site) · [第一阶段验收记录](reports/STAGE1_AUDIT.md)
+[打开私人学习站](https://safeposttrain-learning-lab.cappedcone1.chatgpt.site) · [当前交付核对](reports/STAGE1_FINAL_AUDIT.md)
 
-在线站点采用创建者私有访问；GitHub 仓库源码与站点托管分别管理。当前工作区尚未关联用户仓库，不能将站点源码推送成功误认为已同步到 GitHub。
+新增 [完整学习指南](docs/STUDY_GUIDE.md)、[17 模块覆盖表](docs/STAGE1_COVERAGE.md)及 [CPU 微型模型实战](labs/tiny_lm/README.md)。本地前端包含“学习指南”和“训练实战”入口，直接展示推导、案例和真实运行记录。
 
-当前范围：知识学习与教学实验。浏览器中的数字和 Python 的小模型是教学示例，**不是已完成的真实大模型安全训练或 benchmark 成绩**。后续安全主项目的研究设计见 [项目大纲](docs/PROJECT_OUTLINE.md)。
+新增学习指南与 TinyLM 实战已按确认同步到上述私人站点。访问需要使用拥有该站点的 ChatGPT 账号登录；本地项目也可独立启动。
+
+在线站点采用创建者私有访问。按 2026-11-07 的要求，本阶段交付本地项目与学习前端，暂不上传 GitHub；GitHub 同步不作为本阶段完成条件。
+
+当前范围：知识学习与教学实验。参数计算器使用教学输入；“训练实战”展示 19,281 参数因果 Transformer 的真实 CPU 运行。两者均**不是大模型安全训练或 benchmark 成绩**。后续安全主项目的研究设计见 [项目大纲](docs/PROJECT_OUTLINE.md)。
 
 ## 直接打开本地学习站
 
@@ -70,6 +74,20 @@ python3 labs/toy_training.py --method all --steps 80 --seed 7
 
 详细假设和观察任务见 [实验指南](labs/README.md)。
 
+## Token 级训练实战
+
+在同一个微型因果 Transformer 上运行 SFT、LoRA、神经奖励建模、DPO/SimPO、PPO/GRPO 和生成—验证—筛选—蒸馏。保留 chosen-only SFT、辅助 SFT 对照、失败结果、开发与最终探针、原始回答及成本。
+
+本工作区已安装隔离环境；不需要 GPU 或外部模型权重：
+
+```bash
+.venv-teaching/bin/python -m labs.tiny_lm.run --output artifacts/my-run --seed 7
+.venv-teaching/bin/python -m unittest discover -s tests -p 'test_tiny_lm.py' -v
+python3 labs/evaluate_measured.py
+```
+
+第三条命令不需要 PyTorch，可从保存的原始回答重新计算指标。其他机器的安装方法、配方假设、失败诊断和恢复边界见 [实战 README](labs/tiny_lm/README.md)。本例只有符号复制任务；真实安全策略训练属于下一阶段。
+
 ## 修改内容与验证
 
 构建需要 Node.js 20+ 与 Python 3.10+，无需 `npm install`。`web/course.mjs` 是课程内容的唯一维护入口；生成的 JSON 与 Markdown 不手工修改。构建同时生成可下载、保留目录结构的 Python 教学实验 ZIP。
@@ -82,6 +100,8 @@ node --check web/dist/app.mjs
 ```
 
 构建同步生成浏览器数据与 GitHub 可读课程。数值测试验证手算例子、不变性与边界；课程检查验证章节、引用、前置关系和生成一致性。这些自动检查不等于教学质量的全部证明，还需人工审阅与浏览器交互验证。
+
+默认 Python 未安装 PyTorch 时，11 项 TinyLM 测试会明确跳过。完整验证应再用 `.venv-teaching/bin/python -m unittest discover -s tests -p 'test_*.py'` 执行全部 Python 测试。网页记录来自 `reports/tiny_lm/verified_seed7.json`，历史 pilot 单独保留。
 
 ## 文件结构
 

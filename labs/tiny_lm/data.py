@@ -19,6 +19,11 @@ def datasets():
     return train, heldout
 
 
+def final_probe():
+    """A second held-out combination, reserved until recipe/code freeze."""
+    return [record(["repeat", "please"], symbol) for symbol in SYMBOLS]
+
+
 def preference_rows():
     train, _ = datasets()
     return [r for r in train if r["response"][0] != "answer"]
@@ -45,9 +50,11 @@ def assess(row, response):
 
 def data_card():
     train, heldout = datasets()
-    digest = hashlib.sha256(json.dumps({"train": train, "heldout": heldout}, sort_keys=True).encode()).hexdigest()
-    return {"source": "authored-synthetic-copy-v1", "train_rows": len(train), "heldout_rows": len(heldout),
-            "sha256": digest, "split": "held-out template combination; SAME symbols/intents appear in training",
+    digest = hashlib.sha256(json.dumps({"train": train, "development": heldout, "final_probe": final_probe()}, sort_keys=True).encode()).hexdigest()
+    return {"source": "authored-synthetic-copy-v1", "train_rows": len(train), "development_rows": len(heldout), "final_probe_rows":len(final_probe()),
+            "sha256": digest, "split": "development: please repeat; final probe: repeat please; SAME symbols/intents appear in training",
             "scope": "Tests template transfer on a tiny copy task, NOT unseen-intent generalization or LLM safety.",
+            "development_use": "The initial held-out template was inspected during recipe diagnosis and is explicitly development data.",
+            "license": "Authored synthetic data within this project; no third-party dataset. Repository distribution license is not selected.",
             "labels": "Correctness is exact matching; preference favors brief over verbose correct answers.",
             "external_data": False, "personal_data": False}

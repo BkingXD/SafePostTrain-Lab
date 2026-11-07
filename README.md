@@ -4,17 +4,26 @@
 
 第一阶段提供中文课程和交互学习前端：**17 章、34 道理解检查、12 个交互实验、56 个术语**。课程覆盖基础、数据、SFT、LoRA/QLoRA、奖励建模、DPO、PPO、GAE、GRPO、反馈设计、蒸馏、安全、工程、评测与专项任务。每章都有学习目标、白话解释、数值或场景示例、误区、练习和一手资料。
 
-[打开私人学习站](https://safeposttrain-learning-lab.cappedcone1.chatgpt.site) · [GPU 实测报告](reports/tiny_lm/gpu_seed7.json)
+[GitHub 仓库](https://github.com/BkingXD/SafePostTrain-Lab) · [打开私人学习站](https://safeposttrain-learning-lab.cappedcone1.chatgpt.site) · [GPU 实测报告](reports/tiny_lm/gpu_seed7.json)
 
 新增 [完整学习指南](docs/STUDY_GUIDE.md)、[17 模块覆盖表](docs/STAGE1_COVERAGE.md)及 [GPU 训练实战](labs/tiny_lm/README.md)。训练主流程使用 CUDA GPU、FP32；本地前端提供设备预检、训练命令和 GPU 实测。
 
 私人学习站已更新为 GPU 训练版，包含 RTX 5070 实测报告、训练源码与下载包。访问需要使用拥有该站点的 ChatGPT 账号登录。
 
-在线站点采用创建者私有访问。按 2026-11-07 的要求，本阶段交付本地项目与学习前端，暂不上传 GitHub；GitHub 同步不作为本阶段完成条件。
+项目源码、课程、测试与 GPU 实测报告统一维护于 [BkingXD/SafePostTrain-Lab](https://github.com/BkingXD/SafePostTrain-Lab)。在线学习站保持创建者私有访问，GitHub 仓库提供可自行运行的完整学习材料。
 
 当前范围：知识学习与教学实验。参数计算器使用教学输入；TinyLM 是 19,281 参数因果 Transformer，已完成 RTX 5070 上的 FP32 GPU 训练。[GPU 报告](reports/tiny_lm/gpu_seed7.json)包含 11 阶段的开发/最终探针及资源记录，22 组原始指标已复算；这些教学数据均**不是大模型安全训练或 benchmark 成绩**。后续安全主项目的研究设计见 [项目大纲](docs/PROJECT_OUTLINE.md)。
 
 本机使用 RTX 5070 12GB 与 `.venv-gpu` 环境，已完成 GPU 全量训练、报告源码摘要校验和原始指标复算。训练入口只接受 `cuda` 或 `cuda:N`，不可用时直接报错。
+
+## 获取项目
+
+```bash
+git clone git@github.com:BkingXD/SafePostTrain-Lab.git
+cd SafePostTrain-Lab
+```
+
+仓库包含源码与可复算的实验记录。训练环境、运行检查点及本地构建工作目录由 `.gitignore` 排除。
 
 ## 直接打开本地学习站
 

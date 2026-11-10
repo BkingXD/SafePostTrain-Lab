@@ -11,7 +11,7 @@ test('guide renderer preserves teaching structure and refuses executable HTML/UR
  assert.ok(inline('[课程](curriculum/04.md)').includes('#/lesson/04'));
 });
 
-test('all four guide views are generated from current source',async()=>{
+test('all seven guide views are generated from current source',async()=>{
  const generated=JSON.parse(await readFile(new URL('../web/dist/content/guides.json',import.meta.url),'utf8'));
  for(const [key,file] of Object.entries({study:'STUDY_GUIDE.md',workflow:'POST_TRAINING_WORKFLOW.md',research:'RESEARCH_FRONTIER.md',models:'REAL_MODEL_USAGE.md',coverage:'STAGE1_COVERAGE.md',checklist:'LEARNING_CHECKLIST.md',outline:'PROJECT_OUTLINE.md'})){
   const source=await readFile(new URL('../docs/'+file,import.meta.url),'utf8');assert.deepEqual(generated[key],renderGuide(source));

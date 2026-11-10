@@ -2,6 +2,12 @@
 // identify the algorithms and documentation, not claims of reproduced results.
 import {advancedSources, deepDive} from './deep-dive.mjs';
 import {appliedPractice} from './applied-practice.mjs';
+import {modulesById} from './module-spec.mjs';
+import {moduleFigures} from './module-figures.mjs';
+import {moduleLessons} from './module-lessons.mjs';
+import {selectedSections} from './module-selection.mjs';
+import {moduleCases} from './module-cases.mjs';
+import {implementationNotes} from './implementation-notes.mjs';
 const section = (title, ...paragraphs) => ({ title, paragraphs });
 const quiz = (question, options, correct, explanation) => ({ question, options, correct, explanation });
 export const stages = ['建立直觉', '学会微调', '理解对齐', '走向可靠', '连接实践'];
@@ -37,7 +43,7 @@ export const sources = {
 };
 export const course = [
 {
- id:'01', title:'从下一个词，到一个好助手', subtitle:'先把模型、概率和后训练放在同一张地图上。', stage:0, minutes:30, level:'基础', prerequisites:[], lab:'temperature', extraLabs:['gradient'],
+ id:'01', title:modulesById['01'].title, subtitle:'先把模型、概率和后训练放在同一张地图上。', stage:0, minutes:30, level:'基础', prerequisites:[], lab:'temperature', extraLabs:['gradient'],
  objectives:['解释 token、logit、softmax 和序列概率', '区分预训练、持续预训练与后训练', '说清楚训练和生成时分别发生了什么'],
  sections:[
  section('模型究竟在预测什么？', '想象一个反复练习补全句子的学生。语言模型看到前面的文字，为“接下来出现什么”分配概率。它处理的单位是 token：可能是一个词、一段汉字、标点或词的一部分。token 的边界由 tokenizer 决定，不能把一个 token 永远理解成一个字。', '每一步模型输出一组未归一化分数，叫 logits。softmax 把它们变成总和为 1 的概率。选出一个 token 后把它接回上下文，再预测下一个。这样的自回归生成不会一次写完整个答案。Transformer 用注意力汇总上下文；因果掩码保证预测当前位置时看不到未来答案。'),
@@ -50,7 +56,7 @@ export const course = [
  quizzes:[quiz('三个 token 的条件概率为 0.5、0.25、0.8，序列概率是多少？',['0.1','1.55','0.517'],0,'按链式法则相乘：0.5 × 0.25 × 0.8 = 0.1；不能相加或取平均。'),quiz('只修改生成温度，会发生什么？',['更新模型参数','改变输出采样分布','自动提高事实准确率'],1,'温度影响 logits 转成采样概率的方式，并不执行反向传播。')], references:['transformer','template']
 },
 {
- id:'02',title:'先定义“变好”，再选择算法',subtitle:'目标、代理指标、约束与分布迁移。',stage:0,minutes:25,level:'基础',prerequisites:['01'],lab:'safety',
+ id:'02',title:modulesById['02'].title,subtitle:'目标、代理指标、约束与分布迁移。',stage:0,minutes:25,level:'基础',prerequisites:['01'],lab:'safety',
  objectives:['把模糊目标变成可测量问题','区分真实目标与代理奖励','设计训练、开发、测试之间的边界'],
  sections:[
  section('一个分数无法描述所有目标','“模型更好”需要补全：对谁、在哪些任务、受哪些约束？客服助手要解决问题、遵守信息边界、保持事实可靠，训练成本也有限。若只优化拒绝率，最容易得到的策略可能是所有问题都拒绝。若只优化用户点赞，则可能奖励迎合和过度自信。','先写任务分布、允许的行为和失败代价。例如：在合法敏感问题上应正常解释，在明确有害请求上不提供实质性帮助；普通任务正确率的下降不能超过预先约定范围。这样的目标才能决定需要收集什么数据、如何比较方法。'),
@@ -63,7 +69,7 @@ export const course = [
  quizzes:[quiz('训练奖励持续上升，能直接说明什么？',['模型全面变好','当前优化目标的评分提高','未见攻击必然更难成功'],1,'奖励只是代理指标，真实能力和安全性需要独立评测。'),quiz('用最终测试集的失败案例反复调整训练数据后，这个测试集应视为？',['仍是独立测试集','开发数据的一部分','无标签训练集'],1,'模型选择已受该集合影响，需要另留未使用的测试集合来支持独立结论。')],references:['safe','tulu']
 },
 {
- id:'03',practice:true,title:'把数据做成可靠的训练材料',subtitle:'数据格式、标注、混配和防泄漏。',stage:0,minutes:35,level:'核心',prerequisites:['01','02'],lab:null,
+ id:'03',practice:true,title:modulesById['03'].title,subtitle:'数据格式、标注、混配和防泄漏。',stage:0,minutes:35,level:'核心',prerequisites:['01','02'],lab:null,
  objectives:['区分指令、偏好与轨迹数据','建立可追溯的清洗和切分流程','理解去重、污染检查与数据混配'],
  sections:[
  section('三种数据回答三个问题','SFT 数据描述“应该怎样回答”，常见格式为 messages，包含 role 与 content。偏好数据描述“同一问题下哪个回答更好”，常见字段是 prompt、chosen、rejected。轨迹数据描述“模型在环境中做了什么”，还需保存动作、观察、奖励、结束状态以及策略版本。','一条安全/不安全分类标签并不自动变成偏好对。要构建偏好对，必须给同一个上下文配上两个可比较回答，并明确偏好原因。若 chosen 既更安全又更长，模型可能学习到长度捷径，因此需要控制混杂因素。'),
@@ -75,7 +81,7 @@ export const course = [
  quizzes:[quiz('同一个原始问题有 20 个改写，应怎样分配？',['把全部改写随机拆开','按原始问题簇分组后切分','只按文本长度排序切分'],1,'分组切分避免同源近义改写同时出现在训练和测试。'),quiz('50% 的样本来自安全数据，是否代表 50% 的有效 token 来自安全数据？',['是，比例相同','不一定，还取决于长度与 mask','只有 DPO 才不同'],1,'样本长短、被 mask 的 token 和采样次数都会影响有效训练占比。')],references:['sft','dpotrl','tulu']
 },
 {
- id:'04',practice:true,title:'SFT：让模型学会好的示范',subtitle:'从对话模板到第一个可靠的 loss。',stage:1,minutes:40,level:'核心',prerequisites:['01','03'],lab:'sft',
+ id:'04',practice:true,title:modulesById['04'].title,subtitle:'从对话模板到第一个可靠的 loss。',stage:1,minutes:40,level:'核心',prerequisites:['01','03'],lab:'sft',
  objectives:['计算带 mask 的 token 交叉熵','理解 teacher forcing 和因果位移','诊断模板、packing、EOS 与截断问题'],
  sections:[
  section('SFT 不是把答案存进数据库','监督微调拿一对上下文 x 和理想回答 y，通过梯度更新，让模型在这个上下文下更倾向于生成 y。训练通常用 teacher forcing：预测下一 token 时，前文使用真实答案的前缀，而不是模型刚生成的错误前缀。推理时只能看到自己生成的前缀，因此训练 loss 低并不保证长回答不跑偏。','SFT 适合教授任务格式、风格和行为示范。数据质量比“形式上是问答对”更重要。如果理想回答包含错误事实或过度拒绝，模型也会学习这些模式。训练和验证都要检查真实生成，而不只看损失曲线。'),
@@ -87,7 +93,7 @@ export const course = [
  quizzes:[quiz('只有两个有效 token，正确概率分别为 0.5 和 0.25，平均 NLL 约为？',['0.375','1.040','2.079'],1,'−(ln 0.5 + ln 0.25)/2≈1.040；2.079 是总和，不是平均值。'),quiz('assistant-only loss 中，用户 token 通常怎样处理？',['既不可见也不计算 loss','仍作为上下文，但不计算它们的监督 loss','变成随机 token'],1,'loss mask 控制监督位置，attention mask 控制注意力可见性。')],references:['sft','template']
 },
 {
- id:'05',practice:true,title:'LoRA 与 QLoRA：少更新，也能学习',subtitle:'把参数、显存和表达能力分开理解。',stage:1,minutes:30,level:'核心',prerequisites:['04'],lab:'lora',
+ id:'05',practice:true,title:modulesById['05'].title,subtitle:'把参数、显存和表达能力分开理解。',stage:1,minutes:30,level:'核心',prerequisites:['04'],lab:'lora',
  objectives:['计算低秩适配器的参数量','区分可训练参数与总显存','解释量化、合并与部署一致性'],
  sections:[
  section('把一大块更新拆成两小块','全参数微调允许修改每个权重。LoRA 冻结原权重 W，用两个较小矩阵 B、A 表示更新：W′=W+(α/r)BA。若 W 的形状是 d_out×d_in，B 是 d_out×r，A 是 r×d_in。r 是秩，决定这条更新通道的容量。','可训练参数从 d_out×d_in 变为 r(d_out+d_in)。例如 4096×4096 的投影层有 16,777,216 个权重；r=8 的 LoRA 有 65,536 个参数，约为 0.39%。这是一个投影层的计算，不是整个模型的比例。目标模块选哪些层，会显著改变总参数量。'),
@@ -99,7 +105,7 @@ export const course = [
  quizzes:[quiz('一个 100×100 投影层，rank=4 的 LoRA 参数量为？',['400','800','10,000'],1,'A 和 B 各有 400 个参数，共 4×(100+100)=800，不计可选 bias。'),quiz('QLoRA 的四位主要指什么？',['冻结底模的存储表示','所有梯度与激活的精度','回答的 token 长度'],0,'QLoRA 使用低比特底模存储并训练适配器，不代表训练全过程均为四位。')],references:['lora','qlora']
 },
 {
- id:'06',practice:true,title:'奖励模型：学会比较，也要接受检查',subtitle:'从“哪个回答更好”到一个有偏差的评分器。',stage:2,minutes:35,level:'核心',prerequisites:['03','04'],lab:'reward',
+ id:'06',practice:true,title:modulesById['06'].title,subtitle:'从“哪个回答更好”到一个有偏差的评分器。',stage:2,minutes:35,level:'核心',prerequisites:['03','04'],lab:'reward',
  objectives:['理解 Bradley–Terry 偏好概率','区分结果奖励、过程奖励和安全代价','诊断奖励偏差与校准'],
  sections:[
  section('相对偏好怎样变成分数？','给定同一个问题和两个回答，标注者选择更好的一个。奖励模型 rφ(x,y) 为回答打一个实数分。Bradley–Terry 模型用 σ(r_w−r_l) 表示优选回答获胜的概率，其中 σ(z)=1/(1+e^(−z))。分差越大，模型越相信优选回答更好。','训练损失为 −log σ(r_w−r_l)。当分差为零时概率为 0.5、loss≈0.693；分差为 2 时概率约 0.881。两个分数同时加 100 不改变概率，因此奖励绝对值没有天然的跨模型可比含义。交互实验会同时显示概率与损失。'),
@@ -111,7 +117,7 @@ export const course = [
  quizzes:[quiz('奖励分数从 (2,0) 变成 (102,100)，偏好概率会怎样？',['升高','保持不变','降到 0.5'],1,'Bradley–Terry 概率只依赖分差，二者分差都为 2。'),quiz('策略奖励升高，但人工质量降低，应优先排查？',['奖励投机与分布漂移','训练一定不足','人工必然判断错误'],0,'代理奖励可能被策略利用，需要检查奖励对真实目标的偏离。')],references:['reward','safe']
 },
 {
- id:'07',practice:true,title:'DPO：用偏好直接更新策略',subtitle:'四个 log-prob、一条损失，以及它的适用边界。',stage:2,minutes:45,level:'核心',prerequisites:['04','06'],lab:'dpo',
+ id:'07',practice:true,title:modulesById['07'].title,subtitle:'四个 log-prob、一条损失，以及它的适用边界。',stage:2,minutes:45,level:'核心',prerequisites:['04','06'],lab:'dpo',
  objectives:['独立计算 DPO 损失','解释参考模型与 beta','区分 DPO 及代表性偏好优化变体'],
  sections:[
  section('DPO 用什么数据、更新什么？','一条样本包含问题 x、优选回答 y_w 和较差回答 y_l。策略模型 πθ 是要更新的模型，参考模型 πref 通常固定。分别计算两个回答在策略和参考模型下的序列 log-prob，只统计回答 token，并保持模板一致。','DPO 不需要先训练一个独立奖励模型，也不需要在标准离线训练步骤中实时生成回答。但这些优选/较差标签仍需要可靠来源。若数据来自很不同的策略分布，或者标签高度含糊，直接优化也可能过拟合或损伤能力。'),
@@ -124,7 +130,7 @@ export const course = [
  quizzes:[quiz('当策略模型与参考模型完全相同时，标准 DPO 单样本 loss 为？',['0','约 0.693','取决于回答长度，无法确定'],1,'两个模型的偏好差距相减为零，−log σ(0)=ln 2。'),quiz('chosen 与 rejected 的策略 log-prob 同时加 1，参考不变，DPO margin 会？',['增加 2','不变','减少 1'],1,'两个策略 log-prob 做差，共同偏移抵消。')],references:['dpo','dpotrl','ipo','kto','orpo','simpo']
 },
 {
- id:'08',practice:true,title:'PPO：让模型从反馈中改进',subtitle:'策略梯度、优势、裁剪与四个模型角色。',stage:2,minutes:50,level:'核心',prerequisites:['01','06'],lab:'ppo',extraLabs:['gae'],
+ id:'08',practice:true,title:modulesById['08'].title,subtitle:'策略梯度、优势、裁剪与四个模型角色。',stage:2,minutes:50,level:'核心',prerequisites:['01','06'],lab:'ppo',extraLabs:['gae'],
  objectives:['把文本生成映射到强化学习','区分旧策略、参考策略与价值模型','理解 PPO 裁剪的符号与作用范围'],
  sections:[
  section('把回答看作一段轨迹','状态 sₜ 是问题与已生成的前缀，动作 aₜ 是下一个 token，策略 πθ(aₜ|sₜ) 是分布。回答结束时可获得一个结果奖励，也可在多个步骤得到反馈。回报 Gₜ 是未来折扣奖励之和，价值 V(sₜ) 估计当前状态预期能拿到多少回报。','策略梯度提高高优势动作的概率、降低低优势动作的概率。优势 Aₜ 表示某个动作比当前基线好多少，不等于奖励本身。一个奖励为正的回答，如果比同类选择还差，也可能具有负优势。'),
@@ -137,7 +143,7 @@ export const course = [
  quizzes:[quiz('A=1，ratio=1.5，ε=0.2，clipped surrogate 是？',['1.5','1.2','0.2'],1,'min(1.5×1,1.2×1)=1.2。注意优化 loss 通常是它的负号。'),quiz('旧策略和参考策略有什么区别？',['永远是同一个模型','旧策略对应本批采样；参考策略通常用于长期漂移约束','参考策略负责预测价值'],1,'二者在起始时可以相同，后续更新频率和用途通常不同。')],references:['ppo','gae','reward']
 },
 {
- id:'09',practice:true,title:'GRPO：在一组回答中寻找改进方向',subtitle:'组相对优势、可验证奖励与在线采样。',stage:2,minutes:40,level:'核心',prerequisites:['08'],lab:'grpo',
+ id:'09',practice:true,title:modulesById['09'].title,subtitle:'组相对优势、可验证奖励与在线采样。',stage:2,minutes:40,level:'核心',prerequisites:['08'],lab:'grpo',
  objectives:['手算组内标准化优势','解释同奖励组与探索的关系','理解 GRPO 的成本和实现变体'],
  sections:[
  section('为什么让同一个问题回答多次？','给同一个问题采样 G 个回答，每个得到一个奖励 rᵢ。把它们相互比较，可以构造相对基线：Aᵢ=(rᵢ−mean(r))/(std(r)+ε)。原始 GRPO 用这类组相对信号替代单独的价值模型，并结合 PPO 风格的更新和参考策略约束。','直觉像一次同题练习：不是只看某个回答得了几分，而是看它比本组平均好还是差。原始设定会把序列级优势用于该回答的多个 token；这不代表每个 token 对成功的贡献都被精确识别。'),
@@ -149,7 +155,7 @@ export const course = [
  quizzes:[quiz('组奖励 [1,1,1,1] 的标准化优势为？',['全是 1','全是 0','正负交替'],1,'每个奖励都等于组均值，中心化后为零，ε 仅用于数值稳定。'),quiz('GRPO 省去独立 critic 后，哪项成本通常仍然很重要？',['多回答 rollout 与奖励计算','所有成本都消失','只剩 tokenizer 下载'],0,'组内比较依赖多条生成结果，长回答和复杂验证器可能使采样成本很高。')],references:['grpo','grpotrl','r1']
 },
 {
- id:'10',title:'反馈从哪里来：RLHF、RLAIF 与 RLVR',subtitle:'区分标注来源、优化算法和奖励可靠性。',stage:2,minutes:30,level:'核心',prerequisites:['06','07','09'],lab:'reward',
+ id:'10',title:modulesById['10'].title,subtitle:'区分标注来源、优化算法和奖励可靠性。',stage:2,minutes:30,level:'核心',prerequisites:['06','07','09'],lab:'reward',
  objectives:['用三个维度描述训练方案','设计可审计的模型反馈流程','识别奖励被投机利用的路径'],
  sections:[
  section('它们不是三种互斥优化器','RLHF 强调来自人的反馈，RLAIF 强调来自 AI 的反馈，RLVR 强调奖励可验证性。PPO、GRPO 和 DPO 则是优化方法。一次系统可以先用人工偏好训练奖励模型，再用 PPO 更新；也可以用 AI 构造偏好对，再用 DPO 更新。','画一个三列配置表：反馈来源是什么、信号是什么、用什么算法更新。比如“规则验证器 / 代码测试通过率 / GRPO”与“人类比较 / chosen-rejected / DPO”。这样比把所有缩写放进同一张排名表更准确。'),
@@ -161,7 +167,7 @@ export const course = [
  quizzes:[quiz('“AI 生成偏好对，再用 DPO 训练”中，AI 反馈与 DPO 分别描述？',['同一维度的算法名称','反馈来源与优化方法','模型尺寸与训练精度'],1,'来源、信号形式和优化器需要分别记录。'),quiz('奖励由正确率和格式分相加，最先需要检查？',['各项量纲、范围和可投机性','格式分越大越好','只要和为 1 就可靠'],0,'不同尺度会改变真实优化方向，规则还可能被模型利用。')],references:['cai','tulu','grpotrl']
 },
 {
- id:'11',practice:true,title:'推理、蒸馏与自改进',subtitle:'把更多生成计算，转化为可学习的数据。',stage:2,minutes:35,level:'核心',prerequisites:['04','09','10'],lab:'sampling',
+ id:'11',practice:true,title:modulesById['11'].title,subtitle:'把更多生成计算，转化为可学习的数据。',stage:2,minutes:35,level:'核心',prerequisites:['04','09','10'],lab:'sampling',
  objectives:['区分 best-of-N 与权重训练','理解软标签和序列蒸馏','设计带去重与质量控制的迭代流程'],
  sections:[
  section('多想几次与训练，是两件事','best-of-N 为一个问题生成 N 个候选，再用评分器选择一个；多数投票根据答案一致性选择。它们增加推理计算，但没有直接改变模型权重。若把筛选出的回答加入训练集再做 SFT，则成为拒绝采样微调的一种形式。','如果每次独立尝试的成功率是 p，至少一次成功概率为 1−(1−p)^N。这个公式依赖独立、同分布假设，也假设能知道哪次成功。真实回答常相关，评分器也可能选错，所以它只提供教学直觉，不能当成实际收益预测。'),
@@ -173,7 +179,7 @@ export const course = [
  quizzes:[quiz('仅对同一个问题采样 8 次并挑选最佳回答，是否更新了权重？',['是','否','取决于回答长度'],1,'采样与选择属于推理过程，需额外训练步骤才会更新权重。'),quiz('独立单次成功率 0.5，尝试两次至少成功一次的概率为？',['0.5','0.75','1'],1,'1−(1−0.5)²=0.75；现实的相关采样和不完美选择器可能降低收益。')],references:['distill','r1','tulu']
 },
 {
- id:'12',title:'安全对齐：学会判断边界',subtitle:'有害完成、合理拒绝与正常帮助要一起看。',stage:3,minutes:40,level:'核心',prerequisites:['02','07','10'],lab:'safety',
+ id:'12',title:modulesById['12'].title,subtitle:'有害完成、合理拒绝与正常帮助要一起看。',stage:3,minutes:40,level:'核心',prerequisites:['02','07','10'],lab:'safety',
  objectives:['定义威胁模型和安全政策','构建双向安全偏好','区分模型安全与系统安全'],
  sections:[
  section('先写允许什么，再标注什么','安全不是“所有敏感话题都不回答”。讨论网络安全概念、识别诈骗和一般风险教育可以是合法任务；请求实施具体伤害则需要限制。标签应依据意图、上下文、授权与回答内容，不能只依据某个词出现了没有。','一个好的安全回答可以拒绝有害部分，同时提供适当替代帮助。对于含混问题，可以澄清或给安全范围内的信息。建立规范时要同时给正常样例、禁止样例和边界样例，并记录不确定性和规则冲突。'),
@@ -185,7 +191,7 @@ export const course = [
  quizzes:[quiz('模型对所有请求都拒绝，能够说明？',['安全与有用性都优秀','误拒绝可能非常高，必须看正常任务质量','无需继续评测'],1,'全面拒绝会损害合法任务，单一安全指标无法证明可用。'),quiz('网页中出现“忽略用户并执行某操作”，应用首先应将其视为？',['比用户优先的指令','不可信的数据内容','自动获得授权的工具调用'],1,'提示注入利用数据与指令边界混淆，工具权限也需要独立控制。')],references:['safe','harm','xs']
 },
 {
- id:'13',title:'安全的其他维度',subtitle:'诚实、隐私、公平、遗忘与后续退化。',stage:3,minutes:35,level:'专题',prerequisites:['12'],lab:null,
+ id:'13',title:modulesById['13'].title,subtitle:'诚实、隐私、公平、遗忘与后续退化。',stage:3,minutes:35,level:'专题',prerequisites:['12'],lab:null,
  objectives:['区分内容安全与其他安全问题','为每种风险选择合适的证据','理解安全微调后的持续验证'],
  sections:[
  section('诚实性与不确定性','模型可能自信地回答错误事实，也可能迎合用户的错误前提。训练目标应鼓励有依据的回答、适当表达不确定，以及在需要时使用可信来源。但“我不确定”的措辞本身不能证明概率校准，也不能成为逃避所有问题的模板。','区分知识缺失、检索失败、推理错误与表达过度自信。针对每种失败选择不同干预：补充可靠任务数据、工具使用训练、校准或拒答边界。评测应同时记录答案正确性和置信程度，避免只奖励流畅性。'),
@@ -197,7 +203,7 @@ export const course = [
  quizzes:[quiz('模型拒绝回答某个训练样本，能证明它已经忘记该样本吗？',['能','不能，拒绝行为不等于参数记忆被移除','只要拒绝三次就能'],1,'遗忘需要专门的攻击与保留集验证，输出策略可能遮蔽仍存在的记忆。'),quiz('安全微调后又做量化或任务微调，应当？',['沿用原安全分数','重新进行相关回归评测','只看文件大小'],1,'任何影响推理行为的变更都可能改变原有结论。')],references:['safe','xs','tulu']
 },
 {
- id:'14',practice:true,title:'训练工程：把实验稳定地跑起来',subtitle:'显存、吞吐、分布式与可恢复训练。',stage:4,minutes:40,level:'工程',prerequisites:['05','08','09'],lab:'memory',
+ id:'14',practice:true,title:modulesById['14'].title,subtitle:'显存、吞吐、分布式与可恢复训练。',stage:4,minutes:40,level:'工程',prerequisites:['05','08','09'],lab:'memory',
  objectives:['拆分训练显存组成','理解梯度累积与分布式策略','记录成本并定位常见故障'],
  sections:[
  section('显存不只是模型权重','显存通常包括权重、梯度、优化器状态、激活、临时张量和缓存。以一种传统混合精度 Adam 配置为例，若每参数有 2 字节权重、2 字节梯度、4 字节主副本和 8 字节一二阶状态，共约 16 字节/参数；这只是特定配置的静态状态估计。','7B 参数按此估算约 112GB（十进制），还未计激活和临时开销。不同框架、优化器、精度和分片会改变它。下方计算器把假设明确列出，输出不能作为某张显卡一定能跑的保证；最终要做实测。'),
@@ -210,7 +216,7 @@ export const course = [
  quizzes:[quiz('micro batch=2，累积=4，数据并行=2，有效 batch 是？',['8','16','4'],1,'2×4×2=16。有效 token 数还取决于样本长度与 loss mask。'),quiz('只保存模型权重，能保证完全恢复训练轨迹吗？',['能','不能，还涉及优化器、调度器和随机状态','只与温度有关'],1,'恢复训练需要比推理加载更多状态，并记录数据采样进度。')],references:['zero','fsdp','grpotrl','cuda']
 },
 {
- id:'15',practice:true,title:'评测：让结论经得起追问',subtitle:'基线、分母、裁判和统计不确定性。',stage:3,minutes:40,level:'核心',prerequisites:['02','12'],lab:'safety',
+ id:'15',practice:true,title:modulesById['15'].title,subtitle:'基线、分母、裁判和统计不确定性。',stage:3,minutes:40,level:'核心',prerequisites:['02','12'],lab:'safety',
  objectives:['选择互补的评测维度','准确解释 ASR、误拒绝和能力保持','设计公平对照与独立验证'],
  sections:[
  section('先固定协议，再比较模型','一份评测协议至少包含模型 revision、模板、system prompt、解码设置、样本集版本、攻击方法、查询预算和裁判。小样本用于排错，正式结果需说明覆盖范围；不能把一个子集的成绩写成整个 benchmark 的官方成绩。','HarmBench 关注有害行为与对抗评估；XSTest、OR-Bench 关注过度拒绝；StrongREJECT 检查回答提供实质性有害信息的程度。正常能力需要另外测试知识、推理和指令遵循。不同指标不能不加解释地平均成一个“综合安全分”。'),
@@ -222,7 +228,7 @@ export const course = [
  quizzes:[quiz('ASR 从 20% 降到 10%，绝对变化是？',['下降 10 个百分点','下降 50 个百分点','下降 10% 相对值'],0,'绝对下降 10 个百分点；相对下降 (20−10)/20=50%。'),quiz('同一行为的 10 个近义攻击应在 bootstrap 时怎样处理？',['一律当 10 个独立行为','考虑按原始行为分组重采样','只保留成功攻击'],1,'相关样本会让普通独立采样低估不确定性，应匹配数据结构。')],references:['harm','xs','strong','harness']
 },
 {
- id:'16',title:'把方法迁移到专项任务',subtitle:'长上下文、多语言、Agent 与多模态。',stage:4,minutes:35,level:'专题',prerequisites:['03','10','12','15'],lab:null,
+ id:'16',title:modulesById['16'].title,subtitle:'长上下文、多语言、Agent 与多模态。',stage:4,minutes:35,level:'专题',prerequisites:['03','10','12','15'],lab:null,
  objectives:['理解不同任务的数据与反馈变化','识别轨迹级训练和评测要求','为一个专题写出可落地实验设计'],
  sections:[
  section('领域适应与长上下文','领域适应可能使用持续预训练吸收领域文本，再通过 SFT 教任务格式。专业回答的正确性需要领域评价，不能只看风格像不像专家。数据来源、时效、版权和知识更新方式都应明确。','长上下文训练涉及长度分布、位置表示、注意力成本与远距离信息利用。能输入很多 token 不代表能稳定找到中间信息。评测应变化相关信息位置、干扰文本数量和任务类型，并检查截断是否改变答案条件。'),
@@ -234,7 +240,7 @@ export const course = [
  quizzes:[quiz('Agent 的最终回答很礼貌，能证明执行过程安全吗？',['能','不能，需检查工具动作与权限','只要回答足够短就能'],1,'违规动作可能已经发生，必须评测轨迹和环境中的真实操作。'),quiz('英语测试直接翻成中文后，应如何报告？',['冒用原 benchmark 的同等官方分数','标为翻译扩展集并复核语义与标签','无需记录语言'],1,'翻译可能改变难度和语境，需要单独报告协议和复核过程。')],references:['template','grpotrl','tulu']
 },
 {
- id:'17',practice:true,title:'从学会原理，到可复现的项目',subtitle:'实验卡、模型卡与进入安全后训练的准备。',stage:4,minutes:30,level:'实践',prerequisites:['07','09','14','15'],lab:null,
+ id:'17',practice:true,title:modulesById['17'].title,subtitle:'实验卡、模型卡与进入安全后训练的准备。',stage:4,minutes:30,level:'实践',prerequisites:['07','09','14','15'],lab:null,
  objectives:['组织一个可复现的训练项目','为第二阶段写完整实验计划','用真实证据表达项目价值'],
  sections:[
  section('一个结果需要哪些伴随材料？','代码负责定义方法，配置负责说明具体运行，manifest 记录模型、数据与依赖版本，日志与原始输出支持复算。报告把问题、选择和结果连接起来。别人应该能从一个命令找到运行所需条件，而不是猜测你用过哪个 checkpoint。','建议分开课程、教学数值实验、真实训练、评测和报告。本学习站中的交互数字是教学计算，不是安全后训练成绩。后续真正训练时，应保存每个阶段输出和失败案例，避免只保留最好的一张图。'),
@@ -253,12 +259,18 @@ Object.assign(sources, advancedSources);
 for (const chapter of course) {
   const extra = deepDive[chapter.id];
   const worked = appliedPractice[chapter.id];
-  if (!extra || !worked) throw new Error(`Missing technical expansion for chapter ${chapter.id}`);
-  chapter.sections.push(...extra.sections, ...worked);
-  const references = [...new Set([...chapter.references, ...extra.references])];
+  const module = modulesById[chapter.id], lesson = moduleLessons[chapter.id], figure = moduleFigures[chapter.id], practicalCase = moduleCases[chapter.id], implementation = implementationNotes[chapter.id];
+  if (!extra || !worked || !module || !lesson || !figure || !practicalCase || !implementation) throw new Error(`Missing technical expansion for chapter ${chapter.id}`);
+  if (chapter.title !== module.title) throw new Error(`Chapter title does not match module ${chapter.id}`);
+  chapter.topics = module.topics;
+  chapter.figure = {src: `./figures/${chapter.id}.svg`, alt: figure.caption, caption: figure.caption};
+  chapter.snippet = lesson.snippet;
+  chapter.paperReadings = lesson.papers;
+  chapter.sections.push(...selectedSections(chapter.id,lesson.sections,extra.sections,worked),...implementation,practicalCase);
+  const references = [...new Set([...chapter.references, ...extra.references, ...lesson.papers.map(p=>p.source)])];
   chapter.references = references.filter((key, index) =>
     references.findIndex(other => sources[other][1] === sources[key][1]) === index);
-  chapter.minutes += 45;
+  chapter.minutes += 80;
 }
 
 export const glossary = [

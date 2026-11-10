@@ -8,7 +8,7 @@
 
 新增 [完整学习指南](docs/STUDY_GUIDE.md)、[17 模块覆盖表](docs/STAGE1_COVERAGE.md)及 [GPU 训练实战](labs/tiny_lm/README.md)。训练主流程使用 CUDA GPU、FP32；本地前端提供设备预检、训练命令和 GPU 实测。
 
-深入学习可从 [后训练全流程](docs/POST_TRAINING_WORKFLOW.md)、[论文与模型研究地图](docs/RESEARCH_FRONTIER.md) 和 [真实模型使用指南](docs/REAL_MODEL_USAGE.md) 开始。17 个模块均补充了技术流程、手算与诊断，涵盖 Qwen3、Qwen3.5 和截至 2026 年 11 月核对的代表性研究。
+深入学习可从 [后训练全流程](docs/POST_TRAINING_WORKFLOW.md)、[论文与模型研究地图](docs/RESEARCH_FRONTIER.md) 和 [真实模型使用指南](docs/REAL_MODEL_USAGE.md) 开始。17 个章节严格对应模块名称，逐章提供主要内容、技术拆解、代码片段、自绘图解、论文问题与练习，涵盖 Qwen3、Qwen3.5 和截至 2026 年 11 月核对的代表性研究。
 
 私人学习站已更新为 GPU 训练版，包含 RTX 5070 实测报告、训练源码与下载包。访问需要使用拥有该站点的 ChatGPT 账号登录。
 
@@ -51,23 +51,23 @@ python3 -m http.server 4173 --bind 127.0.0.1 --directory web/dist
 
 | 章节 | 主题 |
 |---|---|
-| [01](docs/curriculum/01.md) | 概率、token、梯度与后训练地图 |
-| [02](docs/curriculum/02.md) | 目标、代理奖励、KL 与分布迁移 |
-| [03](docs/curriculum/03.md) | 数据构建、标注、切分与污染控制 |
-| [04](docs/curriculum/04.md) | SFT、mask、模板、packing 与训练诊断 |
-| [05](docs/curriculum/05.md) | LoRA、QLoRA、参数与显存 |
-| [06](docs/curriculum/06.md) | 奖励模型、偏好概率与校准 |
-| [07](docs/curriculum/07.md) | DPO 推导与偏好方法家族 |
-| [08](docs/curriculum/08.md) | 策略梯度、PPO、GAE 与四个模型角色 |
-| [09](docs/curriculum/09.md) | GRPO、组内优势与在线采样 |
-| [10](docs/curriculum/10.md) | RLHF、RLAIF、RLVR 与奖励投机 |
-| [11](docs/curriculum/11.md) | 推理后训练、蒸馏与自改进 |
-| [12](docs/curriculum/12.md) | 安全边界、威胁模型与双向偏好 |
-| [13](docs/curriculum/13.md) | 诚实、隐私、公平、遗忘与安全退化 |
-| [14](docs/curriculum/14.md) | 训练系统、分布式、吞吐与恢复 |
-| [15](docs/curriculum/15.md) | benchmark、裁判、消融与统计 |
-| [16](docs/curriculum/16.md) | 长上下文、多语言、工具、Agent 与多模态 |
-| [17](docs/curriculum/17.md) | 可复现项目与第二阶段准备 |
+| [01](docs/curriculum/01.md) | 前置基础与训练阶段 |
+| [02](docs/curriculum/02.md) | 后训练目标与问题建模 |
+| [03](docs/curriculum/03.md) | 数据工程 |
+| [04](docs/curriculum/04.md) | 监督微调 SFT |
+| [05](docs/curriculum/05.md) | 参数高效微调 |
+| [06](docs/curriculum/06.md) | 偏好数据与奖励模型 |
+| [07](docs/curriculum/07.md) | 离线偏好优化 |
+| [08](docs/curriculum/08.md) | 强化学习基础与 PPO |
+| [09](docs/curriculum/09.md) | GRPO 与在线训练 |
+| [10](docs/curriculum/10.md) | 反馈来源与奖励设计 |
+| [11](docs/curriculum/11.md) | 推理后训练与自改进 |
+| [12](docs/curriculum/12.md) | 安全对齐原理 |
+| [13](docs/curriculum/13.md) | 广义安全专题 |
+| [14](docs/curriculum/14.md) | 训练系统与效率 |
+| [15](docs/curriculum/15.md) | 评测与实验方法 |
+| [16](docs/curriculum/16.md) | 专项能力后训练 |
+| [17](docs/curriculum/17.md) | 交付与持续改进 |
 
 ## 公式与数据练习
 
@@ -105,7 +105,7 @@ python -m labs.tiny_lm.run --device cuda --final-eval --output artifacts/tiny-lm
 
 ## 修改内容与验证
 
-构建需要 Node.js 20+ 与 Python 3.10+，无需 `npm install`。课程基础内容在 `web/course.mjs`，深入讲解和算例分别在 `web/deep-dive.mjs` 与 `web/applied-practice.mjs`；生成的 JSON 与 Markdown 不手工修改。构建同时生成可下载、保留目录结构的教学实验 ZIP。
+构建需要 Node.js 20+ 与 Python 3.10+，无需 `npm install`。章节名称和提纲在 `web/module-spec.mjs`，技术讲解与图解在 `web/module-lessons.mjs`、`web/implementation-notes.mjs` 和 `web/module-figures.mjs`，实操案例在 `web/module-cases.mjs`，选段由 `web/module-selection.mjs` 管理；其余课程源包括 `web/course.mjs`、`web/deep-dive.mjs` 和 `web/applied-practice.mjs`；生成的 JSON、SVG 与 Markdown 不手工修改。构建同时生成可下载、保留目录结构的教学实验 ZIP。
 
 ```bash
 node scripts/build.mjs

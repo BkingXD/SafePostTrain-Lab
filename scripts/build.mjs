@@ -4,15 +4,17 @@ import path from 'node:path';
 import {execFileSync} from 'node:child_process';
 import {renderGuide} from '../web/render-guides.mjs';
 import {course,glossary,sources,stages} from '../web/course.mjs';
+import {writeModuleFigures} from '../web/module-figures.mjs';
 const root=path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const output=path.join(root,'web/dist/content');
 await mkdir(output,{recursive:true});
 await mkdir(path.join(root,'docs/curriculum'),{recursive:true});
+await writeModuleFigures(path.join(root,'web'));
 await writeFile(path.join(output,'course.json'),JSON.stringify({version:1,course,glossary,sources,stages}));
 for(const chapter of course){
  const refs=chapter.references.map(key=>`- [${sources[key][0]}](${sources[key][1]})`).join('\n');
  const practice=chapter.practice?'\n\n## GPU 微型模型实战\n\n在 [实战指南](../../labs/tiny_lm/README.md) 中把本章公式连接到 CUDA 上的真实 token 训练、日志与生成。微型合成任务不代表大模型安全 benchmark。':'';
- const text=`# ${chapter.id} · ${chapter.title}\n\n${chapter.subtitle}\n\n建议学习时间：${chapter.minutes} 分钟（含阅读与练习，按个人基础调整）。\n\n前置章节：${chapter.prerequisites.join('、')||'无'}。\n\n## 学习目标\n\n${chapter.objectives.map(x=>'- '+x).join('\n')}\n\n${chapter.sections.map(s=>'## '+s.title+'\n\n'+s.paragraphs.join('\n\n')).join('\n\n')}\n\n## 常见误区\n\n${chapter.pitfall}${practice}\n\n## 检查理解\n\n${chapter.quizzes.map((q,i)=>`${i+1}. ${q.question}\n\n${q.options.map((x,j)=>`   - ${String.fromCharCode(65+j)}. ${x}`).join('\n')}\n\n   答案：${String.fromCharCode(65+q.correct)}。${q.explanation}`).join('\n\n')}\n\n## 一手资料\n\n${refs}\n\n本章正文的数值例子用于教学；真实微型模型的实测结果另见实战报告。\n`;
+ const text=`# ${chapter.id} · ${chapter.title}\n\n${chapter.subtitle}\n\n建议学习时间：${chapter.minutes} 分钟（含阅读与练习，按个人基础调整）。\n\n前置章节：${chapter.prerequisites.join('、')||'无'}。\n\n## 本章主要内容\n\n${chapter.topics.map(x=>'- '+x).join('\n')}\n\n## 本章图解\n\n![${chapter.figure.alt}](../../web/dist/figures/${chapter.id}.svg)\n\n${chapter.figure.caption}\n\n## 学习目标\n\n${chapter.objectives.map(x=>'- '+x).join('\n')}\n\n${chapter.sections.map(s=>'## '+s.title+'\n\n'+s.paragraphs.join('\n\n')).join('\n\n')}\n\n## 代码与数据片段\n\n${chapter.snippet.caption}。以下是局部教学片段，运行前需结合上下文准备变量。\n\n\`\`\`python\n${chapter.snippet.body}\n\`\`\`\n\n## 论文精读问题\n\n${chapter.paperReadings.map(p=>`- [${sources[p.source][0]}](${sources[p.source][1]})：${p.question}`).join('\n')}\n\n## 常见误区\n\n${chapter.pitfall}${practice}\n\n## 检查理解\n\n${chapter.quizzes.map((q,i)=>`${i+1}. ${q.question}\n\n${q.options.map((x,j)=>`   - ${String.fromCharCode(65+j)}. ${x}`).join('\n')}\n\n   答案：${String.fromCharCode(65+q.correct)}。${q.explanation}`).join('\n\n')}\n\n## 一手资料\n\n${refs}\n\n本章正文的数值例子用于教学；真实微型模型的实测结果另见实战报告。\n`;
  await writeFile(path.join(root,'docs/curriculum',chapter.id+'.md'),text);
 }
 console.log(`Built ${course.length} chapters, ${course.reduce((n,c)=>n+c.quizzes.length,0)} checks, ${glossary.length} glossary terms.`);

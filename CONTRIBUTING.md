@@ -1,6 +1,6 @@
 # 维护课程与实验
 
-课程源数据是 `web/course.mjs`。修改章节正文、题目、答案或术语后，运行 `node scripts/build.mjs`，同步生成网页 JSON、Markdown 课程和下载材料。不要只修改生成文件。
+课程基础源数据是 `web/course.mjs`，技术扩展与算例分别位于 `web/deep-dive.mjs`、`web/applied-practice.mjs`。修改章节正文、题目、答案或术语后，运行 `node scripts/build.mjs`，同步生成网页 JSON、Markdown 课程和下载材料。不要只修改生成文件。
 
 数学实现位于 `web/dist/math.mjs` 与 `labs/core_math.py`。新增公式实验时应说明符号、假设、适用边界，并使用可手算的案例验证。交互结果必须标为教学计算，不能伪装成真实模型实验。
 

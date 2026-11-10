@@ -4,6 +4,9 @@
 
 先读 [覆盖审查](STAGE1_COVERAGE.md)了解每项实验能证明什么。课程编号和 [原项目大纲](PROJECT_OUTLINE.md)对应，详细验收项见 [学习清单](LEARNING_CHECKLIST.md)。
 
+
+深入学习时，可先阅读[后训练全流程](POST_TRAINING_WORKFLOW.md)，再结合[论文与模型研究地图](RESEARCH_FRONTIER.md)及[真实模型使用指南](REAL_MODEL_USAGE.md)完成逐阶段实验。
+
 ## 开始前：准备三个学习层次
 
 | 层次 | 需要什么 | 实际做什么 |

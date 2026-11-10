@@ -8,5 +8,5 @@ await mkdir(path.join(root,'dist/content'),{recursive:true});
 await writeFile(path.join(root,'dist/content/course.json'),JSON.stringify({version:1,course,glossary,sources,stages}));
 console.log(`Website data: ${course.length} chapters.`);
 const guides={};
-for(const [key,file] of Object.entries({study:'STUDY_GUIDE.md',coverage:'STAGE1_COVERAGE.md',checklist:'LEARNING_CHECKLIST.md',outline:'PROJECT_OUTLINE.md'}))guides[key]=renderGuide(await readFile(path.join(root,'content-source',file),'utf8'));
+for(const [key,file] of Object.entries({study:'STUDY_GUIDE.md',workflow:'POST_TRAINING_WORKFLOW.md',research:'RESEARCH_FRONTIER.md',models:'REAL_MODEL_USAGE.md',coverage:'STAGE1_COVERAGE.md',checklist:'LEARNING_CHECKLIST.md',outline:'PROJECT_OUTLINE.md'}))guides[key]=renderGuide(await readFile(path.join(root,'content-source',file),'utf8'));
 await writeFile(path.join(root,'dist/content/guides.json'),JSON.stringify(guides));

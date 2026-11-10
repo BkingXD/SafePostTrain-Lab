@@ -24,6 +24,16 @@ def build():
             info=ZipInfo(name,date_time=(2026,1,1,0,0,0));info.external_attr=0o100644<<16
             archive.writestr(info,(ROOT/name).read_bytes())
     print(f"TinyLM source bundle: {len(tiny_files)} files")
+    real_files = ["labs/__init__.py", "labs/tiny_lm/requirements-gpu.txt", "tests/test_real_model_data.py", "tests/test_real_model_reports.py",
+                  "labs/real_model/__init__.py", "labs/real_model/run.py", "labs/real_model/data_validation.py",
+                  "labs/real_model/requirements.txt", "labs/real_model/requirements-lock.txt",
+                  "labs/real_model/README.md", "labs/real_model/data/demo_pairs.json"]
+    real_files += [f"reports/real_model/{name}.json" for name in ("base", "sft", "dpo", "sft_probe", "dpo_probe")]
+    with ZipFile(OUT.parent/'safeposttrain-real-model.zip', 'w', compression=ZIP_STORED) as archive:
+        for name in real_files:
+            info=ZipInfo(name,date_time=(2026,1,1,0,0,0));info.external_attr=0o100644<<16
+            archive.writestr(info,(ROOT/name).read_bytes())
+    print(f"Real-model source bundle: {len(real_files)} files")
 
 
 if __name__ == "__main__":

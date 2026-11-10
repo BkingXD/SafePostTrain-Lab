@@ -13,8 +13,11 @@ test('guide renderer preserves teaching structure and refuses executable HTML/UR
 
 test('all four guide views are generated from current source',async()=>{
  const generated=JSON.parse(await readFile(new URL('../web/dist/content/guides.json',import.meta.url),'utf8'));
- for(const [key,file] of Object.entries({study:'STUDY_GUIDE.md',coverage:'STAGE1_COVERAGE.md',checklist:'LEARNING_CHECKLIST.md',outline:'PROJECT_OUTLINE.md'})){
+ for(const [key,file] of Object.entries({study:'STUDY_GUIDE.md',workflow:'POST_TRAINING_WORKFLOW.md',research:'RESEARCH_FRONTIER.md',models:'REAL_MODEL_USAGE.md',coverage:'STAGE1_COVERAGE.md',checklist:'LEARNING_CHECKLIST.md',outline:'PROJECT_OUTLINE.md'})){
   const source=await readFile(new URL('../docs/'+file,import.meta.url),'utf8');assert.deepEqual(generated[key],renderGuide(source));
  }
  assert.ok(generated.study.html.includes('推导卡'));assert.ok(generated.study.html.includes('案例 A'));
+ assert.ok(generated.workflow.html.includes('DPO'));
+ assert.ok(generated.research.html.includes('2604.15149'));
+ assert.ok(generated.models.html.includes('Qwen3-0.6B'));
 });

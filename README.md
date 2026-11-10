@@ -8,6 +8,8 @@
 
 新增 [完整学习指南](docs/STUDY_GUIDE.md)、[17 模块覆盖表](docs/STAGE1_COVERAGE.md)及 [GPU 训练实战](labs/tiny_lm/README.md)。训练主流程使用 CUDA GPU、FP32；本地前端提供设备预检、训练命令和 GPU 实测。
 
+深入学习可从 [后训练全流程](docs/POST_TRAINING_WORKFLOW.md)、[论文与模型研究地图](docs/RESEARCH_FRONTIER.md) 和 [真实模型使用指南](docs/REAL_MODEL_USAGE.md) 开始。17 个模块均补充了技术流程、手算与诊断，涵盖 Qwen3、Qwen3.5 和截至 2026 年 11 月核对的代表性研究。
+
 私人学习站已更新为 GPU 训练版，包含 RTX 5070 实测报告、训练源码与下载包。访问需要使用拥有该站点的 ChatGPT 账号登录。
 
 项目源码、课程、测试与 GPU 实测报告统一维护于 [BkingXD/SafePostTrain-Lab](https://github.com/BkingXD/SafePostTrain-Lab)。在线学习站保持创建者私有访问，GitHub 仓库提供可自行运行的完整学习材料。
@@ -99,9 +101,11 @@ python -m labs.tiny_lm.run --device cuda --final-eval --output artifacts/tiny-lm
 
 设备预检通过后再启动正式训练，使用新的输出目录。首版采用 FP32；BF16、QLoRA 与多卡仍是课程原理和后续扩展，未宣称实现或实测。安装、设备验收、结果复算与恢复边界见 [实战 README](labs/tiny_lm/README.md)。本例只有符号复制任务；真实安全策略训练属于下一阶段。
 
+另有 [Qwen3-0.6B 单卡实战](docs/REAL_MODEL_USAGE.md)：以小规模合成数据演示真实模型的生成、LoRA SFT、DPO、标签与参考策略检查。示例用于验证流程，不能作为安全 benchmark 或模型效果提升的证明。
+
 ## 修改内容与验证
 
-构建需要 Node.js 20+ 与 Python 3.10+，无需 `npm install`。`web/course.mjs` 是课程内容的唯一维护入口；生成的 JSON 与 Markdown 不手工修改。构建同时生成可下载、保留目录结构的 Python 教学实验 ZIP。
+构建需要 Node.js 20+ 与 Python 3.10+，无需 `npm install`。课程基础内容在 `web/course.mjs`，深入讲解和算例分别在 `web/deep-dive.mjs` 与 `web/applied-practice.mjs`；生成的 JSON 与 Markdown 不手工修改。构建同时生成可下载、保留目录结构的教学实验 ZIP。
 
 ```bash
 node scripts/build.mjs

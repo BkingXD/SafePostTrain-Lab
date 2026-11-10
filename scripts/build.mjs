@@ -22,7 +22,7 @@ for(const file of ['core_math.py','toy_training.py','reward_model.py','data_audi
 await copyFile(path.join(root,'docs/LEARNING_CHECKLIST.md'),path.join(downloads,'LEARNING_CHECKLIST.md'));
 execFileSync('python3',[path.join(root,'scripts/package_labs.py')],{stdio:'inherit'});
 const guides={};
-const guideFiles={study:'STUDY_GUIDE.md',coverage:'STAGE1_COVERAGE.md',checklist:'LEARNING_CHECKLIST.md',outline:'PROJECT_OUTLINE.md'};
+const guideFiles={study:'STUDY_GUIDE.md',workflow:'POST_TRAINING_WORKFLOW.md',research:'RESEARCH_FRONTIER.md',models:'REAL_MODEL_USAGE.md',coverage:'STAGE1_COVERAGE.md',checklist:'LEARNING_CHECKLIST.md',outline:'PROJECT_OUTLINE.md'};
 await mkdir(path.join(root,'web/content-source'),{recursive:true});
 for(const [key,file] of Object.entries(guideFiles)){
  const markdown=await readFile(path.join(root,'docs',file),'utf8');guides[key]=renderGuide(markdown);
@@ -35,3 +35,7 @@ await copyFile(path.join(root,'reports/tiny_lm/gpu_reproducibility.json'),path.j
 await copyFile(path.join(root,'labs/evaluate_measured.py'),path.join(downloads,'evaluate_measured.py'));
 await mkdir(path.join(downloads,'tiny-lm'),{recursive:true});
 for(const file of await readdir(path.join(root,'labs/tiny_lm')))if(file.endsWith('.py')||['README.md','requirements-gpu.txt','requirements-gpu-lock.txt'].includes(file))await copyFile(path.join(root,'labs/tiny_lm',file),path.join(downloads,'tiny-lm',file));
+await mkdir(path.join(downloads,'real-model','data'),{recursive:true});
+for(const file of await readdir(path.join(root,'labs/real_model')))if(/\.(py|txt|md)$/.test(file))await copyFile(path.join(root,'labs/real_model',file),path.join(downloads,'real-model',file));
+await copyFile(path.join(root,'labs/real_model/data/demo_pairs.json'),path.join(downloads,'real-model/data/demo_pairs.json'));
+for(const name of ['base','sft','dpo','sft_probe','dpo_probe'])await copyFile(path.join(root,'reports/real_model',name+'.json'),path.join(output,'real-model-'+name+'.json'));

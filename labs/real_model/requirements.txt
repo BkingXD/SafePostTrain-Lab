@@ -1,0 +1,8 @@
+# Install the CUDA PyTorch stack from labs/tiny_lm/requirements-gpu.txt first.
+# API versions verified on RTX 5070 / Python 3.12 / torch 2.9.1+cu128.
+trl==1.17.1
+transformers==5.22.2
+peft==0.21.2
+datasets==5.2.0
+accelerate==1.15.0
+huggingface_hub==2.4.0

@@ -1,5 +1,7 @@
 // Course source of truth. Original Chinese explanations; linked primary sources
 // identify the algorithms and documentation, not claims of reproduced results.
+import {advancedSources, deepDive} from './deep-dive.mjs';
+import {appliedPractice} from './applied-practice.mjs';
 const section = (title, ...paragraphs) => ({ title, paragraphs });
 const quiz = (question, options, correct, explanation) => ({ question, options, correct, explanation });
 export const stages = ['建立直觉', '学会微调', '理解对齐', '走向可靠', '连接实践'];
@@ -244,6 +246,20 @@ export const course = [
  quizzes:[quiz('下面哪条适合写进尚未训练模型的项目说明？',['模型安全性提升 50%','完成 DPO 数值实现与教学验证','已达到行业最优'],1,'已完成的代码与教学验证可以核验；未进行的训练不能编造成绩。'),quiz('为了复现一次训练，哪组材料最完整？',['仅最终权重','代码版本、配置、数据/模型版本、环境、日志与运行命令','只提供一张结果图'],1,'复现需要知道方法、输入、执行条件和结果来源。')],references:['tulu','harness']
 }
 ];
+
+// Append technical depth without changing chapter IDs or existing quiz indices,
+// so saved progress and notes from earlier versions remain valid.
+Object.assign(sources, advancedSources);
+for (const chapter of course) {
+  const extra = deepDive[chapter.id];
+  const worked = appliedPractice[chapter.id];
+  if (!extra || !worked) throw new Error(`Missing technical expansion for chapter ${chapter.id}`);
+  chapter.sections.push(...extra.sections, ...worked);
+  const references = [...new Set([...chapter.references, ...extra.references])];
+  chapter.references = references.filter((key, index) =>
+    references.findIndex(other => sources[other][1] === sources[key][1]) === index);
+  chapter.minutes += 45;
+}
 
 export const glossary = [
  ['Token','模型处理的离散符号单位，边界由 tokenizer 决定。','01'],['Logit','softmax 之前的未归一化分数。','01'],['Log-prob','概率的对数；序列 log-prob 是条件 log-prob 的和。','01'],['Temperature','采样时缩放 logits 的参数，不更新模型权重。','01'],['Entropy / 熵','衡量概率分布不确定性的量；不是质量分。','01'],

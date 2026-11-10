@@ -1,6 +1,6 @@
 let cached;
 const escape=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const names={study:'从这里开始',coverage:'大纲覆盖',checklist:'学习验收',outline:'项目全景'};
+const names={study:'从这里开始',workflow:'后训练全流程',research:'论文与研究',models:'真实模型使用',coverage:'大纲覆盖',checklist:'学习验收',outline:'项目全景'};
 export function guidePage(id='study'){
  return `<div class="eyebrow">A GUIDE FOR LEARNING</div><h1 class="lesson-title">把知识，串成一条路。</h1><p class="lesson-intro">有顺序、有例子、有参考答案。知道自己正在学什么，也知道下一步怎么做。</p><nav class="filters" aria-label="学习指南导航">${Object.entries(names).map(([key,name])=>`<a class="filter ${id===key?'selected':''}" href="#/guide/${key}">${name}</a>`).join('')}</nav><div class="guide-document" id="guide-content" data-guide="${escape(id)}"><p role="status">正在打开学习指南…</p></div>`;
 }

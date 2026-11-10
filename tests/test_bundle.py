@@ -9,6 +9,23 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class DownloadBundleTests(unittest.TestCase):
+    def test_real_model_bundle_contains_working_data_validator(self):
+        archive_path = ROOT / "web/dist/downloads/safeposttrain-real-model.zip"
+        required={"labs/__init__.py", "labs/tiny_lm/requirements-gpu.txt", "labs/real_model/__init__.py",
+                  "labs/real_model/run.py", "labs/real_model/data_validation.py", "labs/real_model/README.md",
+                  "labs/real_model/requirements.txt", "labs/real_model/requirements-lock.txt",
+                  "labs/real_model/data/demo_pairs.json", "tests/test_real_model_data.py", "tests/test_real_model_reports.py",
+                  "reports/real_model/base.json", "reports/real_model/sft.json", "reports/real_model/dpo.json",
+                  "reports/real_model/sft_probe.json", "reports/real_model/dpo_probe.json"}
+        with ZipFile(archive_path) as archive, tempfile.TemporaryDirectory(prefix="safeposttrain-real-") as target:
+            self.assertEqual(set(archive.namelist()), required)
+            for name in required:
+                self.assertEqual(archive.read(name), (ROOT / name).read_bytes())
+            archive.extractall(target)
+            result = subprocess.run([sys.executable,"-m","unittest","discover","-s","tests","-p","test_real_model_*.py"],
+                                    cwd=target,capture_output=True,text=True,timeout=15)
+            self.assertEqual(result.returncode,0,result.stderr)
+
     def test_download_is_self_contained_and_matches_current_sources(self):
         expected = {"labs/core_math.py", "labs/toy_training.py", "labs/reward_model.py", "labs/data_audit.py", "labs/README.md", "docs/LEARNING_CHECKLIST.md"}
         archive_path = ROOT / "web/dist/downloads/safeposttrain-teaching-labs.zip"

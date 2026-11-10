@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {course,glossary,sources,stages} from '../web/course.mjs';
+import {deepDive} from '../web/deep-dive.mjs';
+import {appliedPractice} from '../web/applied-practice.mjs';
 import {readFile} from 'node:fs/promises';
 test('curriculum covers the original 17 modules with valid references and learning scaffolds',()=>{
  assert.equal(course.length,17);assert.equal(new Set(course.map(c=>c.id)).size,17);
@@ -18,6 +20,17 @@ test('the prerequisite graph is acyclic',()=>{
  const byId=new Map(course.map(c=>[c.id,c])),visited=new Set();
  function visit(id,path=new Set()){assert.ok(!path.has(id),`prerequisite cycle at ${id}`);if(visited.has(id))return;const next=new Set([...path,id]);byId.get(id).prerequisites.forEach(p=>visit(p,next));visited.add(id);}
  course.forEach(c=>visit(c.id));
+});
+test('all chapters expose technical expansions, worked examples and sourced research',()=>{
+ assert.deepEqual(Object.keys(deepDive).sort(),course.map(c=>c.id).sort());
+ assert.deepEqual(Object.keys(appliedPractice).sort(),course.map(c=>c.id).sort());
+ for(const c of course){
+  assert.ok(deepDive[c.id].sections.length>=3,`${c.id}: technical coverage`);
+  assert.ok(appliedPractice[c.id].length>=2,`${c.id}: examples and diagnostics`);
+  assert.ok(deepDive[c.id].references.every(key=>sources[key]?.[1].startsWith('https://')&&c.references.some(kept=>sources[kept][1]===sources[key][1])));
+ }
+ assert.ok(sources.verifier26[1].includes('2604.15149'));
+ assert.ok(sources.refusal26[1].includes('2609.03887'));
 });
 test('generated browser content and GitHub-readable chapters match the source',async()=>{
  const generated=JSON.parse(await readFile(new URL('../web/dist/content/course.json',import.meta.url),'utf8'));

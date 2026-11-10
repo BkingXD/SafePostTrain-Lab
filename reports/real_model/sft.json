@@ -1,0 +1,117 @@
+{
+  "scope": "Small synthetic pipeline demonstration, not a safety benchmark or evidence of improvement.",
+  "stage": "sft",
+  "model": {
+    "expected_model_id": "Qwen/Qwen3-0.6B",
+    "declared_revision": "c1899de289a04d12100db370d81485cdf75e47ca",
+    "revision_from_all_hub_metadata": true,
+    "file_sha256": {
+      "config.json": "660db3b73d788119c04535e48cf9be5f55bc3100841a718637ae695b442f27dd",
+      "tokenizer.json": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+      "model.safetensors": "f47f71177f32bcd101b7573ec9171e6a57f4f4d31148d38e382306f42996874b"
+    }
+  },
+  "model_dir": "artifacts/models/Qwen3-0.6B",
+  "input_adapter": null,
+  "input_adapter_sha256": null,
+  "run_config": {
+    "requested_steps": 2,
+    "max_length": 256,
+    "micro_batch": 1,
+    "gradient_accumulation": 1,
+    "optimizer": "adamw_torch",
+    "learning_rate": 0.0002,
+    "lora": {
+      "r": 8,
+      "alpha": 16,
+      "dropout": 0.0,
+      "target_modules": [
+        "q_proj",
+        "v_proj"
+      ]
+    },
+    "beta": null,
+    "enable_thinking": false
+  },
+  "dataset_sha256": "3e0a6c1f7dd50b72b02517b8bf412527e6ffa7813bfacecb33a62e91f3057729",
+  "dataset_counts": {
+    "train": 8,
+    "probe": 3
+  },
+  "source_sha256": {
+    "__init__.py": "96cc1b6fbfced513d0844180ef20b10ec44f1105a78837507361a2ab978e914b",
+    "data_validation.py": "de903e2a7ec50a574122344b2e2d30f411a93dd2d5854b1e36d6b03e954e9632",
+    "run.py": "95b9b24a4f7ae5c196ba455bbbc70be7623bc6f8499f7e0605233042cfcf7954"
+  },
+  "environment": {
+    "python": "3.12.14",
+    "gpu": "NVIDIA GeForce RTX 5070",
+    "device": "cuda:0",
+    "precision": "torch.bfloat16",
+    "cuda": "12.8",
+    "c_compiler": "workspace-local toolchain",
+    "torch": "2.9.1+cu128",
+    "transformers": "5.22.2",
+    "trl": "1.17.1",
+    "peft": "0.21.2",
+    "datasets": "5.2.0",
+    "accelerate": "1.15.0"
+  },
+  "seed": 7,
+  "elapsed_seconds_after_model_load": 1.5700600340005622,
+  "gpu_peak_allocated_bytes": 1295705088,
+  "gpu_peak_reserved_bytes": 1323302912,
+  "metrics": {
+    "mask_check": {
+      "examples_checked": 8,
+      "supervised_tokens_across_examples": 168,
+      "first_sample": {
+        "sample_id": "train-01",
+        "prompt_masked_tokens": 20,
+        "supervised_tokens": 21,
+        "supervised_text": "训练集用于更新模型参数，测试集用于评估未用于调参的样本表现。",
+        "eos_supervised": true
+      }
+    },
+    "trainable_parameters": 1146880,
+    "updated_parameter_tensors": 112,
+    "reference_unchanged": null,
+    "global_step": 2,
+    "training_loss": 4.173274040222168,
+    "training_log": [
+      {
+        "loss": 5.11226749420166,
+        "grad_norm": 7.180814266204834,
+        "learning_rate": 0.0002,
+        "entropy": 2.047339677810669,
+        "mean_token_accuracy": 0.3199999928474426,
+        "num_tokens": 42.0,
+        "epoch": 0.125,
+        "step": 1
+      },
+      {
+        "loss": 3.234280586242676,
+        "grad_norm": 5.4933037757873535,
+        "learning_rate": 0.0001,
+        "entropy": 0.8209126591682434,
+        "mean_token_accuracy": 0.5714285969734192,
+        "num_tokens": 83.0,
+        "epoch": 0.25,
+        "step": 2
+      },
+      {
+        "train_runtime": 0.6285,
+        "train_samples_per_second": 3.182,
+        "train_steps_per_second": 3.182,
+        "total_flos": 219923939328.0,
+        "train_loss": 4.173274040222168,
+        "epoch": 0.25,
+        "step": 2
+      }
+    ],
+    "output_adapter_sha256": {
+      "adapter_config.json": "48c2b640696b3f54176cfb2f1a72d858d02734bf5317e794d287d97a30a622f1",
+      "adapter_model.safetensors": "4bf997a59e0810dccb30cf359c9d3208bd8f35daa139eb9ed021352ad931f313"
+    }
+  }
+}
